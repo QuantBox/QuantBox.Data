@@ -6,7 +6,8 @@
 ## 项目文件介绍
 1. **QuantBox\.Data\.Serializer**,编解码库
 2. **Test**,测试用例
-3. **DataInspector**,数据文件查看、编译、转换工具
+3. **DataInspector**,数据文件查看、编辑、转换工具
+4. **QuantBox行情数据存储方案**,文件格式设计思路
 
 ## 在自己的项目中使用
 引用**QuantBox\.Data\.Serializer**库即可，参考**DataInspector**中的使用方法，再转换成自己系统中的数据格式
