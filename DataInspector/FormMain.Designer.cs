@@ -31,6 +31,21 @@
             this.components = new System.ComponentModel.Container();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.dgvTick = new System.Windows.Forms.DataGridView();
+            this.lastPriceDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.depth13DataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.volumeDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.openInterestDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.turnoverDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.averagePriceDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.tradingDayDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.actionDayDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.timeHHmmDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.timessfDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.timeffDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.timessfDiffDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.barDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.staticDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.tickSizeDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.pbTick2BindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.splitContainer3 = new System.Windows.Forms.SplitContainer();
@@ -56,21 +71,6 @@
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuTools_ExportDirectory = new System.Windows.Forms.ToolStripMenuItem();
-            this.lastPriceDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.depth13DataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.volumeDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.openInterestDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.turnoverDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.averagePriceDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.tradingDayDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.actionDayDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.timeHHmmDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.timessfDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.timeffDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.timessfDiffDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.barDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.staticDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.tickSizeDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -139,6 +139,114 @@
             this.dgvTick.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvTick_CellValueChanged);
             this.dgvTick.RowPostPaint += new System.Windows.Forms.DataGridViewRowPostPaintEventHandler(this.dgvTick_RowPostPaint);
             this.dgvTick.SelectionChanged += new System.EventHandler(this.dgvTick_SelectionChanged);
+            // 
+            // lastPriceDataGridViewTextBoxColumn
+            // 
+            this.lastPriceDataGridViewTextBoxColumn.DataPropertyName = "LastPrice";
+            this.lastPriceDataGridViewTextBoxColumn.HeaderText = "LastPrice";
+            this.lastPriceDataGridViewTextBoxColumn.Name = "lastPriceDataGridViewTextBoxColumn";
+            this.lastPriceDataGridViewTextBoxColumn.Width = 76;
+            // 
+            // depth13DataGridViewTextBoxColumn
+            // 
+            this.depth13DataGridViewTextBoxColumn.DataPropertyName = "Depth1_3";
+            this.depth13DataGridViewTextBoxColumn.HeaderText = "Depth1_3";
+            this.depth13DataGridViewTextBoxColumn.Name = "depth13DataGridViewTextBoxColumn";
+            this.depth13DataGridViewTextBoxColumn.Visible = false;
+            this.depth13DataGridViewTextBoxColumn.Width = 79;
+            // 
+            // volumeDataGridViewTextBoxColumn
+            // 
+            this.volumeDataGridViewTextBoxColumn.DataPropertyName = "Volume";
+            this.volumeDataGridViewTextBoxColumn.HeaderText = "Volume";
+            this.volumeDataGridViewTextBoxColumn.Name = "volumeDataGridViewTextBoxColumn";
+            this.volumeDataGridViewTextBoxColumn.Width = 67;
+            // 
+            // openInterestDataGridViewTextBoxColumn
+            // 
+            this.openInterestDataGridViewTextBoxColumn.DataPropertyName = "OpenInterest";
+            this.openInterestDataGridViewTextBoxColumn.HeaderText = "OpenInterest";
+            this.openInterestDataGridViewTextBoxColumn.Name = "openInterestDataGridViewTextBoxColumn";
+            this.openInterestDataGridViewTextBoxColumn.Width = 93;
+            // 
+            // turnoverDataGridViewTextBoxColumn
+            // 
+            this.turnoverDataGridViewTextBoxColumn.DataPropertyName = "Turnover";
+            this.turnoverDataGridViewTextBoxColumn.HeaderText = "Turnover";
+            this.turnoverDataGridViewTextBoxColumn.Name = "turnoverDataGridViewTextBoxColumn";
+            this.turnoverDataGridViewTextBoxColumn.Width = 75;
+            // 
+            // averagePriceDataGridViewTextBoxColumn
+            // 
+            this.averagePriceDataGridViewTextBoxColumn.DataPropertyName = "AveragePrice";
+            this.averagePriceDataGridViewTextBoxColumn.HeaderText = "AveragePrice";
+            this.averagePriceDataGridViewTextBoxColumn.Name = "averagePriceDataGridViewTextBoxColumn";
+            this.averagePriceDataGridViewTextBoxColumn.Width = 96;
+            // 
+            // tradingDayDataGridViewTextBoxColumn
+            // 
+            this.tradingDayDataGridViewTextBoxColumn.DataPropertyName = "TradingDay";
+            this.tradingDayDataGridViewTextBoxColumn.HeaderText = "TradingDay";
+            this.tradingDayDataGridViewTextBoxColumn.Name = "tradingDayDataGridViewTextBoxColumn";
+            this.tradingDayDataGridViewTextBoxColumn.Width = 87;
+            // 
+            // actionDayDataGridViewTextBoxColumn
+            // 
+            this.actionDayDataGridViewTextBoxColumn.DataPropertyName = "ActionDay";
+            this.actionDayDataGridViewTextBoxColumn.HeaderText = "ActionDay";
+            this.actionDayDataGridViewTextBoxColumn.Name = "actionDayDataGridViewTextBoxColumn";
+            this.actionDayDataGridViewTextBoxColumn.Width = 81;
+            // 
+            // timeHHmmDataGridViewTextBoxColumn
+            // 
+            this.timeHHmmDataGridViewTextBoxColumn.DataPropertyName = "Time_HHmm";
+            this.timeHHmmDataGridViewTextBoxColumn.HeaderText = "Time_HHmm";
+            this.timeHHmmDataGridViewTextBoxColumn.Name = "timeHHmmDataGridViewTextBoxColumn";
+            this.timeHHmmDataGridViewTextBoxColumn.Width = 93;
+            // 
+            // timessfDataGridViewTextBoxColumn
+            // 
+            this.timessfDataGridViewTextBoxColumn.DataPropertyName = "Time_____ssf__";
+            this.timessfDataGridViewTextBoxColumn.HeaderText = "Time_____ssf__";
+            this.timessfDataGridViewTextBoxColumn.Name = "timessfDataGridViewTextBoxColumn";
+            this.timessfDataGridViewTextBoxColumn.Width = 110;
+            // 
+            // timeffDataGridViewTextBoxColumn
+            // 
+            this.timeffDataGridViewTextBoxColumn.DataPropertyName = "Time________ff";
+            this.timeffDataGridViewTextBoxColumn.HeaderText = "Time________ff";
+            this.timeffDataGridViewTextBoxColumn.Name = "timeffDataGridViewTextBoxColumn";
+            this.timeffDataGridViewTextBoxColumn.Width = 109;
+            // 
+            // timessfDiffDataGridViewTextBoxColumn
+            // 
+            this.timessfDiffDataGridViewTextBoxColumn.DataPropertyName = "Time_ssf_Diff";
+            this.timessfDiffDataGridViewTextBoxColumn.HeaderText = "Time_ssf_Diff";
+            this.timessfDiffDataGridViewTextBoxColumn.Name = "timessfDiffDataGridViewTextBoxColumn";
+            this.timessfDiffDataGridViewTextBoxColumn.Width = 96;
+            // 
+            // barDataGridViewTextBoxColumn
+            // 
+            this.barDataGridViewTextBoxColumn.DataPropertyName = "Bar";
+            this.barDataGridViewTextBoxColumn.HeaderText = "Bar";
+            this.barDataGridViewTextBoxColumn.Name = "barDataGridViewTextBoxColumn";
+            this.barDataGridViewTextBoxColumn.Visible = false;
+            this.barDataGridViewTextBoxColumn.Width = 48;
+            // 
+            // staticDataGridViewTextBoxColumn
+            // 
+            this.staticDataGridViewTextBoxColumn.DataPropertyName = "Static";
+            this.staticDataGridViewTextBoxColumn.HeaderText = "Static";
+            this.staticDataGridViewTextBoxColumn.Name = "staticDataGridViewTextBoxColumn";
+            this.staticDataGridViewTextBoxColumn.Visible = false;
+            this.staticDataGridViewTextBoxColumn.Width = 59;
+            // 
+            // tickSizeDataGridViewTextBoxColumn
+            // 
+            this.tickSizeDataGridViewTextBoxColumn.DataPropertyName = "TickSize";
+            this.tickSizeDataGridViewTextBoxColumn.HeaderText = "TickSize";
+            this.tickSizeDataGridViewTextBoxColumn.Name = "tickSizeDataGridViewTextBoxColumn";
+            this.tickSizeDataGridViewTextBoxColumn.Width = 73;
             // 
             // pbTick2BindingSource
             // 
@@ -225,6 +333,7 @@
             this.dgvDepth.Size = new System.Drawing.Size(184, 163);
             this.dgvDepth.TabIndex = 1;
             this.dgvDepth.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvDepth_CellValueChanged);
+            this.dgvDepth.RowPostPaint += new System.Windows.Forms.DataGridViewRowPostPaintEventHandler(this.dgvDepth_RowPostPaint);
             // 
             // bidPriceDataGridViewTextBoxColumn
             // 
@@ -344,7 +453,7 @@
             this.menuView_Convert.Name = "menuView_Convert";
             this.menuView_Convert.Size = new System.Drawing.Size(116, 22);
             this.menuView_Convert.Text = "Convert";
-            this.menuView_Convert.Click += new System.EventHandler(this.menuView_Convert_Click_1);
+            this.menuView_Convert.Click += new System.EventHandler(this.menuView_Convert_Click);
             // 
             // menuStrip1
             // 
@@ -372,114 +481,6 @@
             this.menuTools_ExportDirectory.Size = new System.Drawing.Size(167, 22);
             this.menuTools_ExportDirectory.Text = "Export Directory...";
             this.menuTools_ExportDirectory.Click += new System.EventHandler(this.menuTools_ExportDirectory_Click);
-            // 
-            // lastPriceDataGridViewTextBoxColumn
-            // 
-            this.lastPriceDataGridViewTextBoxColumn.DataPropertyName = "LastPrice";
-            this.lastPriceDataGridViewTextBoxColumn.HeaderText = "LastPrice";
-            this.lastPriceDataGridViewTextBoxColumn.Name = "lastPriceDataGridViewTextBoxColumn";
-            this.lastPriceDataGridViewTextBoxColumn.Width = 76;
-            // 
-            // depth13DataGridViewTextBoxColumn
-            // 
-            this.depth13DataGridViewTextBoxColumn.DataPropertyName = "Depth1_3";
-            this.depth13DataGridViewTextBoxColumn.HeaderText = "Depth1_3";
-            this.depth13DataGridViewTextBoxColumn.Name = "depth13DataGridViewTextBoxColumn";
-            this.depth13DataGridViewTextBoxColumn.Visible = false;
-            this.depth13DataGridViewTextBoxColumn.Width = 79;
-            // 
-            // volumeDataGridViewTextBoxColumn
-            // 
-            this.volumeDataGridViewTextBoxColumn.DataPropertyName = "Volume";
-            this.volumeDataGridViewTextBoxColumn.HeaderText = "Volume";
-            this.volumeDataGridViewTextBoxColumn.Name = "volumeDataGridViewTextBoxColumn";
-            this.volumeDataGridViewTextBoxColumn.Width = 67;
-            // 
-            // openInterestDataGridViewTextBoxColumn
-            // 
-            this.openInterestDataGridViewTextBoxColumn.DataPropertyName = "OpenInterest";
-            this.openInterestDataGridViewTextBoxColumn.HeaderText = "OpenInterest";
-            this.openInterestDataGridViewTextBoxColumn.Name = "openInterestDataGridViewTextBoxColumn";
-            this.openInterestDataGridViewTextBoxColumn.Width = 93;
-            // 
-            // turnoverDataGridViewTextBoxColumn
-            // 
-            this.turnoverDataGridViewTextBoxColumn.DataPropertyName = "Turnover";
-            this.turnoverDataGridViewTextBoxColumn.HeaderText = "Turnover";
-            this.turnoverDataGridViewTextBoxColumn.Name = "turnoverDataGridViewTextBoxColumn";
-            this.turnoverDataGridViewTextBoxColumn.Width = 75;
-            // 
-            // averagePriceDataGridViewTextBoxColumn
-            // 
-            this.averagePriceDataGridViewTextBoxColumn.DataPropertyName = "AveragePrice";
-            this.averagePriceDataGridViewTextBoxColumn.HeaderText = "AveragePrice";
-            this.averagePriceDataGridViewTextBoxColumn.Name = "averagePriceDataGridViewTextBoxColumn";
-            this.averagePriceDataGridViewTextBoxColumn.Width = 96;
-            // 
-            // tradingDayDataGridViewTextBoxColumn
-            // 
-            this.tradingDayDataGridViewTextBoxColumn.DataPropertyName = "TradingDay";
-            this.tradingDayDataGridViewTextBoxColumn.HeaderText = "TradingDay";
-            this.tradingDayDataGridViewTextBoxColumn.Name = "tradingDayDataGridViewTextBoxColumn";
-            this.tradingDayDataGridViewTextBoxColumn.Width = 87;
-            // 
-            // actionDayDataGridViewTextBoxColumn
-            // 
-            this.actionDayDataGridViewTextBoxColumn.DataPropertyName = "ActionDay";
-            this.actionDayDataGridViewTextBoxColumn.HeaderText = "ActionDay";
-            this.actionDayDataGridViewTextBoxColumn.Name = "actionDayDataGridViewTextBoxColumn";
-            this.actionDayDataGridViewTextBoxColumn.Width = 81;
-            // 
-            // timeHHmmDataGridViewTextBoxColumn
-            // 
-            this.timeHHmmDataGridViewTextBoxColumn.DataPropertyName = "Time_HHmm";
-            this.timeHHmmDataGridViewTextBoxColumn.HeaderText = "Time_HHmm";
-            this.timeHHmmDataGridViewTextBoxColumn.Name = "timeHHmmDataGridViewTextBoxColumn";
-            this.timeHHmmDataGridViewTextBoxColumn.Width = 93;
-            // 
-            // timessfDataGridViewTextBoxColumn
-            // 
-            this.timessfDataGridViewTextBoxColumn.DataPropertyName = "Time_____ssf__";
-            this.timessfDataGridViewTextBoxColumn.HeaderText = "Time_____ssf__";
-            this.timessfDataGridViewTextBoxColumn.Name = "timessfDataGridViewTextBoxColumn";
-            this.timessfDataGridViewTextBoxColumn.Width = 110;
-            // 
-            // timeffDataGridViewTextBoxColumn
-            // 
-            this.timeffDataGridViewTextBoxColumn.DataPropertyName = "Time________ff";
-            this.timeffDataGridViewTextBoxColumn.HeaderText = "Time________ff";
-            this.timeffDataGridViewTextBoxColumn.Name = "timeffDataGridViewTextBoxColumn";
-            this.timeffDataGridViewTextBoxColumn.Width = 109;
-            // 
-            // timessfDiffDataGridViewTextBoxColumn
-            // 
-            this.timessfDiffDataGridViewTextBoxColumn.DataPropertyName = "Time_ssf_Diff";
-            this.timessfDiffDataGridViewTextBoxColumn.HeaderText = "Time_ssf_Diff";
-            this.timessfDiffDataGridViewTextBoxColumn.Name = "timessfDiffDataGridViewTextBoxColumn";
-            this.timessfDiffDataGridViewTextBoxColumn.Width = 96;
-            // 
-            // barDataGridViewTextBoxColumn
-            // 
-            this.barDataGridViewTextBoxColumn.DataPropertyName = "Bar";
-            this.barDataGridViewTextBoxColumn.HeaderText = "Bar";
-            this.barDataGridViewTextBoxColumn.Name = "barDataGridViewTextBoxColumn";
-            this.barDataGridViewTextBoxColumn.Visible = false;
-            this.barDataGridViewTextBoxColumn.Width = 48;
-            // 
-            // staticDataGridViewTextBoxColumn
-            // 
-            this.staticDataGridViewTextBoxColumn.DataPropertyName = "Static";
-            this.staticDataGridViewTextBoxColumn.HeaderText = "Static";
-            this.staticDataGridViewTextBoxColumn.Name = "staticDataGridViewTextBoxColumn";
-            this.staticDataGridViewTextBoxColumn.Visible = false;
-            this.staticDataGridViewTextBoxColumn.Width = 59;
-            // 
-            // tickSizeDataGridViewTextBoxColumn
-            // 
-            this.tickSizeDataGridViewTextBoxColumn.DataPropertyName = "TickSize";
-            this.tickSizeDataGridViewTextBoxColumn.HeaderText = "TickSize";
-            this.tickSizeDataGridViewTextBoxColumn.Name = "tickSizeDataGridViewTextBoxColumn";
-            this.tickSizeDataGridViewTextBoxColumn.Width = 73;
             // 
             // FormMain
             // 

@@ -62,8 +62,12 @@ namespace DataInspector
             if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
                 string pathChosen = openFileDialog.FileName;
-                strCurrentFileName = openFileDialog.SafeFileName;
                 listTickData = PbTickSerializer.Read(pathChosen);
+                FileInfo fi = new FileInfo(pathChosen);
+
+                strCurrentFileName = string.Format("{0} ({1}/{2}={3})",
+                    openFileDialog.SafeFileName, fi.Length, listTickData.Count(), (double)fi.Length / listTickData.Count());
+
                 ValueChanged(false);
 
                 PbTickCodec Codec = new PbTickCodec();
@@ -255,7 +259,7 @@ namespace DataInspector
             dgvTick.DataSource = listTickView;
         }
 
-        private void menuView_Convert_Click_1(object sender, EventArgs e)
+        private void menuView_Convert_Click(object sender, EventArgs e)
         {
             ViewToDataByViewType();
 
@@ -265,6 +269,12 @@ namespace DataInspector
 
             listTickView = Codec.Data2View(Codec.Restore(this.listTickData), false);
             dgvTick.DataSource = listTickView;
+        }
+
+        private void menuTools_ExportDirectory_Click(object sender, EventArgs e)
+        {
+            FormExport form2 = new FormExport();
+            form2.Show();
         }
 
         private void dgvTick_RowPostPaint(object sender, DataGridViewRowPostPaintEventArgs e)
@@ -282,10 +292,21 @@ namespace DataInspector
                 TextFormatFlags.VerticalCenter | TextFormatFlags.Right);
         }
 
-        private void menuTools_ExportDirectory_Click(object sender, EventArgs e)
+        
+
+        private void dgvDepth_RowPostPaint(object sender, DataGridViewRowPostPaintEventArgs e)
         {
-            FormExport form2 = new FormExport();
-            form2.Show();
+            DataGridView dgv = (DataGridView)sender;
+            System.Drawing.Rectangle rectangle = new System.Drawing.Rectangle(e.RowBounds.Location.X,
+                e.RowBounds.Location.Y,
+                dgv.RowHeadersWidth - 4,
+                e.RowBounds.Height);
+
+            TextRenderer.DrawText(e.Graphics, (e.RowIndex + 1).ToString(),
+                dgv.RowHeadersDefaultCellStyle.Font,
+                rectangle,
+                dgv.RowHeadersDefaultCellStyle.ForeColor,
+                TextFormatFlags.VerticalCenter | TextFormatFlags.Right);
         }
     }
 }
