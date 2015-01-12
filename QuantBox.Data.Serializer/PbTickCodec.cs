@@ -556,6 +556,7 @@ namespace QuantBox.Data.Serializer
         }
         #endregion
 
+        #region 时间处理
         public void SetTradingDay(PbTick tick, DateTime date)
         {
             tick.TradingDay = SetDateTime(date);
@@ -574,46 +575,19 @@ namespace QuantBox.Data.Serializer
             return new DateTime(year, month, day);
         }
 
+        public DateTime GetTradingDayDateTime(PbTick tick)
+        {
+            return GetDateTime(tick.TradingDay) + GetUpdateTime(tick);
+        }
+
+        public DateTime GetActionDayDateTime(PbTick tick)
+        {
+            return GetDateTime(tick.ActionDay) + GetUpdateTime(tick);
+        }
+
         public void SetActionDay(PbTick tick, DateTime date)
         {
             tick.ActionDay = SetDateTime(date);
-        }
-
-        public void SetLastPrice(PbTick tick, double price)
-        {
-            tick.LastPrice = PriceToTick(price);
-        }
-        public double GetLastPrice(PbTick tick)
-        {
-            return TickToPrice(tick.LastPrice);
-        }
-
-        public int PriceToTick(double price)
-        {
-            if (price >= 0)
-                return (int)((price + TickSize / 2.0f) / TickSize);
-            else
-                return (int)((price - TickSize / 2.0f) / TickSize);
-        }
-
-        public double TickToPrice(int tick, double price = 0)
-        {
-            return Math.Round(price + tick * TickSize, 8);
-        }
-
-        // 全是浮点，表示是原始数
-        public int DiffPrice(double price1, double price2)
-        {
-            if (price1 == price2)
-                return 0;
-
-            return PriceToTick(price1) - PriceToTick(price2);
-        }
-
-        // 全是整型，表示是已经处理过
-        public int DiffPrice(int price1, int price2)
-        {
-            return price1 - price2;
         }
 
         public void SetUpdateTime(int time, int ms, out int hhmm_____, out int ____ssf__, out int _______ff)
@@ -669,6 +643,47 @@ namespace QuantBox.Data.Serializer
         {
             return GetUpdateTime(tick.Time_HHmm, tick.Time_____ssf__, tick.Time________ff);
         }
+        #endregion
+        
+
+        public void SetLastPrice(PbTick tick, double price)
+        {
+            tick.LastPrice = PriceToTick(price);
+        }
+        public double GetLastPrice(PbTick tick)
+        {
+            return TickToPrice(tick.LastPrice);
+        }
+
+        public int PriceToTick(double price)
+        {
+            if (price >= 0)
+                return (int)((price + TickSize / 2.0f) / TickSize);
+            else
+                return (int)((price - TickSize / 2.0f) / TickSize);
+        }
+
+        public double TickToPrice(int tick, double price = 0)
+        {
+            return Math.Round(price + tick * TickSize, 8);
+        }
+
+        // 全是浮点，表示是原始数
+        public int DiffPrice(double price1, double price2)
+        {
+            if (price1 == price2)
+                return 0;
+
+            return PriceToTick(price1) - PriceToTick(price2);
+        }
+
+        // 全是整型，表示是已经处理过
+        public int DiffPrice(int price1, int price2)
+        {
+            return price1 - price2;
+        }
+
+        
 
         public PbTick Diff(PbTick prev, PbTick current)
         {
