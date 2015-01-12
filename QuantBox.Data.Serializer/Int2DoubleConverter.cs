@@ -148,7 +148,7 @@ namespace QuantBox.Data.Serializer
         public static List<DepthDetailView> ToList(DepthTickView deep)
         {
             List<DepthDetailView> list = new List<DepthDetailView>();
-            DepthDetailView detail = new DepthDetailView();
+            DepthDetailView detail;
 
             DepthTickView last = deep;
             while (last != null)
@@ -156,6 +156,7 @@ namespace QuantBox.Data.Serializer
                 if (last.BidSize1 == 0 || last.AskSize1 == 0)
                     break;
 
+                detail = new DepthDetailView();
                 detail.BidPrice = last.BidPrice1;
                 detail.BidSize = last.BidSize1;
                 detail.BidCount = last.BidCount1;
@@ -167,6 +168,7 @@ namespace QuantBox.Data.Serializer
                 if (last.BidSize2 == 0 || last.AskSize2 == 0)
                     break;
 
+                detail = new DepthDetailView();
                 detail.BidPrice = last.BidPrice2;
                 detail.BidSize = last.BidSize2;
                 detail.BidCount = last.BidCount2;
@@ -178,6 +180,7 @@ namespace QuantBox.Data.Serializer
                 if (last.BidSize3 == 0 || last.AskSize3 == 0)
                     break;
 
+                detail = new DepthDetailView();
                 detail.BidPrice = last.BidPrice3;
                 detail.BidSize = last.BidSize3;
                 detail.BidCount = last.BidCount3;
