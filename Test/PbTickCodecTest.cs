@@ -8,16 +8,7 @@ namespace Test
     [TestClass]
     public class PbTickCodecTest
     {
-        [TestMethod]
-        public void TestDataFile()
-        {
-            //var stream = new MemoryStream(File.ReadAllBytes("test.data"));
-            //var serializer = new PbTickSerializer();
-            //PbTick raw;
-            //var tick = serializer.Read(stream, out raw);
-
-            //Assert.AreNotEqual(null, tick);
-        }
+        
 
         [TestMethod]
         public void TestConvertDateTime()
@@ -345,6 +336,165 @@ namespace Test
             var diff = codec.Diff(tick1, tick2);
 
             Assert.AreEqual(null, diff.Static);
+        }
+
+        [TestMethod]
+        public void TestDataFile()
+        {
+            //var stream = new MemoryStream(File.ReadAllBytes("test.data"));
+            //var serializer = new PbTickSerializer();
+            //PbTick raw;
+            //var tick = serializer.Read(stream, out raw);
+
+            //Assert.AreNotEqual(null, tick);
+        }
+
+        [TestMethod]
+        public void TestReadCsvLeve1()
+        {
+            FileInfo fi = new FileInfo(@"d:\wukan\Desktop\if_all\IF1406.csv");
+            FileInfo fo = new FileInfo(@"d:\wukan\Desktop\if_all\IF1406.data");
+
+            PbTickSerializer pts = new PbTickSerializer();
+            pts.Codec.TickSize = 0.2;
+
+            using (Stream stream = File.OpenWrite(@"d:\wukan\Desktop\if_all\IF1406.data"))
+            {
+                using (StreamReader file = new StreamReader(fi.OpenRead()))
+                {
+                    int i = 0;
+                    string str = file.ReadLine();
+                    do
+                    {
+                        ++i;
+                        str = file.ReadLine();
+                        if (str == null)
+                            break;
+
+                        string[] arr = str.Split(',');
+
+                        DateTime dt = DateTime.Parse(arr[0]).AddMilliseconds(int.Parse(arr[1]));
+                        string symbol = arr[2];
+                        double price = double.Parse(arr[3]);
+                        int vol = int.Parse(arr[4]);
+                        int openint = int.Parse(arr[5]);
+                        double bid = double.Parse(arr[6]);
+                        int bidSize = int.Parse(arr[7]);
+                        double ask = double.Parse(arr[8]);
+                        int askSize = int.Parse(arr[9]);
+
+                        PbTick tick = new PbTick();
+
+                        pts.Codec.SetTickSize(tick, pts.Codec.TickSize);
+
+                        pts.Codec.SetLastPrice(tick, price);
+                        pts.Codec.SetVolume(tick, vol);
+                        pts.Codec.SetSymbol(tick, symbol);
+
+                        pts.Codec.SetActionDay(tick, dt.Date);
+                        pts.Codec.SetUpdateTime(tick, dt - dt.Date);
+
+                        pts.Codec.SetBidPrice(tick, 1, bid);
+                        pts.Codec.SetBidSize(tick, 1, bidSize);
+                        pts.Codec.SetAskPrice(tick, 1, ask);
+                        pts.Codec.SetAskSize(tick, 1, askSize);
+
+                        pts.Write(tick, new Stream[] { stream });
+
+                    } while (str != null);
+                    file.Close();
+                }
+            }
+        }
+
+        [TestMethod]
+        public void TestReadCsvLeve2()
+        {
+            FileInfo fi = new FileInfo(@"D:\wukan\Desktop\20141225\20141225.csv");
+            FileInfo fo = new FileInfo(@"D:\wukan\Desktop\20141225\20141225.data");
+
+            PbTickSerializer pts = new PbTickSerializer();
+
+
+            using (Stream stream = File.OpenWrite(@"D:\wukan\Desktop\20141225\20141225.data"))
+            {
+                using (StreamReader file = new StreamReader(fi.OpenRead()))
+                {
+                    int i = 0;
+                    string str = file.ReadLine();
+                    do
+                    {
+                        ++i;
+                        str = file.ReadLine();
+                        if (str == null)
+                            break;
+
+                        string[] arr = str.Split(',');
+
+                        PbTick tick = new PbTick();
+
+                        pts.Codec.SetSymbol(tick, arr[0]);
+
+                        if (arr[0].StartsWith("TF"))
+                        {
+                            pts.Codec.TickSize = 0.002;
+                        }
+                        else
+                        {
+                            pts.Codec.TickSize = 0.2;
+                        }
+
+                        tick.ActionDay = int.Parse(arr[5]);
+                        int time = int.Parse(arr[6]);
+
+                        tick.Time_HHmm = time / 100000;
+                        tick.Time_____ssf__ = time % 100000 / 100;
+                        tick.Time________ff = time % 100;
+                        tick.Time_ssf_Diff = 5;
+
+                        pts.Codec.SetTickSize(tick, pts.Codec.TickSize);
+
+                        pts.Codec.SetLastPrice(tick, double.Parse(arr[8]));
+                        pts.Codec.SetHigh(tick, double.Parse(arr[9]));
+                        pts.Codec.SetLow(tick, double.Parse(arr[10]));
+                        pts.Codec.SetVolume(tick, int.Parse(arr[11]));
+                        pts.Codec.SetTurnover(tick, int.Parse(arr[12]));
+
+                        pts.Codec.SetOpenInterest(tick, int.Parse(arr[16]));
+
+                        pts.Codec.SetAskPrice(tick, 1, double.Parse(arr[17]));
+                        pts.Codec.SetAskPrice(tick, 2, double.Parse(arr[18]));
+                        pts.Codec.SetAskPrice(tick, 3, double.Parse(arr[19]));
+                        pts.Codec.SetAskPrice(tick, 4, double.Parse(arr[20]));
+                        pts.Codec.SetAskPrice(tick, 5, double.Parse(arr[21]));
+
+                        pts.Codec.SetAskSize(tick, 1, int.Parse(arr[22]));
+                        pts.Codec.SetAskSize(tick, 2, int.Parse(arr[23]));
+                        pts.Codec.SetAskSize(tick, 3, int.Parse(arr[24]));
+                        pts.Codec.SetAskSize(tick, 4, int.Parse(arr[25]));
+                        pts.Codec.SetAskSize(tick, 5, int.Parse(arr[26]));
+
+                        pts.Codec.SetBidPrice(tick, 1, double.Parse(arr[27]));
+                        pts.Codec.SetBidPrice(tick, 2, double.Parse(arr[28]));
+                        pts.Codec.SetBidPrice(tick, 3, double.Parse(arr[29]));
+                        pts.Codec.SetBidPrice(tick, 4, double.Parse(arr[30]));
+                        pts.Codec.SetBidPrice(tick, 5, double.Parse(arr[31]));
+
+                        pts.Codec.SetBidSize(tick, 1, int.Parse(arr[32]));
+                        pts.Codec.SetBidSize(tick, 2, int.Parse(arr[33]));
+                        pts.Codec.SetBidSize(tick, 3, int.Parse(arr[34]));
+                        pts.Codec.SetBidSize(tick, 4, int.Parse(arr[35]));
+                        pts.Codec.SetBidSize(tick, 5, int.Parse(arr[36]));
+
+
+
+
+                        pts.Write(tick, new Stream[] { stream });
+
+                    } while (str != null);
+                    file.Close();
+                }
+            }
         }
     }
 }

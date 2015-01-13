@@ -110,7 +110,7 @@ namespace QuantBox.Data.Serializer
         /// </summary>
         public long OpenInterest { get; set; }
         /// <summary>
-        /// 成交额,实际值*1000
+        /// 成交额,实际值/10000
         /// </summary>
         public double Turnover { get; set; }
         /// <summary>

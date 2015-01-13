@@ -101,14 +101,14 @@ namespace QuantBox.Data.Serializer
             if(Codec == null)
             {
                 Codec = new PbTickCodec();
-                if (flat)
-                {
-                    Codec.TickSize = 1.0;
-                }
-                else
-                {
-                    Codec.TickSize = Codec.GetTickSize(tick);
-                }
+            }
+            if (flat)
+            {
+                Codec.TickSize = 1.0;
+            }
+            else
+            {
+                Codec.TickSize = Codec.GetTickSize(tick);
             }
 
             if (flat)
