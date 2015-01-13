@@ -22,6 +22,11 @@ namespace DataInspector
         private int nTickCurrentRowIndex;
         private bool bValueChanged;
 
+        private int ColumnIndex;
+        private int RowIndex;
+        private bool Selected;
+        private int FirstDisplayedScrollingRowIndex;
+
         enum ViewType
         {
             Diff,
@@ -215,6 +220,11 @@ namespace DataInspector
 
         private void SingleCheck(object sender)
         {
+            ColumnIndex = dgvTick.CurrentCell.ColumnIndex;
+            RowIndex = dgvTick.CurrentCell.RowIndex;
+            Selected = dgvTick.CurrentRow.Selected;
+            FirstDisplayedScrollingRowIndex = dgvTick.FirstDisplayedScrollingRowIndex;
+
             menuView_Diff.Checked = false;
             menuView_Restore.Checked = false;
             menuView_Convert.Checked = false;
@@ -245,6 +255,11 @@ namespace DataInspector
             PbTickCodec Codec = new PbTickCodec();
             listTickView = Codec.Data2View(this.listTickData, true);
             dgvTick.DataSource = this.listTickView;
+
+            dgvTick.CurrentCell = dgvTick.Rows[RowIndex].Cells[ColumnIndex];
+            if(Selected)
+                dgvTick.CurrentRow.Selected = Selected;
+            dgvTick.FirstDisplayedScrollingRowIndex = FirstDisplayedScrollingRowIndex;
         }
 
         private void menuView_Restore_Click(object sender, EventArgs e)
@@ -257,6 +272,11 @@ namespace DataInspector
 
             listTickView = Codec.Data2View(Codec.Restore(this.listTickData), true);
             dgvTick.DataSource = listTickView;
+
+            dgvTick.CurrentCell = dgvTick.Rows[RowIndex].Cells[ColumnIndex];
+            if (Selected)
+                dgvTick.CurrentRow.Selected = Selected;
+            dgvTick.FirstDisplayedScrollingRowIndex = FirstDisplayedScrollingRowIndex;
         }
 
         private void menuView_Convert_Click(object sender, EventArgs e)
@@ -269,6 +289,11 @@ namespace DataInspector
 
             listTickView = Codec.Data2View(Codec.Restore(this.listTickData), false);
             dgvTick.DataSource = listTickView;
+
+            dgvTick.CurrentCell = dgvTick.Rows[RowIndex].Cells[ColumnIndex];
+            if (Selected)
+                dgvTick.CurrentRow.Selected = Selected;
+            dgvTick.FirstDisplayedScrollingRowIndex = FirstDisplayedScrollingRowIndex;
         }
 
         private void menuTools_ExportDirectory_Click(object sender, EventArgs e)
