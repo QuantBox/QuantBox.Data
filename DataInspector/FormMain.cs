@@ -26,6 +26,7 @@ namespace DataInspector
         private int RowIndex;
         private bool Selected;
         private int FirstDisplayedScrollingRowIndex;
+        private int HorizontalScrollingOffset;
 
         enum ViewType
         {
@@ -224,6 +225,7 @@ namespace DataInspector
             RowIndex = dgvTick.CurrentCell.RowIndex;
             Selected = dgvTick.CurrentRow.Selected;
             FirstDisplayedScrollingRowIndex = dgvTick.FirstDisplayedScrollingRowIndex;
+            HorizontalScrollingOffset = dgvTick.HorizontalScrollingOffset;
 
             menuView_Diff.Checked = false;
             menuView_Restore.Checked = false;
@@ -260,6 +262,7 @@ namespace DataInspector
             if(Selected)
                 dgvTick.CurrentRow.Selected = Selected;
             dgvTick.FirstDisplayedScrollingRowIndex = FirstDisplayedScrollingRowIndex;
+            dgvTick.HorizontalScrollingOffset = HorizontalScrollingOffset;
         }
 
         private void menuView_Restore_Click(object sender, EventArgs e)
@@ -277,6 +280,7 @@ namespace DataInspector
             if (Selected)
                 dgvTick.CurrentRow.Selected = Selected;
             dgvTick.FirstDisplayedScrollingRowIndex = FirstDisplayedScrollingRowIndex;
+            dgvTick.HorizontalScrollingOffset = HorizontalScrollingOffset;
         }
 
         private void menuView_Convert_Click(object sender, EventArgs e)
@@ -294,6 +298,7 @@ namespace DataInspector
             if (Selected)
                 dgvTick.CurrentRow.Selected = Selected;
             dgvTick.FirstDisplayedScrollingRowIndex = FirstDisplayedScrollingRowIndex;
+            dgvTick.HorizontalScrollingOffset = HorizontalScrollingOffset;
         }
 
         private void menuTools_ExportDirectory_Click(object sender, EventArgs e)
