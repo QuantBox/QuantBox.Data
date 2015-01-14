@@ -8,22 +8,31 @@ namespace QuantBox.Data.Serializer
 {
     public class PbTickCodec
     {
-        // 以下是编解码器要用到的
-        public double TickSizeMultiplier = 10000.0;
-        public int SettlementPriceMultiplier = 100;
-        public int AveragePriceMultiplier = 100;
-        public double TurnoverMultiplier = 10000;
+        private ConfigInfo _config;
+        private ConfigInfo config_flat;
+        public ConfigInfo Config;
 
-        public double TickSize { get; set; }
+        private double TickSize;
 
         public PbTickCodec()
-            : this(0)
         {
+            Config = new ConfigInfo().Default();
+            config_flat = new ConfigInfo().Flat();
+
+            UseFlat(false);
         }
 
-        public PbTickCodec(double tickSize)
+        public void UseFlat(bool flat)
         {
-            TickSize = tickSize;
+            if(flat)
+            {
+                _config = config_flat;
+            }
+            else
+            {
+                _config = Config;
+            }
+            TickSize = _config.TickSize / _config.TickSizeMultiplier;
         }
 
         static int gcd(int a, int b)
@@ -33,6 +42,9 @@ namespace QuantBox.Data.Serializer
 
         public double gcd(params double[] val)
         {
+            // 先用把浮点变成整数才能做GCD
+            double TickSizeMultiplier = 100000;
+
             if (val.Length == 0)
                 return 1 / TickSizeMultiplier;
 
@@ -49,32 +61,22 @@ namespace QuantBox.Data.Serializer
             return a / TickSizeMultiplier;
         }
 
-        public void SetTickSize(PbTick tick, double tickSize)
-        {
-            tick.TickSize = (int)Math.Round(tickSize * TickSizeMultiplier, 0);
-        }
-
-        public double GetTickSize(PbTick tick)
-        {
-            return tick.TickSize / TickSizeMultiplier;
-        }
-
         public void SetAveragePrice(PbTick tick, double price)
         {
-            tick.AveragePrice = PriceToTick(price * AveragePriceMultiplier);
+            tick.AveragePrice = PriceToTick(price * _config.AveragePriceMultiplier);
         }
         public double GetAveragePrice(PbTick tick)
         {
-            return (TickToPrice(tick.AveragePrice) / AveragePriceMultiplier);
+            return (TickToPrice(tick.AveragePrice) / _config.AveragePriceMultiplier);
         }
 
         public void SetTurnover(PbTick tick, double val)
         {
-            tick.Turnover = (long)(val / TurnoverMultiplier);
+            tick.Turnover = (long)(val / _config.TurnoverMultiplier);
         }
         public double GetTurnover(PbTick tick)
         {
-            return tick.Turnover * TurnoverMultiplier;
+            return tick.Turnover * _config.TurnoverMultiplier;
         }
 
         public void SetOpenInterest(PbTick tick, long val)
@@ -93,8 +95,6 @@ namespace QuantBox.Data.Serializer
         {
             return tick.Volume;
         }
-
-
 
         #region Bar部分处理
         public void SetOpen(PbTick tick, double price)
@@ -174,11 +174,24 @@ namespace QuantBox.Data.Serializer
         #endregion
 
         #region Static部分处理
+        public void SetSettlementPrice(StaticInfo Static, double price)
+        {
+            Static.SettlementPrice = PriceToTick(price * _config.SettlementPriceMultiplier);
+        }
+
         public void SetSettlementPrice(PbTick tick, double price)
         {
             if (tick.Static == null)
                 tick.Static = new StaticInfo();
-            tick.Static.SettlementPrice = PriceToTick(price * SettlementPriceMultiplier);
+            SetSettlementPrice(tick.Static, price);
+        }
+
+        public double GetSettlementPrice(StaticInfo Static)
+        {
+            if (Static == null)
+                return 0;
+
+            return (TickToPrice(Static.SettlementPrice) / _config.SettlementPriceMultiplier);
         }
 
         public double GetSettlementPrice(PbTick tick)
@@ -186,14 +199,24 @@ namespace QuantBox.Data.Serializer
             if (tick.Static == null)
                 return 0;
 
-            return (TickToPrice(tick.Static.SettlementPrice) / SettlementPriceMultiplier);
+            return GetSettlementPrice(tick.Static);
+        }
+
+        public void SetLowerLimitPrice(StaticInfo Static, double price)
+        {
+            Static.LowerLimitPrice = PriceToTick(price);
         }
 
         public void SetLowerLimitPrice(PbTick tick, double price)
         {
             if (tick.Static == null)
                 tick.Static = new StaticInfo();
-            tick.Static.LowerLimitPrice = PriceToTick(price);
+            SetLowerLimitPrice(tick.Static, price);
+        }
+
+        public double GetLowerLimitPrice(StaticInfo Static)
+        {
+            return TickToPrice(Static.LowerLimitPrice);
         }
 
         public double GetLowerLimitPrice(PbTick tick)
@@ -201,14 +224,27 @@ namespace QuantBox.Data.Serializer
             if (tick.Static == null)
                 return 0;
 
-            return TickToPrice(tick.Static.LowerLimitPrice);
+            return GetLowerLimitPrice(tick.Static);
+        }
+
+        public void SetUpperLimitPrice(StaticInfo Static, double price)
+        {
+            Static.UpperLimitPrice = PriceToTick(price);
         }
 
         public void SetUpperLimitPrice(PbTick tick, double price)
         {
             if (tick.Static == null)
                 tick.Static = new StaticInfo();
-            tick.Static.UpperLimitPrice = PriceToTick(price);
+            SetUpperLimitPrice(tick.Static, price);
+        }
+
+        public double GetUpperLimitPrice(StaticInfo Static)
+        {
+            if (Static == null)
+                return 0;
+
+            return TickToPrice(Static.UpperLimitPrice);
         }
 
         public double GetUpperLimitPrice(PbTick tick)
@@ -216,7 +252,7 @@ namespace QuantBox.Data.Serializer
             if (tick.Static == null)
                 return 0;
 
-            return TickToPrice(tick.Static.UpperLimitPrice);
+            return GetUpperLimitPrice(tick.Static);
         }
 
         public void SetMultiplier(PbTick tick, int val)
@@ -226,6 +262,7 @@ namespace QuantBox.Data.Serializer
 
             tick.Static.Multiplier = val;
         }
+
         public int GetMultiplier(PbTick tick)
         {
             if (tick.Static == null)
@@ -683,18 +720,49 @@ namespace QuantBox.Data.Serializer
             return price1 - price2;
         }
 
-        
-
         public PbTick Diff(PbTick prev, PbTick current)
         {
-            // 如果是第一条或TickSize变化后的数据，不处理
-            if (prev == null || current.TickSize != prev.TickSize)
+            if (prev == null)
+            {
+                if (current.Config == null)
+                    throw new Exception("快照的配置不能为空");
+                // 是快照，直接返回
                 return current;
-
+            }
+            
             PbTick tick = new PbTick();
 
-            // 先取最关键的数据
-            TickSize = current.TickSize / TickSizeMultiplier;
+            #region 配置数据
+            if (current.Config != null || prev.Config != null)
+            {
+                tick.Config = new ConfigInfo();
+                if (current.Config == null)
+                    current.Config = new ConfigInfo();
+                if (prev.Config == null)
+                    prev.Config = new ConfigInfo();
+
+                tick.Config.Version = current.Config.Version - prev.Config.Version;
+                tick.Config.TickSize = current.Config.TickSize - prev.Config.TickSize;
+                tick.Config.TickSizeMultiplier = current.Config.TickSizeMultiplier - prev.Config.TickSizeMultiplier;
+                tick.Config.SettlementPriceMultiplier = current.Config.SettlementPriceMultiplier - prev.Config.SettlementPriceMultiplier;
+                tick.Config.AveragePriceMultiplier = current.Config.AveragePriceMultiplier - prev.Config.AveragePriceMultiplier;
+                tick.Config.TurnoverMultiplier = current.Config.TurnoverMultiplier - prev.Config.TurnoverMultiplier;
+                tick.Config.Time_ssf_Diff = current.Config.Time_ssf_Diff - prev.Config.Time_ssf_Diff;
+
+                if (tick.Config.Version == 0
+                    && tick.Config.TickSize == 0
+                    && tick.Config.TickSizeMultiplier == 0
+                    && tick.Config.SettlementPriceMultiplier == 0
+                    && tick.Config.AveragePriceMultiplier == 0
+                    && tick.Config.TurnoverMultiplier == 0
+                    && tick.Config.Time_ssf_Diff == 0)
+                    tick.Config = null;
+            }
+            #endregion
+
+            // 先取最关键的数据，因为前一条的config总会补成有效
+            _config = prev.Config;
+            TickSize = _config.TickSize / _config.TickSizeMultiplier;
 
             tick.LastPrice = current.LastPrice - prev.LastPrice;
 
@@ -904,9 +972,8 @@ namespace QuantBox.Data.Serializer
 
             tick.Time_HHmm = current.Time_HHmm - prev.Time_HHmm;
             tick.Time________ff = current.Time________ff - prev.Time________ff;
-            tick.Time_ssf_Diff = current.Time_ssf_Diff - prev.Time_ssf_Diff;
             // 这个地方有区别要减去一个差，将时间再缩小
-            tick.Time_____ssf__ = current.Time_____ssf__ - prev.Time_____ssf__ - prev.Time_ssf_Diff;
+            tick.Time_____ssf__ = current.Time_____ssf__ - prev.Time_____ssf__ - _config.Time_ssf_Diff;
 
 
             #region Bar数据
@@ -960,21 +1027,48 @@ namespace QuantBox.Data.Serializer
             }
             #endregion
 
+            
+
             return tick;
         }
 
         public PbTick Restore(PbTick prev, PbTick diff)
         {
-            // 先取最关键的数据
-            TickSize = diff.TickSize / TickSizeMultiplier;
-
-            // 如果是第一条或是全量数据，不处理
-            if (prev == null || diff.TickSize != 0)
+            if (prev == null)
+            {
+                if (diff.Config == null)
+                    throw new Exception("快照的配置不能为空");
+                // 记下配置，要用到
+                _config = diff.Config;
+                // 是快照，直接返回
                 return diff;
+            }
 
             var tick = new PbTick();
 
-            tick.TickSize = prev.TickSize;
+            #region 配置数据
+            // 前一条有配置，后一条没有配置，很简单，后一条等于前一条即可
+            if (prev.Config != null || diff.Config != null)
+            {
+                tick.Config = new ConfigInfo();
+                if (prev.Config == null)
+                    prev.Config = new ConfigInfo();
+                if (diff.Config == null)
+                    diff.Config = new ConfigInfo();
+
+                tick.Config.Version = prev.Config.Version + diff.Config.Version;
+                tick.Config.TickSize = prev.Config.TickSize + diff.Config.TickSize;
+                tick.Config.TickSizeMultiplier = prev.Config.TickSizeMultiplier + diff.Config.TickSizeMultiplier;
+                tick.Config.SettlementPriceMultiplier = prev.Config.SettlementPriceMultiplier + diff.Config.SettlementPriceMultiplier;
+                tick.Config.AveragePriceMultiplier = prev.Config.AveragePriceMultiplier + diff.Config.AveragePriceMultiplier;
+                tick.Config.TurnoverMultiplier = prev.Config.TurnoverMultiplier + diff.Config.TurnoverMultiplier;
+                tick.Config.Time_ssf_Diff = prev.Config.Time_ssf_Diff + diff.Config.Time_ssf_Diff;
+            }
+            #endregion
+
+            _config = tick.Config;
+            TickSize = _config.TickSize / _config.TickSizeMultiplier;
+
             tick.LastPrice = prev.LastPrice + diff.LastPrice;
 
             DepthTick from_last = null;
@@ -1173,9 +1267,8 @@ namespace QuantBox.Data.Serializer
 
             tick.Time_HHmm = prev.Time_HHmm + diff.Time_HHmm;
             tick.Time________ff = prev.Time________ff + diff.Time________ff;
-            tick.Time_ssf_Diff = prev.Time_ssf_Diff + diff.Time_ssf_Diff;
             // 还原时间
-            tick.Time_____ssf__ = prev.Time_____ssf__ + diff.Time_____ssf__ + tick.Time_ssf_Diff;
+            tick.Time_____ssf__ = prev.Time_____ssf__ + diff.Time_____ssf__ + _config.Time_ssf_Diff;
 
             #region Bar数据
             if (prev.Bar != null || diff.Bar != null)

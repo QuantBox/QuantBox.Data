@@ -121,6 +121,76 @@ namespace QuantBox.Data.Serializer
         public int BarSize;
     }
 
+    /// <summary>
+    /// 配置信息，最关键的地方
+    /// 如果为空表示差分数据，不为空表示快照数据
+    /// </summary>
+    [ProtoContract]
+    public class ConfigInfo
+    {
+        /// <summary>
+        /// 格式版本
+        /// </summary>
+        [ProtoMember(1)]
+        public int Version;
+        /// <summary>
+        /// 实际值要先进行处理
+        /// </summary>
+        [ProtoMember(2)]
+        public int TickSize;
+        /// <summary>
+        /// TickSize乘数，实际值*TickSizeMultiplier
+        /// </summary>
+        [ProtoMember(3)]
+        public double TickSizeMultiplier;
+        /// <summary>
+        /// 结算价乘数，实际值*SettlementPriceMultiplier/TickSize
+        /// </summary>
+        [ProtoMember(4)]
+        public int SettlementPriceMultiplier;
+        /// <summary>
+        /// 均价乘数，实际值*AveragePriceMultiplier/TickSize
+        /// </summary>
+        [ProtoMember(5)]
+        public int AveragePriceMultiplier;
+        /// <summary>
+        /// 成交额乘数，实际值/TurnoverMultiplier,只保存了万元，在深虚值期权中会丢失信息
+        /// </summary>
+        [ProtoMember(6)]
+        public double TurnoverMultiplier;
+        /// <summary>
+        /// ssf默认时间差，股指是500ms，Time_____ssf__会算出大量的5，默认减去此数还原成0
+        /// </summary>
+        [ProtoMember(7)]
+        public int Time_ssf_Diff;
+
+        public ConfigInfo Default()
+        {
+            Version = 1;
+            TickSize = 1;
+            TickSizeMultiplier = 10000.0;
+            SettlementPriceMultiplier = 100;
+            AveragePriceMultiplier = 100;
+            TurnoverMultiplier = 10000;
+            Time_ssf_Diff = 0;
+
+            return this;
+        }
+
+        public ConfigInfo Flat()
+        {
+            Version = 0;
+            TickSize = 1;
+            TickSizeMultiplier = 1;
+            SettlementPriceMultiplier = 1;
+            AveragePriceMultiplier = 1;
+            TurnoverMultiplier = 1;
+            Time_ssf_Diff = 0;
+
+            return this;
+        }
+    }
+
     [ProtoContract]
     public class PbTick
     {
@@ -130,48 +200,48 @@ namespace QuantBox.Data.Serializer
         [ProtoMember(1, DataFormat = DataFormat.ZigZag)]
         public int LastPrice;
         /// <summary>
-        /// N档数据
-        /// </summary>
-        [ProtoMember(2)]
-        public DepthTick Depth1_3;
-        /// <summary>
         /// 成交量
         /// </summary>
-        [ProtoMember(3, DataFormat = DataFormat.ZigZag)]
+        [ProtoMember(2, DataFormat = DataFormat.ZigZag)]
         public long Volume;
         /// <summary>
         /// 持仓量
         /// </summary>
-        [ProtoMember(4, DataFormat = DataFormat.ZigZag)]
+        [ProtoMember(3, DataFormat = DataFormat.ZigZag)]
         public long OpenInterest;
         /// <summary>
         /// 成交额,实际值*1000
         /// </summary>
-        [ProtoMember(5, DataFormat = DataFormat.ZigZag)]
+        [ProtoMember(4, DataFormat = DataFormat.ZigZag)]
         public long Turnover;
         /// <summary>
         /// 均价,实际值/10000
         /// </summary>
-        [ProtoMember(6, DataFormat = DataFormat.ZigZag)]
+        [ProtoMember(5, DataFormat = DataFormat.ZigZag)]
         public int AveragePrice;
+
         /// <summary>
         /// 交易日
         /// </summary>
-        [ProtoMember(7, DataFormat = DataFormat.ZigZag)]
+        [ProtoMember(6, DataFormat = DataFormat.ZigZag)]
         public int TradingDay;      
         /// <summary>
         /// 实际日期
         /// </summary>
-        [ProtoMember(8, DataFormat = DataFormat.ZigZag)]
+        [ProtoMember(7, DataFormat = DataFormat.ZigZag)]
         public int ActionDay;
-
-        [ProtoMember(9, DataFormat = DataFormat.ZigZag)]
+        [ProtoMember(8, DataFormat = DataFormat.ZigZag)]
         public int Time_HHmm;
-        [ProtoMember(10, DataFormat = DataFormat.ZigZag)]
+        [ProtoMember(9, DataFormat = DataFormat.ZigZag)]
         public int Time_____ssf__;
-        [ProtoMember(11, DataFormat = DataFormat.ZigZag)]
+        [ProtoMember(10, DataFormat = DataFormat.ZigZag)]
         public int Time________ff;
 
+        /// <summary>
+        /// N档数据
+        /// </summary>
+        [ProtoMember(11)]
+        public DepthTick Depth1_3;
         /// <summary>
         /// Bar数据或高开低收
         /// </summary>
@@ -183,14 +253,9 @@ namespace QuantBox.Data.Serializer
         [ProtoMember(13)]
         public StaticInfo Static;
         /// <summary>
-        /// 实际数*10000
+        /// 配置信息，有就代表是快照，而不是差分
         /// </summary>
         [ProtoMember(14)]
-        public int TickSize;
-        /// <summary>
-        /// ssf默认时间差，股指是500ms，Time_____ssf__会算出大量的5，默认减去此数还原成0
-        /// </summary>
-        [ProtoMember(15)]
-        public int Time_ssf_Diff;
+        public ConfigInfo Config;
     }
 }

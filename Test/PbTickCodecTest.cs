@@ -60,7 +60,9 @@ namespace Test
         public void TestGetSetPrice()
         {
             PbTickCodec codec = new PbTickCodec();
-            codec.TickSize = 0.2;
+
+            codec.Config.TickSize = (int)(0.2 * codec.Config.TickSizeMultiplier);
+            codec.UseFlat(false);
 
             PbTick tick = new PbTick();
 
@@ -109,7 +111,9 @@ namespace Test
         public void TestTick2Price()
         {
             PbTickCodec ptc = new PbTickCodec();
-            ptc.TickSize = 0.2;
+
+            ptc.Config.TickSize = (int)(0.2 * ptc.Config.TickSizeMultiplier);
+            ptc.UseFlat(false);
 
             Assert.AreEqual<int>(5, ptc.PriceToTick(1));
             Assert.AreEqual<int>(6, ptc.PriceToTick(1.2));
@@ -135,26 +139,20 @@ namespace Test
         }
 
         [TestMethod]
-        public void TestCodec()
-        {
-            PbTickCodec ptc = new PbTickCodec();
-            ptc.TickSize = 0.2;
-
-            PbTick t1 = new PbTick();
-            ptc.SetTickSize(t1, ptc.TickSize);
-            ptc.SetTradingDay(t1, DateTime.Now.Date);
-            t1.ActionDay = 20141120;
-        }
-
-        [TestMethod]
         public void TestTickDiff()
         {
-            PbTickCodec codec = new PbTickCodec(0.2);
+            PbTickCodec codec = new PbTickCodec();
+
+            codec.Config.TickSize = (int)(0.2 * codec.Config.TickSizeMultiplier);
+            codec.Config.Time_ssf_Diff = 5;
+            codec.UseFlat(false);
 
             PbTick tick1 = new PbTick();
+
+            tick1.Config = codec.Config;
+
             codec.SetLastPrice(tick1, 1234);
             codec.SetVolume(tick1, 1);
-            codec.SetTickSize(tick1, codec.TickSize);
             codec.SetActionDay(tick1, DateTime.Today);
             codec.SetTradingDay(tick1, DateTime.Today.AddDays(-1));
             //codec.Set
@@ -194,7 +192,6 @@ namespace Test
             codec.SetClose(tick1, 10);
             codec.SetBarSize(tick1, 10);
 
-            tick1.Time_ssf_Diff = 5;
             tick1.Time_HHmm = 1234;
             tick1.Time_____ssf__ = 567;
             tick1.Time________ff = 0;
@@ -203,7 +200,6 @@ namespace Test
             codec.SetLastPrice(tick2, 1234.2);
             codec.SetVolume(tick2, 2);
 
-            codec.SetTickSize(tick2, codec.TickSize);
             codec.SetActionDay(tick2, DateTime.Today);
             codec.SetTradingDay(tick2, DateTime.Today.AddDays(-1));
             codec.SetAskPrice(tick2, 1, 1234.2);
@@ -230,7 +226,6 @@ namespace Test
             codec.SetClose(tick2, 10);
             codec.SetBarSize(tick2, 10);
 
-            tick2.Time_ssf_Diff = 5;
             tick2.Time_HHmm = 1234;
             tick2.Time_____ssf__ = 572;
             tick2.Time________ff = 0;
@@ -248,7 +243,6 @@ namespace Test
             Assert.AreEqual<int>(0, diff.Depth1_3.AskPrice3, "AskPrice3");
             Assert.AreEqual<int>(3, diff.Depth1_3.AskSize3, "AskSize3");
 
-            Assert.AreEqual<int>(0, diff.Time_ssf_Diff);
             Assert.AreEqual<int>(0, diff.Time_____ssf__);
 
 
@@ -277,29 +271,40 @@ namespace Test
             Assert.AreEqual<double>(codec.GetLow(tick1), codec.GetLow(tick3));
             Assert.AreEqual<double>(codec.GetClose(tick1), codec.GetClose(tick3));
 
-            Assert.AreEqual<int>(5, tick3.Time_ssf_Diff);
             Assert.AreEqual<int>(572, tick3.Time_____ssf__);
         }
 
         [TestMethod]
         public void TestTickMultiplier()
         {
-            PbTickCodec codec = new PbTickCodec(0.2);
+            PbTickCodec codec = new PbTickCodec();
+
+            codec.Config.TickSize = (int)(0.2 * codec.Config.TickSizeMultiplier);
+            codec.Config.Time_ssf_Diff = 5;
+            codec.UseFlat(false);
 
             PbTick tick1 = new PbTick();
-            codec.SetTickSize(tick1, codec.TickSize);
             codec.SetAveragePrice(tick1, 123.45);
             codec.SetSettlementPrice(tick1, 123.45);
             codec.SetTurnover(tick1, 1234567890123456);
             codec.SetOpenInterest(tick1, 9123456789012345678);
             codec.SetVolume(tick1, 1234567890);
 
-            Assert.AreEqual<double>(0.2, codec.GetTickSize(tick1));
+            
+
             Assert.AreEqual<double>(123.45, codec.GetAveragePrice(tick1));
             Assert.AreEqual<double>(123.45, codec.GetSettlementPrice(tick1));
             Assert.AreEqual<double>(1234567890120000, codec.GetTurnover(tick1));
             Assert.AreEqual<long>(9123456789012345678, codec.GetOpenInterest(tick1));
             Assert.AreEqual<long>(1234567890, codec.GetVolume(tick1));
+
+            codec.Config.TurnoverMultiplier = 1;
+            codec.SetTurnover(tick1, 1234567890123456);
+            Assert.AreEqual<double>(1234567890123456, codec.GetTurnover(tick1));
+
+            codec.Config.TurnoverMultiplier = 0.01;
+            codec.SetTurnover(tick1, 12345678901234.56);
+            Assert.AreEqual<double>(12345678901234.56, codec.GetTurnover(tick1));
         }
 
         [TestMethod]
@@ -307,7 +312,7 @@ namespace Test
         {
             PbTickCodec codec = new PbTickCodec();
 
-            Assert.AreEqual<double>(0.0001, codec.gcd());
+            Assert.AreEqual<double>(0.00001, codec.gcd());
             Assert.AreEqual<double>(0.3, codec.gcd(100.3f - 100.0f));
             Assert.AreEqual<double>(0.2, codec.gcd(100.3f - 100.1f));
             Assert.AreEqual<double>(0.1, codec.gcd(100.3f - 100.0f, 100.2f - 100.0f));
@@ -321,9 +326,16 @@ namespace Test
         [TestMethod]
         public void TestStatic()
         {
-            PbTickCodec codec = new PbTickCodec(0.2);
+            PbTickCodec codec = new PbTickCodec();
+
+            codec.Config.TickSize = (int)(0.2 * codec.Config.TickSizeMultiplier);
+            codec.UseFlat(false);
+
 
             PbTick tick1 = new PbTick();
+
+            tick1.Config = codec.Config;
+
             codec.SetMultiplier(tick1, 1234);
             codec.SetSymbol(tick1, "ABC");
             codec.SetExchange(tick1, "DEF");
@@ -338,16 +350,16 @@ namespace Test
             Assert.AreEqual(null, diff.Static);
         }
 
-        [TestMethod]
-        public void TestDataFile()
-        {
-            //var stream = new MemoryStream(File.ReadAllBytes("test.data"));
-            //var serializer = new PbTickSerializer();
-            //PbTick raw;
-            //var tick = serializer.Read(stream, out raw);
+        //[TestMethod]
+        //public void TestDataFile()
+        //{
+        //    //var stream = new MemoryStream(File.ReadAllBytes("test.data"));
+        //    //var serializer = new PbTickSerializer();
+        //    //PbTick raw;
+        //    //var tick = serializer.Read(stream, out raw);
 
-            //Assert.AreNotEqual(null, tick);
-        }
+        //    //Assert.AreNotEqual(null, tick);
+        //}
 
         [TestMethod]
         public void TestReadCsvLeve1()
@@ -356,7 +368,8 @@ namespace Test
             FileInfo fo = new FileInfo(@"d:\wukan\Desktop\if_all\IF1406.data");
 
             PbTickSerializer pts = new PbTickSerializer();
-            pts.Codec.TickSize = 0.2;
+            pts.Codec.Config.TickSize = (int)(0.2 * pts.Codec.Config.TickSizeMultiplier);
+            pts.Codec.Config.Time_ssf_Diff = 5;
 
             using (Stream stream = File.OpenWrite(@"d:\wukan\Desktop\if_all\IF1406.data"))
             {
@@ -385,7 +398,7 @@ namespace Test
 
                         PbTick tick = new PbTick();
 
-                        pts.Codec.SetTickSize(tick, pts.Codec.TickSize);
+                        tick.Config = pts.Codec.Config;
 
                         pts.Codec.SetLastPrice(tick, price);
                         pts.Codec.SetVolume(tick, vol);
@@ -401,10 +414,14 @@ namespace Test
 
                         pts.Write(tick, new Stream[] { stream });
 
+                        //if (i == 1000000)
+                        //    break;
+
                     } while (str != null);
                     file.Close();
                 }
             }
+            Console.WriteLine("结束了");
         }
 
         [TestMethod]
@@ -435,14 +452,21 @@ namespace Test
 
                         pts.Codec.SetSymbol(tick, arr[0]);
 
+                        tick.Config = new ConfigInfo().Default();
+
                         if (arr[0].StartsWith("TF"))
                         {
-                            pts.Codec.TickSize = 0.002;
+                            tick.Config.TickSize = (int)(0.002 * tick.Config.TickSizeMultiplier);
                         }
                         else
                         {
-                            pts.Codec.TickSize = 0.2;
+                            tick.Config.TickSize = (int)(0.2 * tick.Config.TickSizeMultiplier);
                         }
+                        tick.Config.Time_ssf_Diff = 5;
+                        tick.Config.TurnoverMultiplier = 1;
+
+                        pts.Codec.Config = tick.Config;
+                        pts.Codec.UseFlat(false);
 
                         tick.ActionDay = int.Parse(arr[5]);
                         int time = int.Parse(arr[6]);
@@ -450,9 +474,6 @@ namespace Test
                         tick.Time_HHmm = time / 100000;
                         tick.Time_____ssf__ = time % 100000 / 100;
                         tick.Time________ff = time % 100;
-                        tick.Time_ssf_Diff = 5;
-
-                        pts.Codec.SetTickSize(tick, pts.Codec.TickSize);
 
                         pts.Codec.SetLastPrice(tick, double.Parse(arr[8]));
                         pts.Codec.SetHigh(tick, double.Parse(arr[9]));
@@ -485,9 +506,6 @@ namespace Test
                         pts.Codec.SetBidSize(tick, 3, int.Parse(arr[34]));
                         pts.Codec.SetBidSize(tick, 4, int.Parse(arr[35]));
                         pts.Codec.SetBidSize(tick, 5, int.Parse(arr[36]));
-
-
-
 
                         pts.Write(tick, new Stream[] { stream });
 

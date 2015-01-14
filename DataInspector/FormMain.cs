@@ -163,6 +163,7 @@ namespace DataInspector
                 si = new StaticInfoView();
             }
             pgStatic.SelectedObject = si;
+            pgConfig.SelectedObject = tick2.Config;
 
             dgvDepth.DataSource = Int2DoubleConverter.ToList(tick2.Depth1_3);
         }

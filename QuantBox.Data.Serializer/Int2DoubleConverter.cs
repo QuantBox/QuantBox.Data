@@ -38,21 +38,31 @@ namespace QuantBox.Data.Serializer
 
             StaticInfoView field = new StaticInfoView();
 
-            field.LowerLimitPrice = Codec.TickToPrice(Static.LowerLimitPrice);
-            field.UpperLimitPrice = Codec.TickToPrice(Static.UpperLimitPrice);
-
-            if(flat)
-            {
-                field.SettlementPrice = Codec.TickToPrice(Static.SettlementPrice);
-            }
-            else
-            {
-                field.SettlementPrice = Codec.TickToPrice(Static.SettlementPrice) / Codec.SettlementPriceMultiplier;
-            }
+            field.LowerLimitPrice = Codec.GetLowerLimitPrice(Static);
+            field.UpperLimitPrice = Codec.GetUpperLimitPrice(Static);
+            field.SettlementPrice = Codec.GetSettlementPrice(Static);
 
             field.Symbol = Static.Symbol;
             field.Exchange = Static.Exchange;
             field.Multiplier = Static.Multiplier;
+
+            return field;
+        }
+
+        public ConfigInfoView Int2Double(ConfigInfo config)
+        {
+            if (config == null)
+                return null;
+
+            ConfigInfoView field = new ConfigInfoView();
+
+            field.Version = config.Version;
+            field.TickSize = config.TickSize;
+            field.TickSizeMultiplier = config.TickSizeMultiplier;
+            field.SettlementPriceMultiplier = config.SettlementPriceMultiplier;
+            field.AveragePriceMultiplier = config.AveragePriceMultiplier;
+            field.TurnoverMultiplier = config.TurnoverMultiplier;
+            field.Time_ssf_Diff = config.Time_ssf_Diff;
 
             return field;
         }
@@ -102,27 +112,13 @@ namespace QuantBox.Data.Serializer
             {
                 Codec = new PbTickCodec();
             }
-            if (flat)
-            {
-                Codec.TickSize = 1.0;
-            }
-            else
-            {
-                Codec.TickSize = Codec.GetTickSize(tick);
-            }
+            field.Config = Int2Double(tick.Config);
 
-            if (flat)
-            {
-                field.TickSize = tick.TickSize;
-                field.Turnover = tick.Turnover;
-                field.AveragePrice = tick.AveragePrice;
-            }
-            else
-            {
-                field.TickSize = Codec.GetTickSize(tick);
-                field.Turnover = Codec.GetTurnover(tick);
-                field.AveragePrice = Codec.GetAveragePrice(tick);
-            }
+            Codec.Config = tick.Config;
+            Codec.UseFlat(flat);
+
+            field.Turnover = Codec.GetTurnover(tick);
+            field.AveragePrice = Codec.GetAveragePrice(tick);
 
             field.LastPrice = Codec.TickToPrice(tick.LastPrice);
 
@@ -135,16 +131,16 @@ namespace QuantBox.Data.Serializer
             field.Time_HHmm = tick.Time_HHmm;
             field.Time_____ssf__ = tick.Time_____ssf__;
             field.Time________ff = tick.Time________ff;
-            field.Time_ssf_Diff = tick.Time_ssf_Diff;
 
             field.Bar = Int2Double(tick.Bar);
             field.Static = Int2Double(tick.Static);
-
+            
 
 
             return field;
         }
 
+        #region 深度行情的显示方式转换
         public static List<DepthDetailView> ToList(DepthTickView deep)
         {
             List<DepthDetailView> list = new List<DepthDetailView>();
@@ -248,5 +244,6 @@ namespace QuantBox.Data.Serializer
 
             return first;
         }
+        #endregion
     }
 }

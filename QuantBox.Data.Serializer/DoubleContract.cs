@@ -36,7 +36,6 @@ namespace QuantBox.Data.Serializer
         public int AskCount3 { get; set; }
     }
 
-    [ProtoContract]
     public class StaticInfoView
     {
         /// <summary>
@@ -65,7 +64,6 @@ namespace QuantBox.Data.Serializer
         public string Exchange { get; set; }
     }
 
-    [ProtoContract]
     public class BarInfoView
     {
         /// <summary>
@@ -90,17 +88,30 @@ namespace QuantBox.Data.Serializer
         public int BarSize { get; set; }
     }
 
-    [ProtoContract]
+    public class ConfigInfoView
+    {
+        public int Version { get; set; }
+
+        public int TickSize { get; set; }
+
+        public double TickSizeMultiplier { get; set; }
+
+        public int SettlementPriceMultiplier { get; set; }
+
+        public int AveragePriceMultiplier { get; set; }
+
+        public double TurnoverMultiplier { get; set; }
+
+        public int Time_ssf_Diff { get; set; }
+    }
+
     public class PbTickView
     {
         /// <summary>
         /// 与上一笔的比
         /// </summary>
         public double LastPrice { get; set; }
-        /// <summary>
-        /// N档数据
-        /// </summary>
-        public DepthTickView Depth1_3 { get; set; }
+
         /// <summary>
         /// 成交量
         /// </summary>
@@ -130,7 +141,10 @@ namespace QuantBox.Data.Serializer
         public int Time_____ssf__ { get; set; }
         public int Time________ff { get; set; }
 
-        public int Time_ssf_Diff { get; set; }
+        /// <summary>
+        /// N档数据
+        /// </summary>
+        public DepthTickView Depth1_3 { get; set; }
 
         /// <summary>
         /// Bar数据或高开低收
@@ -140,10 +154,9 @@ namespace QuantBox.Data.Serializer
         /// 涨跌停价格及结算价
         /// </summary>
         public StaticInfoView Static { get; set; }
-        /// <summary>
-        /// 实际数*10000
-        /// </summary>
-        public double TickSize { get; set; }
+
+        public ConfigInfoView Config { get; set; }
+
 
         public string ToCsvHeader()
         {
