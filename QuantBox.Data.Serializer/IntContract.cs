@@ -229,12 +229,25 @@ namespace QuantBox.Data.Serializer
         public double RightsOfferingPrice;
 
         /// <summary>
-        /// 股价调整因子
+        /// 复权因子就是权息修复比例
+        /// 计算向后复权价格：向后复权价格 = 原始价格 * 复权因子
+        /// http://blog.sina.com.cn/s/blog_50dfbb0b0100b6ly.html
+        /// 除权价＝（除权前一日收盘价＋配股价Ｘ配股比率－每股派息）／（１＋配股比率＋送股比率）
+        /// 除权因子=收盘价/除权价
+        /// 
+        /// fV = 1 + StockDividend + RightsOffering;
+        /// fP = RightsOfferingPrice *RightsOffering - CashDividend;
+        /// 
+        /// fSplitPrice = (fLastClose+fP)/fV;
+        /// fV = fLastClose/fSplitPrice;
+		///	fP = 0;
+        ///	
+        /// Price = m_fClose*fV - fP;
+        /// 
+        /// 除权因子一定要有前一日收盘价的信息才能正确算出，
         /// </summary>
-        public double AdjustingFactor
-        {
-            get { return 1; }
-        }
+        [ProtoMember(5)]
+        public double AdjustingFactor;
     }
 
     [ProtoContract]

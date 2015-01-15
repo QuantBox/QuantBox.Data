@@ -79,8 +79,7 @@ namespace QuantBox.Data.Serializer
             field.StockDividend = split.StockDividend;
             field.RightsOffering = split.RightsOffering;
             field.RightsOfferingPrice = split.RightsOfferingPrice;
-            // 只读的，由上面的参数决定
-            //field.AdjustingFactor = split.AdjustingFactor;
+            field.AdjustingFactor = split.AdjustingFactor;
 
             return field;
         }

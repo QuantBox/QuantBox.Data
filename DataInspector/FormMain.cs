@@ -144,6 +144,9 @@ namespace DataInspector
 
         private void dgvTick_SelectionChanged(object sender, EventArgs e)
         {
+            if (dgvTick.CurrentRow == null)
+                return;
+
             nTickCurrentRowIndex = dgvTick.CurrentRow.Index;
             if (listTickView == null || nTickCurrentRowIndex >= listTickView.Count)
                 return;

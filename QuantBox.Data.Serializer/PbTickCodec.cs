@@ -1077,12 +1077,14 @@ namespace QuantBox.Data.Serializer
                 tick.Split.StockDividend = current.Split.StockDividend - prev.Split.StockDividend;
                 tick.Split.RightsOffering = current.Split.RightsOffering - prev.Split.RightsOffering;
                 tick.Split.RightsOfferingPrice = current.Split.RightsOfferingPrice - prev.Split.RightsOfferingPrice;
+                tick.Split.AdjustingFactor = current.Split.AdjustingFactor - prev.Split.AdjustingFactor;
 
                 if (tick.Split.CashDividend == 0
                     && tick.Split.StockDividend == 0
                     && tick.Split.RightsOffering == 0
-                    && tick.Split.RightsOfferingPrice == 0)
-                    tick.Static = null;
+                    && tick.Split.RightsOfferingPrice == 0
+                    && tick.Split.AdjustingFactor == 0)
+                    tick.Split = null;
             }
             #endregion
 
@@ -1376,6 +1378,7 @@ namespace QuantBox.Data.Serializer
                 tick.Split.StockDividend = prev.Split.StockDividend + diff.Split.StockDividend;
                 tick.Split.RightsOffering = prev.Split.RightsOffering + diff.Split.RightsOffering;
                 tick.Split.RightsOfferingPrice = prev.Split.RightsOfferingPrice + diff.Split.RightsOfferingPrice;
+                tick.Split.AdjustingFactor = prev.Split.AdjustingFactor + diff.Split.AdjustingFactor;
             }
             #endregion
 
