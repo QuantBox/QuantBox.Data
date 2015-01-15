@@ -105,6 +105,15 @@ namespace QuantBox.Data.Serializer
         public int Time_ssf_Diff { get; set; }
     }
 
+    public class StockSplitInfoView
+    {
+        public double CashDividend { get; set; }
+        public double StockDividend { get; set; }
+        public double RightsOffering { get; set; }
+        public double RightsOfferingPrice { get; set; }
+        public double AdjustingFactor { get; set; }
+    }
+
     public class PbTickView
     {
         /// <summary>
@@ -156,6 +165,8 @@ namespace QuantBox.Data.Serializer
         public StaticInfoView Static { get; set; }
 
         public ConfigInfoView Config { get; set; }
+
+        public StockSplitInfoView Split { get; set; }
 
 
         public string ToCsvHeader()

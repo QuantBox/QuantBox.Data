@@ -68,6 +68,23 @@ namespace QuantBox.Data.Serializer
             return field;
         }
 
+        public StockSplitInfo Double2Int(StockSplitInfoView split)
+        {
+            if (split == null)
+                return null;
+
+            StockSplitInfo field = new StockSplitInfo();
+
+            field.CashDividend = split.CashDividend;
+            field.StockDividend = split.StockDividend;
+            field.RightsOffering = split.RightsOffering;
+            field.RightsOfferingPrice = split.RightsOfferingPrice;
+            // 只读的，由上面的参数决定
+            //field.AdjustingFactor = split.AdjustingFactor;
+
+            return field;
+        }
+
         public DepthTick Double2Int(DepthTickView depthTick)
         {
             if (depthTick == null)
@@ -135,6 +152,7 @@ namespace QuantBox.Data.Serializer
 
             field.Bar = Double2Int(tick.Bar);
             field.Static = Double2Int(tick.Static);
+            field.Split = Double2Int(tick.Split);
             
 
             return field;

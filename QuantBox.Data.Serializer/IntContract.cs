@@ -201,6 +201,42 @@ namespace QuantBox.Data.Serializer
         }
     }
 
+    /// <summary>
+    /// http://www2.resset.cn/product/db/datadict/cn/HKQTTNDIST.htm
+    /// </summary>
+    [ProtoContract]
+    public class StockSplitInfo
+    {
+        /// <summary>
+        /// 分红
+        /// </summary>
+        [ProtoMember(1)]
+        public double CashDividend;
+        /// <summary>
+        /// 送股
+        /// </summary>
+        [ProtoMember(2)]
+        public double StockDividend;
+        /// <summary>
+        /// 配股
+        /// </summary>
+        [ProtoMember(3)]
+        public double RightsOffering;
+        /// <summary>
+        /// 配股价
+        /// </summary>
+        [ProtoMember(4)]
+        public double RightsOfferingPrice;
+
+        /// <summary>
+        /// 股价调整因子
+        /// </summary>
+        public double AdjustingFactor
+        {
+            get { return 1; }
+        }
+    }
+
     [ProtoContract]
     public class PbTick
     {
@@ -267,5 +303,11 @@ namespace QuantBox.Data.Serializer
         /// </summary>
         [ProtoMember(14)]
         public ConfigInfo Config;
+        /// <summary>
+        /// 除权除息
+        /// </summary>
+        [ProtoMember(15)]
+        public StockSplitInfo Split;
+
     }
 }

@@ -163,7 +163,20 @@ namespace DataInspector
                 si = new StaticInfoView();
             }
             pgStatic.SelectedObject = si;
-            pgConfig.SelectedObject = tick2.Config;
+
+            ConfigInfoView ci = tick2.Config;
+            if (ci == null)
+            {
+                ci = new ConfigInfoView();
+            }
+            pgConfig.SelectedObject = ci;
+
+            StockSplitInfoView ssi = tick2.Split;
+            if (ssi == null)
+            {
+                ssi = new StockSplitInfoView();
+            }
+            pgSplit.SelectedObject = ssi;
 
             dgvDepth.DataSource = Int2DoubleConverter.ToList(tick2.Depth1_3);
         }
@@ -204,6 +217,22 @@ namespace DataInspector
 
             PbTickView tick2 = listTickView[nTickCurrentRowIndex];
             tick2.Static = (StaticInfoView)pgStatic.SelectedObject;
+        }
+
+        private void pgSplit_Click(object sender, EventArgs e)
+        {
+            ValueChanged(true);
+
+            PbTickView tick2 = listTickView[nTickCurrentRowIndex];
+            tick2.Split = (StockSplitInfoView)pgSplit.SelectedObject;
+        }
+
+        private void pgConfig_Click(object sender, EventArgs e)
+        {
+            ValueChanged(true);
+
+            PbTickView tick2 = listTickView[nTickCurrentRowIndex];
+            tick2.Config = (ConfigInfoView)pgConfig.SelectedObject;
         }
 
         private void dgvDepth_CellValueChanged(object sender, DataGridViewCellEventArgs e)
@@ -339,5 +368,7 @@ namespace DataInspector
                 dgv.RowHeadersDefaultCellStyle.ForeColor,
                 TextFormatFlags.VerticalCenter | TextFormatFlags.Right);
         }
+
+
     }
 }

@@ -10,7 +10,7 @@ namespace QuantBox.Data.Serializer
     {
         private ConfigInfo _config;
         private ConfigInfo config_flat;
-        public ConfigInfo Config;
+        public ConfigInfo Config { get; set; }
 
         private double TickSize;
 
@@ -1054,12 +1054,6 @@ namespace QuantBox.Data.Serializer
                 tick.Static.SettlementPrice = current.Static.SettlementPrice - prev.Static.SettlementPrice;
                 tick.Static.Multiplier = current.Static.Multiplier - prev.Static.Multiplier;
 
-                if (current.Static.Symbol != prev.Static.Symbol && !string.IsNullOrWhiteSpace(current.Static.Symbol))
-                    tick.Static.Symbol = current.Static.Symbol;
-
-                if (current.Static.Exchange != prev.Static.Exchange && !string.IsNullOrWhiteSpace(current.Static.Exchange))
-                    tick.Static.Exchange = current.Static.Exchange;
-
                 if (tick.Static.LowerLimitPrice == 0
                     && tick.Static.UpperLimitPrice == 0
                     && tick.Static.SettlementPrice == 0
@@ -1070,7 +1064,27 @@ namespace QuantBox.Data.Serializer
             }
             #endregion
 
-            
+            #region 除权除息数据
+            if (current.Split != null || prev.Split != null)
+            {
+                tick.Split = new StockSplitInfo();
+                if (current.Split == null)
+                    current.Split = new StockSplitInfo();
+                if (prev.Split == null)
+                    prev.Split = new StockSplitInfo();
+
+                tick.Split.CashDividend = current.Split.CashDividend - prev.Split.CashDividend;
+                tick.Split.StockDividend = current.Split.StockDividend - prev.Split.StockDividend;
+                tick.Split.RightsOffering = current.Split.RightsOffering - prev.Split.RightsOffering;
+                tick.Split.RightsOfferingPrice = current.Split.RightsOfferingPrice - prev.Split.RightsOfferingPrice;
+
+                if (tick.Split.CashDividend == 0
+                    && tick.Split.StockDividend == 0
+                    && tick.Split.RightsOffering == 0
+                    && tick.Split.RightsOfferingPrice == 0)
+                    tick.Static = null;
+            }
+            #endregion
 
             return tick;
         }
@@ -1346,6 +1360,22 @@ namespace QuantBox.Data.Serializer
 
                 tick.Static.Symbol = string.IsNullOrWhiteSpace(diff.Static.Symbol) ? prev.Static.Symbol : diff.Static.Symbol;
                 tick.Static.Exchange = string.IsNullOrWhiteSpace(diff.Static.Exchange) ? prev.Static.Exchange : diff.Static.Exchange;
+            }
+            #endregion
+
+            #region 除权除息数据
+            if (prev.Split != null || diff.Split != null)
+            {
+                tick.Split = new StockSplitInfo();
+                if (prev.Split == null)
+                    prev.Split = new StockSplitInfo();
+                if (diff.Split == null)
+                    diff.Split = new StockSplitInfo();
+
+                tick.Split.CashDividend = prev.Split.CashDividend + diff.Split.CashDividend;
+                tick.Split.StockDividend = prev.Split.StockDividend + diff.Split.StockDividend;
+                tick.Split.RightsOffering = prev.Split.RightsOffering + diff.Split.RightsOffering;
+                tick.Split.RightsOfferingPrice = prev.Split.RightsOfferingPrice + diff.Split.RightsOfferingPrice;
             }
             #endregion
 

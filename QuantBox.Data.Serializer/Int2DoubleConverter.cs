@@ -67,6 +67,22 @@ namespace QuantBox.Data.Serializer
             return field;
         }
 
+        public StockSplitInfoView Int2Double(StockSplitInfo split)
+        {
+            if (split == null)
+                return null;
+
+            StockSplitInfoView field = new StockSplitInfoView();
+
+            field.CashDividend = split.CashDividend;
+            field.StockDividend = split.StockDividend;
+            field.RightsOffering = split.RightsOffering;
+            field.RightsOfferingPrice = split.RightsOfferingPrice;
+            field.AdjustingFactor = split.AdjustingFactor;
+
+            return field;
+        }
+
         public DepthTickView Int2Double(DepthTick depthTick)
         {
             if (depthTick == null)
@@ -134,8 +150,7 @@ namespace QuantBox.Data.Serializer
 
             field.Bar = Int2Double(tick.Bar);
             field.Static = Int2Double(tick.Static);
-            
-
+            field.Split = Int2Double(tick.Split);
 
             return field;
         }

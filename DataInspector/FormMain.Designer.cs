@@ -34,7 +34,9 @@
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.splitContainer3 = new System.Windows.Forms.SplitContainer();
             this.pgBar = new System.Windows.Forms.PropertyGrid();
+            this.splitContainer4 = new System.Windows.Forms.SplitContainer();
             this.pgStatic = new System.Windows.Forms.PropertyGrid();
+            this.pgConfig = new System.Windows.Forms.PropertyGrid();
             this.dgvDepth = new System.Windows.Forms.DataGridView();
             this.menuFile = new System.Windows.Forms.ToolStripMenuItem();
             this.menuFile_Open = new System.Windows.Forms.ToolStripMenuItem();
@@ -48,8 +50,8 @@
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuTools_ExportDirectory = new System.Windows.Forms.ToolStripMenuItem();
-            this.splitContainer4 = new System.Windows.Forms.SplitContainer();
-            this.pgConfig = new System.Windows.Forms.PropertyGrid();
+            this.splitContainer5 = new System.Windows.Forms.SplitContainer();
+            this.pgSplit = new System.Windows.Forms.PropertyGrid();
             this.lastPriceDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.volumeDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.openInterestDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -85,12 +87,16 @@
             this.splitContainer3.Panel1.SuspendLayout();
             this.splitContainer3.Panel2.SuspendLayout();
             this.splitContainer3.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dgvDepth)).BeginInit();
-            this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer4)).BeginInit();
             this.splitContainer4.Panel1.SuspendLayout();
             this.splitContainer4.Panel2.SuspendLayout();
             this.splitContainer4.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dgvDepth)).BeginInit();
+            this.menuStrip1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer5)).BeginInit();
+            this.splitContainer5.Panel1.SuspendLayout();
+            this.splitContainer5.Panel2.SuspendLayout();
+            this.splitContainer5.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbTick2BindingSource)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.depthDetail2BindingSource)).BeginInit();
             this.SuspendLayout();
@@ -172,7 +178,7 @@
             // 
             // splitContainer3.Panel1
             // 
-            this.splitContainer3.Panel1.Controls.Add(this.pgBar);
+            this.splitContainer3.Panel1.Controls.Add(this.splitContainer5);
             this.splitContainer3.Panel1MinSize = 100;
             // 
             // splitContainer3.Panel2
@@ -188,10 +194,27 @@
             this.pgBar.HelpVisible = false;
             this.pgBar.Location = new System.Drawing.Point(0, 0);
             this.pgBar.Name = "pgBar";
-            this.pgBar.Size = new System.Drawing.Size(211, 125);
+            this.pgBar.Size = new System.Drawing.Size(98, 125);
             this.pgBar.TabIndex = 0;
             this.pgBar.ToolbarVisible = false;
             this.pgBar.PropertyValueChanged += new System.Windows.Forms.PropertyValueChangedEventHandler(this.pgBar_PropertyValueChanged);
+            // 
+            // splitContainer4
+            // 
+            this.splitContainer4.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer4.Location = new System.Drawing.Point(0, 0);
+            this.splitContainer4.Name = "splitContainer4";
+            // 
+            // splitContainer4.Panel1
+            // 
+            this.splitContainer4.Panel1.Controls.Add(this.pgStatic);
+            // 
+            // splitContainer4.Panel2
+            // 
+            this.splitContainer4.Panel2.Controls.Add(this.pgConfig);
+            this.splitContainer4.Size = new System.Drawing.Size(211, 122);
+            this.splitContainer4.SplitterDistance = 101;
+            this.splitContainer4.TabIndex = 0;
             // 
             // pgStatic
             // 
@@ -203,6 +226,18 @@
             this.pgStatic.TabIndex = 0;
             this.pgStatic.ToolbarVisible = false;
             this.pgStatic.PropertyValueChanged += new System.Windows.Forms.PropertyValueChangedEventHandler(this.pgStatic_PropertyValueChanged);
+            // 
+            // pgConfig
+            // 
+            this.pgConfig.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pgConfig.HelpVisible = false;
+            this.pgConfig.Location = new System.Drawing.Point(0, 0);
+            this.pgConfig.Name = "pgConfig";
+            this.pgConfig.Size = new System.Drawing.Size(106, 122);
+            this.pgConfig.TabIndex = 0;
+            this.pgConfig.ToolbarVisible = false;
+            this.pgConfig.PropertyValueChanged += new System.Windows.Forms.PropertyValueChangedEventHandler(this.pgStatic_PropertyValueChanged);
+            this.pgConfig.Click += new System.EventHandler(this.pgConfig_Click);
             // 
             // dgvDepth
             // 
@@ -328,33 +363,34 @@
             this.menuTools_ExportDirectory.Text = "Export Directory...";
             this.menuTools_ExportDirectory.Click += new System.EventHandler(this.menuTools_ExportDirectory_Click);
             // 
-            // splitContainer4
+            // splitContainer5
             // 
-            this.splitContainer4.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainer4.Location = new System.Drawing.Point(0, 0);
-            this.splitContainer4.Name = "splitContainer4";
+            this.splitContainer5.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer5.Location = new System.Drawing.Point(0, 0);
+            this.splitContainer5.Name = "splitContainer5";
             // 
-            // splitContainer4.Panel1
+            // splitContainer5.Panel1
             // 
-            this.splitContainer4.Panel1.Controls.Add(this.pgStatic);
+            this.splitContainer5.Panel1.Controls.Add(this.pgBar);
             // 
-            // splitContainer4.Panel2
+            // splitContainer5.Panel2
             // 
-            this.splitContainer4.Panel2.Controls.Add(this.pgConfig);
-            this.splitContainer4.Size = new System.Drawing.Size(211, 122);
-            this.splitContainer4.SplitterDistance = 101;
-            this.splitContainer4.TabIndex = 0;
+            this.splitContainer5.Panel2.Controls.Add(this.pgSplit);
+            this.splitContainer5.Size = new System.Drawing.Size(211, 125);
+            this.splitContainer5.SplitterDistance = 98;
+            this.splitContainer5.TabIndex = 0;
             // 
-            // pgConfig
+            // pgSplit
             // 
-            this.pgConfig.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pgConfig.HelpVisible = false;
-            this.pgConfig.Location = new System.Drawing.Point(0, 0);
-            this.pgConfig.Name = "pgConfig";
-            this.pgConfig.Size = new System.Drawing.Size(106, 122);
-            this.pgConfig.TabIndex = 0;
-            this.pgConfig.ToolbarVisible = false;
-            this.pgConfig.PropertyValueChanged += new System.Windows.Forms.PropertyValueChangedEventHandler(this.pgStatic_PropertyValueChanged);
+            this.pgSplit.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pgSplit.HelpVisible = false;
+            this.pgSplit.Location = new System.Drawing.Point(0, 0);
+            this.pgSplit.Name = "pgSplit";
+            this.pgSplit.Size = new System.Drawing.Size(109, 125);
+            this.pgSplit.TabIndex = 0;
+            this.pgSplit.ToolbarVisible = false;
+            this.pgSplit.PropertyValueChanged += new System.Windows.Forms.PropertyValueChangedEventHandler(this.pgBar_PropertyValueChanged);
+            this.pgSplit.Click += new System.EventHandler(this.pgSplit_Click);
             // 
             // lastPriceDataGridViewTextBoxColumn
             // 
@@ -530,13 +566,17 @@
             this.splitContainer3.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer3)).EndInit();
             this.splitContainer3.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.dgvDepth)).EndInit();
-            this.menuStrip1.ResumeLayout(false);
-            this.menuStrip1.PerformLayout();
             this.splitContainer4.Panel1.ResumeLayout(false);
             this.splitContainer4.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer4)).EndInit();
             this.splitContainer4.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.dgvDepth)).EndInit();
+            this.menuStrip1.ResumeLayout(false);
+            this.menuStrip1.PerformLayout();
+            this.splitContainer5.Panel1.ResumeLayout(false);
+            this.splitContainer5.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer5)).EndInit();
+            this.splitContainer5.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pbTick2BindingSource)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.depthDetail2BindingSource)).EndInit();
             this.ResumeLayout(false);
@@ -591,6 +631,8 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn configDataGridViewTextBoxColumn;
         private System.Windows.Forms.SplitContainer splitContainer4;
         private System.Windows.Forms.PropertyGrid pgConfig;
+        private System.Windows.Forms.SplitContainer splitContainer5;
+        private System.Windows.Forms.PropertyGrid pgSplit;
 
     }
 }
