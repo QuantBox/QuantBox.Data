@@ -164,6 +164,16 @@ namespace QuantBox.Data.Serializer
         [ProtoMember(7)]
         public int Time_ssf_Diff;
 
+        public void SetTickSize(double val)
+        {
+            TickSize = (int)(TickSizeMultiplier * val);
+        }
+
+        public double GetTickSize()
+        {
+            return TickSize / TickSizeMultiplier;
+        }
+
         public ConfigInfo Default()
         {
             Version = 1;

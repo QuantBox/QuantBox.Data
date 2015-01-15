@@ -61,7 +61,7 @@ namespace Test
         {
             PbTickCodec codec = new PbTickCodec();
 
-            codec.Config.TickSize = (int)(0.2 * codec.Config.TickSizeMultiplier);
+            codec.Config.SetTickSize(0.2);
             codec.UseFlat(false);
 
             PbTick tick = new PbTick();
@@ -112,7 +112,7 @@ namespace Test
         {
             PbTickCodec ptc = new PbTickCodec();
 
-            ptc.Config.TickSize = (int)(0.2 * ptc.Config.TickSizeMultiplier);
+            ptc.Config.SetTickSize(0.2);
             ptc.UseFlat(false);
 
             Assert.AreEqual<int>(5, ptc.PriceToTick(1));
@@ -143,7 +143,7 @@ namespace Test
         {
             PbTickCodec codec = new PbTickCodec();
 
-            codec.Config.TickSize = (int)(0.2 * codec.Config.TickSizeMultiplier);
+            codec.Config.SetTickSize(0.2);
             codec.Config.Time_ssf_Diff = 5;
             codec.UseFlat(false);
 
@@ -279,7 +279,7 @@ namespace Test
         {
             PbTickCodec codec = new PbTickCodec();
 
-            codec.Config.TickSize = (int)(0.2 * codec.Config.TickSizeMultiplier);
+            codec.Config.SetTickSize(0.2);
             codec.Config.Time_ssf_Diff = 5;
             codec.UseFlat(false);
 
@@ -328,7 +328,7 @@ namespace Test
         {
             PbTickCodec codec = new PbTickCodec();
 
-            codec.Config.TickSize = (int)(0.2 * codec.Config.TickSizeMultiplier);
+            codec.Config.SetTickSize(0.2);
             codec.UseFlat(false);
 
 
@@ -368,7 +368,7 @@ namespace Test
             FileInfo fo = new FileInfo(@"d:\wukan\Desktop\if_all\IF1406.data");
 
             PbTickSerializer pts = new PbTickSerializer();
-            pts.Codec.Config.TickSize = (int)(0.2 * pts.Codec.Config.TickSizeMultiplier);
+            pts.Codec.Config.SetTickSize(0.2);
             pts.Codec.Config.Time_ssf_Diff = 5;
 
             using (Stream stream = File.OpenWrite(@"d:\wukan\Desktop\if_all\IF1406.data"))
@@ -456,11 +456,11 @@ namespace Test
 
                         if (arr[0].StartsWith("TF"))
                         {
-                            tick.Config.TickSize = (int)(0.002 * tick.Config.TickSizeMultiplier);
+                            tick.Config.SetTickSize(0.002);
                         }
                         else
                         {
-                            tick.Config.TickSize = (int)(0.2 * tick.Config.TickSizeMultiplier);
+                            tick.Config.SetTickSize(0.2);
                         }
                         tick.Config.Time_ssf_Diff = 5;
                         tick.Config.TurnoverMultiplier = 1;

@@ -32,7 +32,7 @@ namespace QuantBox.Data.Serializer
             {
                 _config = Config;
             }
-            TickSize = _config.TickSize / _config.TickSizeMultiplier;
+            TickSize = _config.GetTickSize();
         }
 
         static int gcd(int a, int b)
@@ -97,79 +97,128 @@ namespace QuantBox.Data.Serializer
         }
 
         #region Bar部分处理
+        public void SetOpen(BarInfo Bar, double price)
+        {
+            Bar.Open = PriceToTick(price);
+        }
         public void SetOpen(PbTick tick, double price)
         {
             if (tick.Bar == null)
                 tick.Bar = new BarInfo();
-            tick.Bar.Open = PriceToTick(price);
+            SetOpen(tick.Bar, price);
+        }
+
+        public double GetOpen(BarInfo Bar)
+        {
+            if (Bar == null)
+                return 0;
+
+            return TickToPrice(Bar.Open);
         }
 
         public double GetOpen(PbTick tick)
         {
-            if (tick.Bar == null)
-                return 0;
+            return GetOpen(tick.Bar);
+        }
 
-            return TickToPrice(tick.Bar.Open);
+        public void SetHigh(BarInfo Bar, double price)
+        {
+            Bar.High = PriceToTick(price);
         }
 
         public void SetHigh(PbTick tick, double price)
         {
             if (tick.Bar == null)
                 tick.Bar = new BarInfo();
-            tick.Bar.High = PriceToTick(price);
+            SetHigh(tick.Bar, price);
+        }
+
+        public double GetHigh(BarInfo Bar)
+        {
+            if (Bar == null)
+                return 0;
+
+            return TickToPrice(Bar.High);
         }
 
         public double GetHigh(PbTick tick)
         {
-            if (tick.Bar == null)
-                return 0;
+            return GetHigh(tick.Bar);
+        }
 
-            return TickToPrice(tick.Bar.High);
+        public void SetLow(BarInfo Bar, double price)
+        {
+            Bar.Low = PriceToTick(price);
         }
 
         public void SetLow(PbTick tick, double price)
         {
             if (tick.Bar == null)
                 tick.Bar = new BarInfo();
-            tick.Bar.Low = PriceToTick(price);
+            SetLow(tick.Bar, price);
+        }
+
+        public double GetLow(BarInfo Bar)
+        {
+            if (Bar == null)
+                return 0;
+
+            return TickToPrice(Bar.Low);
         }
 
         public double GetLow(PbTick tick)
         {
-            if (tick.Bar == null)
-                return 0;
+            return GetLow(tick.Bar);
+        }
 
-            return TickToPrice(tick.Bar.Low);
+        public void SetClose(BarInfo Bar, double price)
+        {
+            Bar.Close = PriceToTick(price);
         }
 
         public void SetClose(PbTick tick, double price)
         {
             if (tick.Bar == null)
                 tick.Bar = new BarInfo();
-            tick.Bar.Close = PriceToTick(price);
+            SetClose(tick.Bar, price);
+        }
+
+        public double GetClose(BarInfo Bar)
+        {
+            if (Bar == null)
+                return 0;
+
+            return TickToPrice(Bar.Close);
         }
 
         public double GetClose(PbTick tick)
         {
-            if (tick.Bar == null)
-                return 0;
+            return GetClose(tick.Bar);
+        }
 
-            return TickToPrice(tick.Bar.Close);
+        public void SetBarSize(BarInfo Bar, int barSize)
+        {
+            Bar.BarSize = barSize;
         }
 
         public void SetBarSize(PbTick tick, int barSize)
         {
             if (tick.Bar == null)
                 tick.Bar = new BarInfo();
-            tick.Bar.BarSize = barSize;
+            SetBarSize(tick.Bar, barSize);
+        }
+
+        public int GetBarSize(BarInfo Bar)
+        {
+            if (Bar == null)
+                return 0;
+
+            return Bar.BarSize;
         }
 
         public int GetBarSize(PbTick tick)
         {
-            if (tick.Bar == null)
-                return 0;
-
-            return tick.Bar.BarSize;
+            return GetBarSize(tick.Bar);
         }
         #endregion
 
@@ -196,9 +245,6 @@ namespace QuantBox.Data.Serializer
 
         public double GetSettlementPrice(PbTick tick)
         {
-            if (tick.Static == null)
-                return 0;
-
             return GetSettlementPrice(tick.Static);
         }
 
@@ -216,14 +262,14 @@ namespace QuantBox.Data.Serializer
 
         public double GetLowerLimitPrice(StaticInfo Static)
         {
+            if (Static == null)
+                return 0;
+
             return TickToPrice(Static.LowerLimitPrice);
         }
 
         public double GetLowerLimitPrice(PbTick tick)
         {
-            if (tick.Static == null)
-                return 0;
-
             return GetLowerLimitPrice(tick.Static);
         }
 
@@ -249,9 +295,6 @@ namespace QuantBox.Data.Serializer
 
         public double GetUpperLimitPrice(PbTick tick)
         {
-            if (tick.Static == null)
-                return 0;
-
             return GetUpperLimitPrice(tick.Static);
         }
 
