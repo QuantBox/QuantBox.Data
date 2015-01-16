@@ -44,7 +44,6 @@ namespace QuantBox.Data.Serializer
 
             field.Symbol = Static.Symbol;
             field.Exchange = Static.Exchange;
-            field.Multiplier = Static.Multiplier;
 
             return field;
         }
@@ -61,7 +60,7 @@ namespace QuantBox.Data.Serializer
             field.TickSizeMultiplier = config.TickSizeMultiplier;
             field.SettlementPriceMultiplier = config.SettlementPriceMultiplier;
             field.AveragePriceMultiplier = config.AveragePriceMultiplier;
-            field.TurnoverMultiplier = config.TurnoverMultiplier;
+            field.ContractMultiplier = config.ContractMultiplier;
             field.Time_ssf_Diff = config.Time_ssf_Diff;
 
             return field;
@@ -78,6 +77,7 @@ namespace QuantBox.Data.Serializer
             field.StockDividend = split.StockDividend;
             field.RightsOffering = split.RightsOffering;
             field.RightsOfferingPrice = split.RightsOfferingPrice;
+            field.PreClose = split.PreClose;
             field.AdjustingFactor = split.AdjustingFactor;
 
             return field;

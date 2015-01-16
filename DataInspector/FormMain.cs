@@ -64,24 +64,33 @@ namespace DataInspector
             CheckSaved();
 
             OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Filter = "Portable Data Zero files (*.pd0)|*.pd0|All files (*.*)|*.*";
 
             if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
                 string pathChosen = openFileDialog.FileName;
-                listTickData = PbTickSerializer.Read(pathChosen);
-                FileInfo fi = new FileInfo(pathChosen);
 
-                strCurrentFileName = string.Format("{0} ({1}/{2}={3})",
-                    openFileDialog.SafeFileName, fi.Length, listTickData.Count(), (double)fi.Length / listTickData.Count());
+                try
+                {
+                    listTickData = PbTickSerializer.Read(pathChosen);
+                    FileInfo fi = new FileInfo(pathChosen);
 
-                ValueChanged(false);
+                    strCurrentFileName = string.Format("{0} ({1}/{2}={3})",
+                        openFileDialog.SafeFileName, fi.Length, listTickData.Count(), (double)fi.Length / listTickData.Count());
 
-                PbTickCodec Codec = new PbTickCodec();
+                    ValueChanged(false);
 
-                listTickView = Codec.Data2View(this.listTickData, true);
-                dgvTick.DataSource = this.listTickView;
+                    PbTickCodec Codec = new PbTickCodec();
 
-                SingleCheck(menuView_Diff);
+                    listTickView = Codec.Data2View(this.listTickData, true);
+                    dgvTick.DataSource = this.listTickView;
+
+                    SingleCheck(menuView_Diff);
+                }
+                catch(Exception ex)
+                {
+                    MessageBox.Show(ex.ToString());
+                }
             }
         }
 
@@ -130,6 +139,7 @@ namespace DataInspector
         private void SaveChanges()
         {
             SaveFileDialog saveFileDialog = new SaveFileDialog();
+            saveFileDialog.Filter = "Portable Data Zero files (*.pd0)|*.pd0|All files (*.*)|*.*";
             DialogResult result = saveFileDialog.ShowDialog();
             if (result == DialogResult.OK)
             {
@@ -156,28 +166,28 @@ namespace DataInspector
             BarInfoView bi = tick2.Bar;
             if (bi == null)
             {
-                bi = new BarInfoView();
+                //bi = new BarInfoView();
             }
             pgBar.SelectedObject = bi;
 
             StaticInfoView si = tick2.Static;
             if (si == null)
             {
-                si = new StaticInfoView();
+                //si = new StaticInfoView();
             }
             pgStatic.SelectedObject = si;
 
             ConfigInfoView ci = tick2.Config;
             if (ci == null)
             {
-                ci = new ConfigInfoView();
+                //ci = new ConfigInfoView();
             }
             pgConfig.SelectedObject = ci;
 
             StockSplitInfoView ssi = tick2.Split;
             if (ssi == null)
             {
-                ssi = new StockSplitInfoView();
+                //ssi = new StockSplitInfoView();
             }
             pgSplit.SelectedObject = ssi;
 

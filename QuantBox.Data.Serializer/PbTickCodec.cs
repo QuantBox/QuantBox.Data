@@ -298,22 +298,6 @@ namespace QuantBox.Data.Serializer
             return GetUpperLimitPrice(tick.Static);
         }
 
-        public void SetMultiplier(PbTick tick, int val)
-        {
-            if (tick.Static == null)
-                tick.Static = new StaticInfo();
-
-            tick.Static.Multiplier = val;
-        }
-
-        public int GetMultiplier(PbTick tick)
-        {
-            if (tick.Static == null)
-                return 0;
-
-            return tick.Static.Multiplier;
-        }
-
         public void SetSymbol(PbTick tick, string val)
         {
             if (string.IsNullOrWhiteSpace(val))
@@ -772,7 +756,7 @@ namespace QuantBox.Data.Serializer
                 // 是快照，直接返回
                 return current;
             }
-            
+
             PbTick tick = new PbTick();
 
             #region 配置数据
@@ -789,23 +773,16 @@ namespace QuantBox.Data.Serializer
                 tick.Config.TickSizeMultiplier = current.Config.TickSizeMultiplier - prev.Config.TickSizeMultiplier;
                 tick.Config.SettlementPriceMultiplier = current.Config.SettlementPriceMultiplier - prev.Config.SettlementPriceMultiplier;
                 tick.Config.AveragePriceMultiplier = current.Config.AveragePriceMultiplier - prev.Config.AveragePriceMultiplier;
-                tick.Config.TurnoverMultiplier = current.Config.TurnoverMultiplier - prev.Config.TurnoverMultiplier;
                 tick.Config.Time_ssf_Diff = current.Config.Time_ssf_Diff - prev.Config.Time_ssf_Diff;
 
-                if (tick.Config.Version == 0
-                    && tick.Config.TickSize == 0
-                    && tick.Config.TickSizeMultiplier == 0
-                    && tick.Config.SettlementPriceMultiplier == 0
-                    && tick.Config.AveragePriceMultiplier == 0
-                    && tick.Config.TurnoverMultiplier == 0
-                    && tick.Config.Time_ssf_Diff == 0)
+                if (tick.Config.IsZero)
                     tick.Config = null;
             }
             #endregion
 
             // 先取最关键的数据，因为前一条的config总会补成有效
             _config = prev.Config;
-            TickSize = _config.TickSize / _config.TickSizeMultiplier;
+            TickSize = _config.GetTickSize();
 
             tick.LastPrice = current.LastPrice - prev.LastPrice;
 
@@ -1005,21 +982,22 @@ namespace QuantBox.Data.Serializer
             }
             #endregion
 
+            #region 常用行情信息
             tick.Volume = current.Volume - prev.Volume;
             tick.OpenInterest = current.OpenInterest - prev.OpenInterest;
             tick.Turnover = current.Turnover - prev.Turnover;
             tick.AveragePrice = current.AveragePrice - prev.AveragePrice;
             tick.TradingDay = current.TradingDay - prev.TradingDay;
             tick.ActionDay = current.ActionDay - prev.ActionDay;
-            
 
             tick.Time_HHmm = current.Time_HHmm - prev.Time_HHmm;
             tick.Time________ff = current.Time________ff - prev.Time________ff;
             // 这个地方有区别要减去一个差，将时间再缩小
             tick.Time_____ssf__ = current.Time_____ssf__ - prev.Time_____ssf__ - _config.Time_ssf_Diff;
-
+            #endregion
 
             #region Bar数据
+            // Bar数据要进行差分计算
             if (current.Bar != null || prev.Bar != null)
             {
                 tick.Bar = new BarInfo();
@@ -1034,8 +1012,7 @@ namespace QuantBox.Data.Serializer
                 tick.Bar.Close = current.Bar.Close - prev.Bar.Close;
                 tick.Bar.BarSize = current.Bar.BarSize - prev.Bar.BarSize;
 
-                if (tick.Bar.Open == 0 && tick.Bar.High == 0 && tick.Bar.Low == 0 && tick.Bar.Close == 0
-                    && tick.Bar.BarSize == 0)
+                if (tick.Bar.IsZero)
                     tick.Bar = null;
             }
             #endregion
@@ -1052,38 +1029,26 @@ namespace QuantBox.Data.Serializer
                 tick.Static.LowerLimitPrice = current.Static.LowerLimitPrice - prev.Static.LowerLimitPrice;
                 tick.Static.UpperLimitPrice = current.Static.UpperLimitPrice - prev.Static.UpperLimitPrice;
                 tick.Static.SettlementPrice = current.Static.SettlementPrice - prev.Static.SettlementPrice;
-                tick.Static.Multiplier = current.Static.Multiplier - prev.Static.Multiplier;
 
-                if (tick.Static.LowerLimitPrice == 0
-                    && tick.Static.UpperLimitPrice == 0
-                    && tick.Static.SettlementPrice == 0
-                    && tick.Static.Multiplier == 0
-                    && tick.Static.Symbol == null
-                    && tick.Static.Exchange == null)
+                if (!string.Equals(current.Static.Exchange,prev.Static.Exchange))
+                    tick.Static.Exchange = current.Static.Exchange;
+
+                if (!string.Equals(current.Static.Symbol, prev.Static.Symbol))
+                    tick.Static.Symbol = current.Static.Symbol;
+                
+
+                if (tick.Static.IsZero)
                     tick.Static = null;
             }
             #endregion
 
             #region 除权除息数据
-            if (current.Split != null || prev.Split != null)
+            // 除权除息数据本来就是稀疏矩阵，不需要做差分
+            if (current.Split != null)
             {
-                tick.Split = new StockSplitInfo();
-                if (current.Split == null)
-                    current.Split = new StockSplitInfo();
-                if (prev.Split == null)
-                    prev.Split = new StockSplitInfo();
+                tick.Split = current.Split;
 
-                tick.Split.CashDividend = current.Split.CashDividend - prev.Split.CashDividend;
-                tick.Split.StockDividend = current.Split.StockDividend - prev.Split.StockDividend;
-                tick.Split.RightsOffering = current.Split.RightsOffering - prev.Split.RightsOffering;
-                tick.Split.RightsOfferingPrice = current.Split.RightsOfferingPrice - prev.Split.RightsOfferingPrice;
-                tick.Split.AdjustingFactor = current.Split.AdjustingFactor - prev.Split.AdjustingFactor;
-
-                if (tick.Split.CashDividend == 0
-                    && tick.Split.StockDividend == 0
-                    && tick.Split.RightsOffering == 0
-                    && tick.Split.RightsOfferingPrice == 0
-                    && tick.Split.AdjustingFactor == 0)
+                if (tick.Split.IsZero)
                     tick.Split = null;
             }
             #endregion
@@ -1120,13 +1085,13 @@ namespace QuantBox.Data.Serializer
                 tick.Config.TickSizeMultiplier = prev.Config.TickSizeMultiplier + diff.Config.TickSizeMultiplier;
                 tick.Config.SettlementPriceMultiplier = prev.Config.SettlementPriceMultiplier + diff.Config.SettlementPriceMultiplier;
                 tick.Config.AveragePriceMultiplier = prev.Config.AveragePriceMultiplier + diff.Config.AveragePriceMultiplier;
-                tick.Config.TurnoverMultiplier = prev.Config.TurnoverMultiplier + diff.Config.TurnoverMultiplier;
+                tick.Config.ContractMultiplier = prev.Config.ContractMultiplier + diff.Config.ContractMultiplier;
                 tick.Config.Time_ssf_Diff = prev.Config.Time_ssf_Diff + diff.Config.Time_ssf_Diff;
             }
             #endregion
 
             _config = tick.Config;
-            TickSize = _config.TickSize / _config.TickSizeMultiplier;
+            TickSize = _config.GetTickSize();
 
             tick.LastPrice = prev.LastPrice + diff.LastPrice;
 
@@ -1317,6 +1282,7 @@ namespace QuantBox.Data.Serializer
             }
             #endregion
 
+            #region 常用行情信息
             tick.Volume = prev.Volume + diff.Volume;
             tick.OpenInterest = prev.OpenInterest + diff.OpenInterest;
             tick.Turnover = prev.Turnover + diff.Turnover;
@@ -1328,6 +1294,7 @@ namespace QuantBox.Data.Serializer
             tick.Time________ff = prev.Time________ff + diff.Time________ff;
             // 还原时间
             tick.Time_____ssf__ = prev.Time_____ssf__ + diff.Time_____ssf__ + _config.Time_ssf_Diff;
+            #endregion
 
             #region Bar数据
             if (prev.Bar != null || diff.Bar != null)
@@ -1358,7 +1325,6 @@ namespace QuantBox.Data.Serializer
                 tick.Static.LowerLimitPrice = prev.Static.LowerLimitPrice + diff.Static.LowerLimitPrice;
                 tick.Static.UpperLimitPrice = prev.Static.UpperLimitPrice + diff.Static.UpperLimitPrice;
                 tick.Static.SettlementPrice = prev.Static.SettlementPrice + diff.Static.SettlementPrice;
-                tick.Static.Multiplier = prev.Static.Multiplier + diff.Static.Multiplier;
 
                 tick.Static.Symbol = string.IsNullOrWhiteSpace(diff.Static.Symbol) ? prev.Static.Symbol : diff.Static.Symbol;
                 tick.Static.Exchange = string.IsNullOrWhiteSpace(diff.Static.Exchange) ? prev.Static.Exchange : diff.Static.Exchange;
@@ -1366,19 +1332,10 @@ namespace QuantBox.Data.Serializer
             #endregion
 
             #region 除权除息数据
-            if (prev.Split != null || diff.Split != null)
+            // 没有做过差分，所以直接返回
+            if (diff.Split != null)
             {
-                tick.Split = new StockSplitInfo();
-                if (prev.Split == null)
-                    prev.Split = new StockSplitInfo();
-                if (diff.Split == null)
-                    diff.Split = new StockSplitInfo();
-
-                tick.Split.CashDividend = prev.Split.CashDividend + diff.Split.CashDividend;
-                tick.Split.StockDividend = prev.Split.StockDividend + diff.Split.StockDividend;
-                tick.Split.RightsOffering = prev.Split.RightsOffering + diff.Split.RightsOffering;
-                tick.Split.RightsOfferingPrice = prev.Split.RightsOfferingPrice + diff.Split.RightsOfferingPrice;
-                tick.Split.AdjustingFactor = prev.Split.AdjustingFactor + diff.Split.AdjustingFactor;
+                tick.Split = diff.Split;
             }
             #endregion
 

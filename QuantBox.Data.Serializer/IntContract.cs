@@ -75,20 +75,26 @@ namespace QuantBox.Data.Serializer
         [ProtoMember(3, DataFormat = DataFormat.ZigZag)]
         public int SettlementPrice;
         /// <summary>
-        /// 合约乘数
-        /// </summary>
-        [ProtoMember(4)]
-        public int Multiplier;
-        /// <summary>
         /// 合约名称
         /// </summary>
-        [ProtoMember(5)]
+        [ProtoMember(4)]
         public string Symbol;
         /// <summary>
         /// 交易所
         /// </summary>
-        [ProtoMember(6)]
+        [ProtoMember(5)]
         public string Exchange;
+        public bool IsZero
+        {
+            get
+            {
+                return LowerLimitPrice == 0
+                    && UpperLimitPrice == 0
+                    && SettlementPrice == 0
+                    && string.IsNullOrWhiteSpace(Symbol)
+                    && string.IsNullOrWhiteSpace(Exchange);
+            }
+        }
     }
 
     [ProtoContract]
@@ -119,6 +125,18 @@ namespace QuantBox.Data.Serializer
         /// </summary>
         [ProtoMember(5, DataFormat = DataFormat.ZigZag)]
         public int BarSize;
+
+        public bool IsZero
+        {
+            get
+            {
+                return Open == 0
+                    && High == 0
+                    && Low == 0
+                    && Close == 0
+                    && BarSize == 0;
+            }
+        }
     }
 
     /// <summary>
@@ -154,15 +172,40 @@ namespace QuantBox.Data.Serializer
         [ProtoMember(5)]
         public int AveragePriceMultiplier;
         /// <summary>
-        /// 成交额乘数，实际值/TurnoverMultiplier,只保存了万元，在深虚值期权中会丢失信息
+        /// 合约乘数
         /// </summary>
         [ProtoMember(6)]
-        public double TurnoverMultiplier;
+        public double ContractMultiplier;
         /// <summary>
         /// ssf默认时间差，股指是500ms，Time_____ssf__会算出大量的5，默认减去此数还原成0
         /// </summary>
         [ProtoMember(7)]
         public int Time_ssf_Diff;
+
+        public bool IsZero
+        {
+            get
+            {
+                return Version == 0
+                    && TickSize == 0
+                    && TickSizeMultiplier == 0
+                    && SettlementPriceMultiplier == 0
+                    && AveragePriceMultiplier == 0
+                    && ContractMultiplier == 0
+                    && Time_ssf_Diff == 0;
+            }
+        }
+
+        public bool IsSame(ConfigInfo config)
+        {
+            return Version == config.Version
+                && TickSize == config.TickSize
+                && TickSizeMultiplier == config.TickSizeMultiplier
+                && SettlementPriceMultiplier == config.SettlementPriceMultiplier
+                && AveragePriceMultiplier == config.AveragePriceMultiplier
+                && ContractMultiplier == config.ContractMultiplier
+                && Time_ssf_Diff == config.Time_ssf_Diff;
+        }
 
         public void SetTickSize(double val)
         {
@@ -174,6 +217,13 @@ namespace QuantBox.Data.Serializer
             return TickSize / TickSizeMultiplier;
         }
 
+        public double TurnoverMultiplier
+        {
+            get {
+                return TickSize * ContractMultiplier / TickSizeMultiplier;
+            }
+        }
+
         public ConfigInfo Default()
         {
             Version = 1;
@@ -181,7 +231,7 @@ namespace QuantBox.Data.Serializer
             TickSizeMultiplier = 10000.0;
             SettlementPriceMultiplier = 100;
             AveragePriceMultiplier = 100;
-            TurnoverMultiplier = 10000;
+            ContractMultiplier = 1;
             Time_ssf_Diff = 0;
 
             return this;
@@ -194,7 +244,7 @@ namespace QuantBox.Data.Serializer
             TickSizeMultiplier = 1;
             SettlementPriceMultiplier = 1;
             AveragePriceMultiplier = 1;
-            TurnoverMultiplier = 1;
+            ContractMultiplier = 1;
             Time_ssf_Diff = 0;
 
             return this;
@@ -227,95 +277,113 @@ namespace QuantBox.Data.Serializer
         /// </summary>
         [ProtoMember(4)]
         public double RightsOfferingPrice;
-
+        /// <summary>
+        /// 
+        /// 除权因子一定要有前一日收盘价的信息才能正确算出，
+        /// </summary>
+        [ProtoMember(5)]
+        public double PreClose;
         /// <summary>
         /// 复权因子就是权息修复比例
         /// 计算向后复权价格：向后复权价格 = 原始价格 * 复权因子
         /// http://blog.sina.com.cn/s/blog_50dfbb0b0100b6ly.html
         /// 除权价＝（除权前一日收盘价＋配股价Ｘ配股比率－每股派息）／（１＋配股比率＋送股比率）
         /// 除权因子=收盘价/除权价
-        /// 
-        /// fV = 1 + StockDividend + RightsOffering;
-        /// fP = RightsOfferingPrice *RightsOffering - CashDividend;
-        /// 
-        /// fSplitPrice = (fLastClose+fP)/fV;
-        /// fV = fLastClose/fSplitPrice;
-		///	fP = 0;
         ///	
         /// Price = m_fClose*fV - fP;
-        /// 
-        /// 除权因子一定要有前一日收盘价的信息才能正确算出，
         /// </summary>
-        [ProtoMember(5)]
-        public double AdjustingFactor;
+        public double AdjustingFactor
+        {
+            get
+            {
+                // 这地方可能有问题，先放着
+                double fV = 1 + StockDividend + RightsOffering;
+                double fP = RightsOfferingPrice * RightsOffering - CashDividend;
+                double fS = (PreClose + fP) / fV;
+
+                return PreClose/fS;
+            }
+        }
+
+        public bool IsZero
+        {
+            get
+            {
+                return CashDividend == 0
+                    && StockDividend == 0
+                    && RightsOffering == 0
+                    && RightsOfferingPrice == 0
+                    && PreClose == 0;
+            }
+        }
     }
 
     [ProtoContract]
     public class PbTick
     {
         /// <summary>
+        /// 配置信息，有就代表是快照，而不是差分
+        /// </summary>
+        [ProtoMember(1)]
+        public ConfigInfo Config;
+        /// <summary>
         /// 与上一笔的比
         /// </summary>
-        [ProtoMember(1, DataFormat = DataFormat.ZigZag)]
+        [ProtoMember(2, DataFormat = DataFormat.ZigZag)]
         public int LastPrice;
         /// <summary>
         /// 成交量
         /// </summary>
-        [ProtoMember(2, DataFormat = DataFormat.ZigZag)]
+        [ProtoMember(3, DataFormat = DataFormat.ZigZag)]
         public long Volume;
         /// <summary>
         /// 持仓量
         /// </summary>
-        [ProtoMember(3, DataFormat = DataFormat.ZigZag)]
+        [ProtoMember(4, DataFormat = DataFormat.ZigZag)]
         public long OpenInterest;
         /// <summary>
-        /// 成交额,实际值*1000
-        /// </summary>
-        [ProtoMember(4, DataFormat = DataFormat.ZigZag)]
-        public long Turnover;
-        /// <summary>
-        /// 均价,实际值/10000
+        /// 成交额
         /// </summary>
         [ProtoMember(5, DataFormat = DataFormat.ZigZag)]
+        public long Turnover;
+        /// <summary>
+        /// 均价
+        /// </summary>
+        [ProtoMember(6, DataFormat = DataFormat.ZigZag)]
         public int AveragePrice;
 
         /// <summary>
         /// 交易日
         /// </summary>
-        [ProtoMember(6, DataFormat = DataFormat.ZigZag)]
+        [ProtoMember(7, DataFormat = DataFormat.ZigZag)]
         public int TradingDay;      
         /// <summary>
         /// 实际日期
         /// </summary>
-        [ProtoMember(7, DataFormat = DataFormat.ZigZag)]
-        public int ActionDay;
         [ProtoMember(8, DataFormat = DataFormat.ZigZag)]
-        public int Time_HHmm;
+        public int ActionDay;
         [ProtoMember(9, DataFormat = DataFormat.ZigZag)]
-        public int Time_____ssf__;
+        public int Time_HHmm;
         [ProtoMember(10, DataFormat = DataFormat.ZigZag)]
+        public int Time_____ssf__;
+        [ProtoMember(11, DataFormat = DataFormat.ZigZag)]
         public int Time________ff;
 
         /// <summary>
         /// N档数据
         /// </summary>
-        [ProtoMember(11)]
+        [ProtoMember(12)]
         public DepthTick Depth1_3;
         /// <summary>
         /// Bar数据或高开低收
         /// </summary>
-        [ProtoMember(12)]
+        [ProtoMember(13)]
         public BarInfo Bar;
         /// <summary>
         /// 涨跌停价格及结算价
         /// </summary>
-        [ProtoMember(13)]
-        public StaticInfo Static;
-        /// <summary>
-        /// 配置信息，有就代表是快照，而不是差分
-        /// </summary>
         [ProtoMember(14)]
-        public ConfigInfo Config;
+        public StaticInfo Static;
         /// <summary>
         /// 除权除息
         /// </summary>

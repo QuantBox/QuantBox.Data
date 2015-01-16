@@ -51,10 +51,6 @@ namespace QuantBox.Data.Serializer
         /// </summary>
         public double SettlementPrice { get; set; }
         /// <summary>
-        /// 合约乘数
-        /// </summary>
-        public int Multiplier { get; set; }
-        /// <summary>
         /// 合约名称
         /// </summary>
         public string Symbol { get; set; }
@@ -100,7 +96,7 @@ namespace QuantBox.Data.Serializer
 
         public int AveragePriceMultiplier { get; set; }
 
-        public double TurnoverMultiplier { get; set; }
+        public double ContractMultiplier { get; set; }
 
         public int Time_ssf_Diff { get; set; }
     }
@@ -111,11 +107,14 @@ namespace QuantBox.Data.Serializer
         public double StockDividend { get; set; }
         public double RightsOffering { get; set; }
         public double RightsOfferingPrice { get; set; }
+
+        public double PreClose { get; set; }
         public double AdjustingFactor { get; set; }
     }
 
     public class PbTickView
     {
+        public ConfigInfoView Config { get; set; }
         /// <summary>
         /// 与上一笔的比
         /// </summary>
@@ -163,8 +162,6 @@ namespace QuantBox.Data.Serializer
         /// 涨跌停价格及结算价
         /// </summary>
         public StaticInfoView Static { get; set; }
-
-        public ConfigInfoView Config { get; set; }
 
         public StockSplitInfoView Split { get; set; }
 

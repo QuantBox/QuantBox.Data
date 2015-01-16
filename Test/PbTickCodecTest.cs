@@ -280,6 +280,7 @@ namespace Test
             PbTickCodec codec = new PbTickCodec();
 
             codec.Config.SetTickSize(0.2);
+            codec.Config.ContractMultiplier = 50000;
             codec.Config.Time_ssf_Diff = 5;
             codec.UseFlat(false);
 
@@ -298,11 +299,11 @@ namespace Test
             Assert.AreEqual<long>(9123456789012345678, codec.GetOpenInterest(tick1));
             Assert.AreEqual<long>(1234567890, codec.GetVolume(tick1));
 
-            codec.Config.TurnoverMultiplier = 1;
+            codec.Config.ContractMultiplier = 5;
             codec.SetTurnover(tick1, 1234567890123456);
             Assert.AreEqual<double>(1234567890123456, codec.GetTurnover(tick1));
 
-            codec.Config.TurnoverMultiplier = 0.01;
+            codec.Config.ContractMultiplier = 0.1;
             codec.SetTurnover(tick1, 12345678901234.56);
             Assert.AreEqual<double>(12345678901234.56, codec.GetTurnover(tick1));
         }
@@ -336,12 +337,10 @@ namespace Test
 
             tick1.Config = codec.Config;
 
-            codec.SetMultiplier(tick1, 1234);
             codec.SetSymbol(tick1, "ABC");
             codec.SetExchange(tick1, "DEF");
 
             PbTick tick2 = new PbTick();
-            codec.SetMultiplier(tick2, 1234);
             codec.SetSymbol(tick2, "ABC");
             codec.SetExchange(tick2, "DEF");
 
@@ -371,7 +370,7 @@ namespace Test
             pts.Codec.Config.SetTickSize(0.2);
             pts.Codec.Config.Time_ssf_Diff = 5;
 
-            using (Stream stream = File.OpenWrite(@"d:\wukan\Desktop\if_all\IF1406.data"))
+            using (Stream stream = File.Open(@"d:\wukan\Desktop\if_all\IF1406.data", FileMode.Create))
             {
                 using (StreamReader file = new StreamReader(fi.OpenRead()))
                 {
@@ -428,12 +427,12 @@ namespace Test
         public void TestReadCsvLeve2()
         {
             FileInfo fi = new FileInfo(@"D:\wukan\Desktop\20141225\20141225.csv");
-            FileInfo fo = new FileInfo(@"D:\wukan\Desktop\20141225\20141225.data");
+            FileInfo fo = new FileInfo(@"D:\wukan\Desktop\20141225\20141225.pd0");
 
             PbTickSerializer pts = new PbTickSerializer();
 
 
-            using (Stream stream = File.OpenWrite(@"D:\wukan\Desktop\20141225\20141225.data"))
+            using (Stream stream = File.Open(@"D:\wukan\Desktop\20141225\20141225.pd0", FileMode.Create))
             {
                 using (StreamReader file = new StreamReader(fi.OpenRead()))
                 {
@@ -457,16 +456,27 @@ namespace Test
                         if (arr[0].StartsWith("TF"))
                         {
                             tick.Config.SetTickSize(0.002);
+                            tick.Config.ContractMultiplier = 10000;
                         }
                         else
                         {
                             tick.Config.SetTickSize(0.2);
+                            tick.Config.ContractMultiplier = 300;
                         }
                         tick.Config.Time_ssf_Diff = 5;
-                        tick.Config.TurnoverMultiplier = 1;
-
+                        
                         pts.Codec.Config = tick.Config;
                         pts.Codec.UseFlat(false);
+
+                        if(i == 2)
+                        {
+                            tick.Split = new StockSplitInfo();
+                            tick.Split.StockDividend = 10;
+                        }
+                        if(i == 3)
+                        {
+
+                        }
 
                         tick.ActionDay = int.Parse(arr[5]);
                         int time = int.Parse(arr[6]);
