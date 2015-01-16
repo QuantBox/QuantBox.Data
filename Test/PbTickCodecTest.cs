@@ -103,8 +103,8 @@ namespace Test
             codec.SetSettlementPrice(tick, 1234.56);
             Assert.AreEqual<double>(1234.56, codec.GetSettlementPrice(tick), "SettlementPrice");
 
-            codec.SetTurnover(tick, 4567.89);
-            Assert.AreEqual<double>(0, codec.GetTurnover(tick), "Turnover");
+            codec.SetTurnover(tick, 4567.8);
+            Assert.AreEqual<double>(4567.8, codec.GetTurnover(tick), "Turnover");
         }
 
         [TestMethod]
@@ -426,13 +426,13 @@ namespace Test
         [TestMethod]
         public void TestReadCsvLeve2()
         {
-            FileInfo fi = new FileInfo(@"D:\wukan\Desktop\20141225\20141225.csv");
-            FileInfo fo = new FileInfo(@"D:\wukan\Desktop\20141225\20141225.pd0");
+            FileInfo fi = new FileInfo(@"F:\BaiduYunDownload\20141225\20141225.csv");
+            FileInfo fo = new FileInfo(@"F:\BaiduYunDownload\20141225\20141225.pd0");
 
             PbTickSerializer pts = new PbTickSerializer();
 
 
-            using (Stream stream = File.Open(@"D:\wukan\Desktop\20141225\20141225.pd0", FileMode.Create))
+            using (Stream stream = File.Open(@"F:\BaiduYunDownload\20141225\20141225.pd0", FileMode.Create))
             {
                 using (StreamReader file = new StreamReader(fi.OpenRead()))
                 {
@@ -468,15 +468,16 @@ namespace Test
                         pts.Codec.Config = tick.Config;
                         pts.Codec.UseFlat(false);
 
-                        if(i == 2)
-                        {
-                            tick.Split = new StockSplitInfo();
-                            tick.Split.StockDividend = 10;
-                        }
-                        if(i == 3)
-                        {
-
-                        }
+                        //if(i == 1)
+                        //{
+                        //    tick.Split = new StockSplitInfo();
+                        //    tick.Split.StockDividend = 10;
+                        //}
+                        //if(i == 2)
+                        //{
+                        //    tick.Split = new StockSplitInfo();
+                        //    tick.Split.CashDividend = 10;
+                        //}
 
                         tick.ActionDay = int.Parse(arr[5]);
                         int time = int.Parse(arr[6]);

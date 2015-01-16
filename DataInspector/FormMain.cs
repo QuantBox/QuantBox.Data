@@ -64,7 +64,7 @@ namespace DataInspector
             CheckSaved();
 
             OpenFileDialog openFileDialog = new OpenFileDialog();
-            openFileDialog.Filter = "Portable Data Zero files (*.pd0)|*.pd0|All files (*.*)|*.*";
+            openFileDialog.Filter = "Protobuf Data Zero files (*.pd0)|*.pd0|All files (*.*)|*.*";
 
             if (openFileDialog.ShowDialog() == DialogResult.OK)
             {

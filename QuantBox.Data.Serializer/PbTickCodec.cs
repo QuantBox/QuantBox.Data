@@ -760,24 +760,38 @@ namespace QuantBox.Data.Serializer
             PbTick tick = new PbTick();
 
             #region 配置数据
-            if (current.Config != null || prev.Config != null)
+            // 当前数据为空或前后相同，表示
+            if(current.Config == null || prev.Config.IsSame(current.Config))
             {
-                tick.Config = new ConfigInfo();
-                if (current.Config == null)
-                    current.Config = new ConfigInfo();
-                if (prev.Config == null)
-                    prev.Config = new ConfigInfo();
-
-                tick.Config.Version = current.Config.Version - prev.Config.Version;
-                tick.Config.TickSize = current.Config.TickSize - prev.Config.TickSize;
-                tick.Config.TickSizeMultiplier = current.Config.TickSizeMultiplier - prev.Config.TickSizeMultiplier;
-                tick.Config.SettlementPriceMultiplier = current.Config.SettlementPriceMultiplier - prev.Config.SettlementPriceMultiplier;
-                tick.Config.AveragePriceMultiplier = current.Config.AveragePriceMultiplier - prev.Config.AveragePriceMultiplier;
-                tick.Config.Time_ssf_Diff = current.Config.Time_ssf_Diff - prev.Config.Time_ssf_Diff;
-
-                if (tick.Config.IsZero)
-                    tick.Config = null;
+                tick.Config = null;
+                // 可以继续下去
             }
+            else
+            {
+                // 是新数据，返回快照
+                _config = current.Config;
+                TickSize = _config.GetTickSize();
+
+                return current;
+            }
+            //if (current.Config != null || prev.Config != null)
+            //{
+            //    tick.Config = new ConfigInfo();
+            //    if (current.Config == null)
+            //        current.Config = new ConfigInfo();
+            //    if (prev.Config == null)
+            //        prev.Config = new ConfigInfo();
+
+            //    tick.Config.Version = current.Config.Version - prev.Config.Version;
+            //    tick.Config.TickSize = current.Config.TickSize - prev.Config.TickSize;
+            //    tick.Config.TickSizeMultiplier = current.Config.TickSizeMultiplier - prev.Config.TickSizeMultiplier;
+            //    tick.Config.SettlementPriceMultiplier = current.Config.SettlementPriceMultiplier - prev.Config.SettlementPriceMultiplier;
+            //    tick.Config.AveragePriceMultiplier = current.Config.AveragePriceMultiplier - prev.Config.AveragePriceMultiplier;
+            //    tick.Config.Time_ssf_Diff = current.Config.Time_ssf_Diff - prev.Config.Time_ssf_Diff;
+
+            //    if (tick.Config.IsZero)
+            //        tick.Config = null;
+            //}
             #endregion
 
             // 先取最关键的数据，因为前一条的config总会补成有效
@@ -1064,6 +1078,7 @@ namespace QuantBox.Data.Serializer
                     throw new Exception("快照的配置不能为空");
                 // 记下配置，要用到
                 _config = diff.Config;
+                TickSize = _config.GetTickSize();
                 // 是快照，直接返回
                 return diff;
             }
@@ -1071,23 +1086,37 @@ namespace QuantBox.Data.Serializer
             var tick = new PbTick();
 
             #region 配置数据
-            // 前一条有配置，后一条没有配置，很简单，后一条等于前一条即可
-            if (prev.Config != null || diff.Config != null)
+            if (diff.Config == null)
             {
-                tick.Config = new ConfigInfo();
-                if (prev.Config == null)
-                    prev.Config = new ConfigInfo();
-                if (diff.Config == null)
-                    diff.Config = new ConfigInfo();
-
-                tick.Config.Version = prev.Config.Version + diff.Config.Version;
-                tick.Config.TickSize = prev.Config.TickSize + diff.Config.TickSize;
-                tick.Config.TickSizeMultiplier = prev.Config.TickSizeMultiplier + diff.Config.TickSizeMultiplier;
-                tick.Config.SettlementPriceMultiplier = prev.Config.SettlementPriceMultiplier + diff.Config.SettlementPriceMultiplier;
-                tick.Config.AveragePriceMultiplier = prev.Config.AveragePriceMultiplier + diff.Config.AveragePriceMultiplier;
-                tick.Config.ContractMultiplier = prev.Config.ContractMultiplier + diff.Config.ContractMultiplier;
-                tick.Config.Time_ssf_Diff = prev.Config.Time_ssf_Diff + diff.Config.Time_ssf_Diff;
+                // 使用上条的配置
+                tick.Config = prev.Config;
             }
+            else
+            {
+                // 新配置
+                _config = diff.Config;
+                TickSize = _config.GetTickSize();
+                // 是快照，直接返回
+                return diff;
+            }
+
+            // 前一条有配置，后一条没有配置，很简单，后一条等于前一条即可
+            //if (prev.Config != null || diff.Config != null)
+            //{
+            //    tick.Config = new ConfigInfo();
+            //    if (prev.Config == null)
+            //        prev.Config = new ConfigInfo();
+            //    if (diff.Config == null)
+            //        diff.Config = new ConfigInfo();
+
+            //    tick.Config.Version = prev.Config.Version + diff.Config.Version;
+            //    tick.Config.TickSize = prev.Config.TickSize + diff.Config.TickSize;
+            //    tick.Config.TickSizeMultiplier = prev.Config.TickSizeMultiplier + diff.Config.TickSizeMultiplier;
+            //    tick.Config.SettlementPriceMultiplier = prev.Config.SettlementPriceMultiplier + diff.Config.SettlementPriceMultiplier;
+            //    tick.Config.AveragePriceMultiplier = prev.Config.AveragePriceMultiplier + diff.Config.AveragePriceMultiplier;
+            //    tick.Config.ContractMultiplier = prev.Config.ContractMultiplier + diff.Config.ContractMultiplier;
+            //    tick.Config.Time_ssf_Diff = prev.Config.Time_ssf_Diff + diff.Config.Time_ssf_Diff;
+            //}
             #endregion
 
             _config = tick.Config;
