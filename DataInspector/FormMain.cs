@@ -69,28 +69,7 @@ namespace DataInspector
             if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
                 string pathChosen = openFileDialog.FileName;
-
-                try
-                {
-                    listTickData = PbTickSerializer.Read(pathChosen);
-                    FileInfo fi = new FileInfo(pathChosen);
-
-                    strCurrentFileName = string.Format("{0} ({1}/{2}={3})",
-                        openFileDialog.SafeFileName, fi.Length, listTickData.Count(), (double)fi.Length / listTickData.Count());
-
-                    ValueChanged(false);
-
-                    PbTickCodec Codec = new PbTickCodec();
-
-                    listTickView = Codec.Data2View(this.listTickData, true);
-                    dgvTick.DataSource = this.listTickView;
-
-                    SingleCheck(menuView_Diff);
-                }
-                catch(Exception ex)
-                {
-                    MessageBox.Show(ex.ToString());
-                }
+                ReadFromFile(pathChosen);
             }
         }
 
@@ -382,6 +361,50 @@ namespace DataInspector
                 TextFormatFlags.VerticalCenter | TextFormatFlags.Right);
         }
 
+        private void dgvTick_DragDrop(object sender, DragEventArgs e)
+        {
+            string pathChosen = ((System.Array)e.Data.GetData(DataFormats.FileDrop)).GetValue(0).ToString();
+            ReadFromFile(pathChosen);
+        }
 
+        private void dgvTick_DragEnter(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                e.Effect = DragDropEffects.Copy;
+            }
+            else
+            {
+                e.Effect = DragDropEffects.None;
+            }
+        }
+
+        private void ReadFromFile(string pathChosen)
+        {
+            try
+            {
+                listTickData = PbTickSerializer.Read(pathChosen);
+                FileInfo fi = new FileInfo(pathChosen);
+
+                int index = pathChosen.LastIndexOf(@"\");
+                string safeFileName = pathChosen.Substring(index + 1, pathChosen.Length - index - 1);
+
+                strCurrentFileName = string.Format("{0} ({1}/{2}={3})",
+                    safeFileName, fi.Length, listTickData.Count(), (double)fi.Length / listTickData.Count());
+
+                ValueChanged(false);
+
+                PbTickCodec Codec = new PbTickCodec();
+
+                listTickView = Codec.Data2View(this.listTickData, true);
+                dgvTick.DataSource = this.listTickView;
+
+                SingleCheck(menuView_Diff);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
+            }
+        }
     }
 }
