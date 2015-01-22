@@ -2,6 +2,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using QuantBox.Data.Serializer;
 using System.IO;
+using System.Collections.Generic;
 
 namespace Test
 {
@@ -322,6 +323,7 @@ namespace Test
 
             Assert.AreEqual<double>(0.1, codec.gcd(100.0f - 100.3f, 100.0f - 100.2f));
             Assert.AreEqual<double>(0.05, codec.gcd(100.0f - 100.3f, 100.0f - 100.2f, 100.0f - 100.1f, 100.05f - 100.1f));
+            Assert.AreEqual<double>(10, codec.gcd(1000, 41430));
         }
 
         [TestMethod]
@@ -363,14 +365,14 @@ namespace Test
         [TestMethod]
         public void TestReadCsvLeve1()
         {
-            FileInfo fi = new FileInfo(@"d:\wukan\Desktop\if_all\IF1406.csv");
-            FileInfo fo = new FileInfo(@"d:\wukan\Desktop\if_all\IF1406.data");
+            FileInfo fi = new FileInfo(@"F:\BaiduYunDownload\IF1406\IF1406.csv");
+            FileInfo fo = new FileInfo(@"F:\BaiduYunDownload\IF1406\IF1406.pd0");
 
             PbTickSerializer pts = new PbTickSerializer();
             pts.Codec.Config.SetTickSize(0.2);
             pts.Codec.Config.Time_ssf_Diff = 5;
 
-            using (Stream stream = File.Open(@"d:\wukan\Desktop\if_all\IF1406.data", FileMode.Create))
+            using (Stream stream = File.Open(@"F:\BaiduYunDownload\IF1406\IF1406.pd0", FileMode.Create))
             {
                 using (StreamReader file = new StreamReader(fi.OpenRead()))
                 {
@@ -520,6 +522,253 @@ namespace Test
 
                         pts.Write(tick, new Stream[] { stream });
 
+                    } while (str != null);
+                    file.Close();
+                }
+            }
+        }
+
+
+        class AAA
+        {
+            public string symbol;
+            public string time;
+            public bool buy;
+            public double price;
+            public int size;
+        }
+
+        class BBB
+        {
+            public double TickSize = 1000;
+            public string symbol;
+            public string time;
+            private List<AAA> Asks = new List<AAA>(); // 先存数字大的，后存数字小的，最后是卖一
+            private List<AAA> Bids = new List<AAA>(); // 先存数字大的，后存数字小的，最前是买一
+            public PbTick tick;
+            public PbTickCodec Codec = new PbTickCodec();
+
+            public void AddAsk(AAA a)
+            {
+                // 由小到大
+                if (Asks.Count > 1)
+                {
+                    double diff = a.price - Asks[Asks.Count - 1].price;
+                    if (diff > 0)
+                        TickSize = Codec.gcd(TickSize, diff);
+                }
+                else
+                {
+                    TickSize = Codec.gcd(TickSize, a.price);
+                }
+                Asks.Add(a);
+            }
+
+            public void AddBid(AAA b)
+            {
+                // 由大到小
+                if (Bids.Count > 1)
+                {
+                    double diff = Bids[Bids.Count - 1].price - b.price;
+                    if(diff>0)
+                        TickSize = Codec.gcd(TickSize, diff);
+                }
+                else
+                {
+                    TickSize = Codec.gcd(TickSize, b.price);
+                }
+                Bids.Add(b);
+            }
+
+            public void CalcTickSize()
+            {
+                if (Bids.Count > 1 && Asks.Count > 1)
+                {
+                    double ts3 = Asks[0].price - Bids[Bids.Count - 1].price;
+                    if (ts3 > 0)
+                    {
+                        TickSize = Codec.gcd(TickSize, ts3);
+                    }
+                }
+            }
+
+            public void MakeTick()
+            {
+                tick = new PbTick();
+                tick.Config = new ConfigInfo().Default();
+
+                CalcTickSize();
+
+                tick.Config.SetTickSize(TickSize);
+                tick.Config.Time_ssf_Diff = 10;
+
+                
+                Codec.Config = tick.Config;
+                Codec.UseFlat(false);
+
+                int HH = int.Parse(time.Substring(0, 2));
+                int mm = int.Parse(time.Substring(3, 2));
+                int ss = int.Parse(time.Substring(6, 2));
+
+                tick.Time_HHmm = HH * 100 + mm;
+                tick.Time_____ssf__ = ss * 10;
+
+                tick.TradingDay = 20150120;
+
+                //if()
+                //{
+
+                //}
+
+                int i = 0;
+                foreach(var b in Bids)
+                {
+                    ++i;
+                    Codec.SetBidPrice(tick, i, b.price);
+                    Codec.SetBidSize(tick, i, b.size);
+                }
+                i = 0;
+                foreach (var a in Asks)
+                {
+                    ++i;
+                    Codec.SetAskPrice(tick, i, a.price);
+                    Codec.SetAskSize(tick, i, a.size);
+                }
+                Codec.SetSymbol(tick, symbol);
+            }
+
+            public void Reset()
+            {
+                Asks = null;
+                Bids = null;
+            }
+        }
+
+        class CCC
+        {
+            public Dictionary<string, BBB> dict = new Dictionary<string, BBB>();
+            public Dictionary<string, PbTickSerializer> dict2 = new Dictionary<string, PbTickSerializer>();
+            public Dictionary<string, Stream> dict3 = new Dictionary<string, Stream>();
+
+            public BBB Get(string symbol)
+            {
+                BBB list;
+                if (!dict.TryGetValue(symbol, out list))
+                {
+                    list = new BBB();
+                    dict.Add(symbol, list);
+                }
+                return list;
+            }
+
+            public PbTickSerializer GetSerializer(string symbol)
+            {
+                PbTickSerializer list;
+                if (!dict2.TryGetValue(symbol, out list))
+                {
+                    list = new PbTickSerializer();
+                    dict2.Add(symbol, list);
+                }
+                return list;
+            }
+
+            public Stream GetStream(string symbol)
+            {
+                Stream list;
+                if (!dict3.TryGetValue(symbol, out list))
+                {
+                    list = File.Open(@"d:\wukan\Desktop\DepthDataShow\" + symbol + ".pd0", FileMode.Create);
+                    dict3.Add(symbol, list);
+                }
+                return list;
+            }
+        }
+
+
+
+        [TestMethod]
+        public void TestReadCsvLeve3()
+        {
+            FileInfo fi = new FileInfo(@"d:\wukan\Desktop\DepthDataShow\20150120.txt");
+            //FileInfo fo = new FileInfo(@"F:\BaiduYunDownload\DepthDataShow\20150120.pd0");
+
+            PbTickSerializer pts = new PbTickSerializer();
+
+            CCC ccc = new CCC();
+            CCC last_ccc = new CCC();
+
+            AAA last = new AAA();
+            last.buy = false;
+
+            string last_symbol = "XXX";
+
+            List<AAA> list = new List<AAA>();
+
+            //using (Stream stream = File.Open(@"F:\BaiduYunDownload\DepthDataShow\20150120.pd0", FileMode.Create))
+            {
+                using (StreamReader file = new StreamReader(fi.OpenRead()))
+                {
+                    int i = 0;
+                    string str;
+                    do
+                    {
+                        ++i;
+                        str = file.ReadLine();
+                        if (str == null)
+                            break;
+
+                        string[] arr = str.Split(',');
+
+                        AAA a = new AAA();
+                        a.symbol = arr[1];
+                        a.buy = arr[2] == "0";
+                        a.price = double.Parse(arr[3]);
+                        a.size = int.Parse(arr[4]);
+
+
+                        if(last.buy == false && a.buy == true)
+                        {
+                            // 快照的切换点，把上次的存储都取出来，进行保存
+                            // sell里先存的数字大的，后存的数字小的,最后的是卖一
+                            // buy里也是先存数字大的，后存数字小的，最前的买一
+                            // 
+                            foreach(var kv in ccc.dict)
+                            {
+                                kv.Value.MakeTick();
+                                
+                                ccc.GetSerializer(kv.Key).Write(kv.Value.tick,
+                                    new Stream[] {ccc.GetStream(kv.Key)});
+                            }
+
+                            ccc.dict.Clear();
+                        }
+
+                        BBB bbb = ccc.Get(a.symbol);
+                        bbb.symbol = a.symbol;
+                        bbb.time = arr[0];
+
+                        if(bbb.symbol == "cu1502")
+                        {
+                            int nTest = 1;
+                        }
+
+                        if(a.buy)
+                        {
+                            bbb.AddBid(a);
+                        }
+                        else
+                        {
+                            bbb.AddAsk(a);
+                        }
+                        
+
+                        last = a;
+                        last_symbol = a.symbol;
+
+                        //if (i < 4000)
+                        //    Console.WriteLine(str);
+                        //if (i > 4000)
+                        //    break;
                     } while (str != null);
                     file.Close();
                 }

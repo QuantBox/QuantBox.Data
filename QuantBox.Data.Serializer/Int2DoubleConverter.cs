@@ -164,7 +164,7 @@ namespace QuantBox.Data.Serializer
             DepthTickView last = deep;
             while (last != null)
             {
-                if (last.BidSize1 == 0 || last.AskSize1 == 0)
+                if (last.BidSize1 == 0 && last.AskSize1 == 0)
                     break;
 
                 detail = new DepthDetailView();
@@ -176,7 +176,7 @@ namespace QuantBox.Data.Serializer
                 detail.AskCount = last.AskCount1;
                 list.Add(detail);
 
-                if (last.BidSize2 == 0 || last.AskSize2 == 0)
+                if (last.BidSize2 == 0 && last.AskSize2 == 0)
                     break;
 
                 detail = new DepthDetailView();
@@ -188,7 +188,7 @@ namespace QuantBox.Data.Serializer
                 detail.AskCount = last.AskCount2;
                 list.Add(detail);
 
-                if (last.BidSize3 == 0 || last.AskSize3 == 0)
+                if (last.BidSize3 == 0 && last.AskSize3 == 0)
                     break;
 
                 detail = new DepthDetailView();
