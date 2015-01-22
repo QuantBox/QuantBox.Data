@@ -35,7 +35,7 @@ namespace QuantBox.Data.Serializer
             TickSize = _config.GetTickSize();
         }
 
-        static int gcd(int a, int b)
+        static long gcd(long a, long b)
         {
             return b == 0 ? a : gcd(b, a % b);
         }
@@ -48,13 +48,13 @@ namespace QuantBox.Data.Serializer
             if (val.Length == 0)
                 return 1 / TickSizeMultiplier;
 
-            int a = (int)Math.Round(Math.Abs(val[0]) * TickSizeMultiplier, 0);
+            long a = (long)Math.Round(Math.Abs(val[0]) * TickSizeMultiplier, 0);
 
             if (val.Length > 1)
             {
                 for (int i = 1; i < val.Length; ++i)
                 {
-                    var b = (int)Math.Round(Math.Abs(val[i]) * TickSizeMultiplier, 0);
+                    var b = (long)Math.Round(Math.Abs(val[i]) * TickSizeMultiplier, 0);
                     a = gcd(a, b);
                 }
             }
@@ -747,6 +747,12 @@ namespace QuantBox.Data.Serializer
             return price1 - price2;
         }
 
+        /// <summary>
+        /// 传入两个tick得到tick的差分
+        /// </summary>
+        /// <param name="prev"></param>
+        /// <param name="current"></param>
+        /// <returns></returns>
         public PbTick Diff(PbTick prev, PbTick current)
         {
             if (prev == null)
@@ -774,24 +780,6 @@ namespace QuantBox.Data.Serializer
 
                 return current;
             }
-            //if (current.Config != null || prev.Config != null)
-            //{
-            //    tick.Config = new ConfigInfo();
-            //    if (current.Config == null)
-            //        current.Config = new ConfigInfo();
-            //    if (prev.Config == null)
-            //        prev.Config = new ConfigInfo();
-
-            //    tick.Config.Version = current.Config.Version - prev.Config.Version;
-            //    tick.Config.TickSize = current.Config.TickSize - prev.Config.TickSize;
-            //    tick.Config.TickSizeMultiplier = current.Config.TickSizeMultiplier - prev.Config.TickSizeMultiplier;
-            //    tick.Config.SettlementPriceMultiplier = current.Config.SettlementPriceMultiplier - prev.Config.SettlementPriceMultiplier;
-            //    tick.Config.AveragePriceMultiplier = current.Config.AveragePriceMultiplier - prev.Config.AveragePriceMultiplier;
-            //    tick.Config.Time_ssf_Diff = current.Config.Time_ssf_Diff - prev.Config.Time_ssf_Diff;
-
-            //    if (tick.Config.IsZero)
-            //        tick.Config = null;
-            //}
             #endregion
 
             // 先取最关键的数据，因为前一条的config总会补成有效
@@ -1099,24 +1087,6 @@ namespace QuantBox.Data.Serializer
                 // 是快照，直接返回
                 return diff;
             }
-
-            // 前一条有配置，后一条没有配置，很简单，后一条等于前一条即可
-            //if (prev.Config != null || diff.Config != null)
-            //{
-            //    tick.Config = new ConfigInfo();
-            //    if (prev.Config == null)
-            //        prev.Config = new ConfigInfo();
-            //    if (diff.Config == null)
-            //        diff.Config = new ConfigInfo();
-
-            //    tick.Config.Version = prev.Config.Version + diff.Config.Version;
-            //    tick.Config.TickSize = prev.Config.TickSize + diff.Config.TickSize;
-            //    tick.Config.TickSizeMultiplier = prev.Config.TickSizeMultiplier + diff.Config.TickSizeMultiplier;
-            //    tick.Config.SettlementPriceMultiplier = prev.Config.SettlementPriceMultiplier + diff.Config.SettlementPriceMultiplier;
-            //    tick.Config.AveragePriceMultiplier = prev.Config.AveragePriceMultiplier + diff.Config.AveragePriceMultiplier;
-            //    tick.Config.ContractMultiplier = prev.Config.ContractMultiplier + diff.Config.ContractMultiplier;
-            //    tick.Config.Time_ssf_Diff = prev.Config.Time_ssf_Diff + diff.Config.Time_ssf_Diff;
-            //}
             #endregion
 
             _config = tick.Config;
