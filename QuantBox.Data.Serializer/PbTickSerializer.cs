@@ -53,11 +53,11 @@ namespace QuantBox.Data.Serializer
             return _lastRead;
         }
 
-        public static PbTick Read(Stream stream)
+        public static PbTick ReadOne(Stream stream)
         {
             return ProtoBuf.Serializer.DeserializeWithLengthPrefix<PbTick>(stream, PrefixStyle.Base128);
         }
-        public static void Write(PbTick tick, Stream stream)
+        public static void WriteOne(PbTick tick, Stream stream)
         {
             ProtoBuf.Serializer.SerializeWithLengthPrefix<PbTick>(stream, tick, PrefixStyle.Base128);
         }
@@ -69,13 +69,14 @@ namespace QuantBox.Data.Serializer
 
             foreach (PbTick item in list)
             {
-                PbTickSerializer.Write(item, stream);
+                PbTickSerializer.WriteOne(item, stream);
             }
         }
 
         public static void Write(IEnumerable<PbTick> list, string output)
         {
-            using (Stream stream = File.OpenWrite(output))
+            //using (Stream stream = File.OpenWrite(output))
+            using (Stream stream = File.Open(output, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.Read))
             {
                 Write(list, stream);
                 stream.Close();
@@ -106,28 +107,33 @@ namespace QuantBox.Data.Serializer
             }
         }
 
-        public static List<PbTick> Read(string input)
+        public static List<PbTick> Read(Stream stream)
         {
             PbTick diff = null;
 
             List<PbTick> _list = new List<PbTick>();
 
-            using (Stream stream = File.OpenRead(input))
+            while (true)
             {
-                while (true)
+                diff = PbTickSerializer.ReadOne(stream);
+                if (diff == null)
                 {
-                    diff = PbTickSerializer.Read(stream);
-                    if (diff == null)
-                    {
-                        break;
-                    }
-
-                    _list.Add(diff);
+                    break;
                 }
-                stream.Close();
+
+                _list.Add(diff);
             }
+            stream.Close();
 
             return _list;
+        }
+
+        public static List<PbTick> Read(string input)
+        {
+            using (Stream stream = File.Open(input,FileMode.Open,FileAccess.Read,FileShare.ReadWrite))
+            {
+                return Read(stream);
+            }
         }
     }
 }
