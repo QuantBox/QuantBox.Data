@@ -1,4 +1,5 @@
-﻿using QuantBox.Data.Serializer;
+using QuantBox.Data.Serializer;
+using SevenZip;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -8,6 +9,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -17,7 +19,7 @@ namespace DataInspector
     {
         private IEnumerable<PbTick> listTickData;
         private List<PbTickView> listTickView;
-        
+
         private string strCurrentFileName;
         private int nTickCurrentRowIndex;
         private bool bValueChanged;
@@ -36,7 +38,7 @@ namespace DataInspector
         }
 
         private ViewType eViewType;
-        
+
         public FormMain()
         {
             InitializeComponent();
@@ -129,7 +131,7 @@ namespace DataInspector
                 PbTickSerializer.Write(this.listTickData, pathChosen);
                 ValueChanged(false);
             }
-        }        
+        }
 
         private void dgvTick_SelectionChanged(object sender, EventArgs e)
         {
@@ -281,7 +283,7 @@ namespace DataInspector
             dgvTick.DataSource = this.listTickView;
 
             dgvTick.CurrentCell = dgvTick.Rows[RowIndex].Cells[ColumnIndex];
-            if(Selected)
+            if (Selected)
                 dgvTick.CurrentRow.Selected = Selected;
             dgvTick.FirstDisplayedScrollingRowIndex = FirstDisplayedScrollingRowIndex;
             dgvTick.HorizontalScrollingOffset = HorizontalScrollingOffset;
@@ -344,8 +346,6 @@ namespace DataInspector
                 TextFormatFlags.VerticalCenter | TextFormatFlags.Right);
         }
 
-        
-
         private void dgvDepth_RowPostPaint(object sender, DataGridViewRowPostPaintEventArgs e)
         {
             DataGridView dgv = (DataGridView)sender;
@@ -379,18 +379,23 @@ namespace DataInspector
             }
         }
 
+        #region Decompress To Stream
         private void ReadFromFile(string pathChosen)
         {
+            Tuple<Stream, string, double> tuple = ReadToStream(pathChosen);
+            
+            if (tuple == null)
+            {
+                return;
+            }
+
+            Stream stream = tuple.Item1;
             try
             {
-                listTickData = PbTickSerializer.Read(pathChosen);
-                FileInfo fi = new FileInfo(pathChosen);
-
-                int index = pathChosen.LastIndexOf(@"\");
-                string safeFileName = pathChosen.Substring(index + 1, pathChosen.Length - index - 1);
+                listTickData = PbTickSerializer.Read(stream);
 
                 strCurrentFileName = string.Format("{0} ({1}/{2}={3})",
-                    safeFileName, fi.Length, listTickData.Count(), (double)fi.Length / listTickData.Count());
+                    tuple.Item2, tuple.Item3, listTickData.Count(), tuple.Item3 / listTickData.Count());
 
                 ValueChanged(false);
 
@@ -406,5 +411,158 @@ namespace DataInspector
                 MessageBox.Show(ex.ToString());
             }
         }
+
+        private Tuple<Stream, string, double> ReadToStream(string pathChosen)
+        {
+            SevenZipExtractor extractor;
+            try
+            {
+                extractor = new SevenZipExtractor(pathChosen);
+            }
+            catch (Exception ex)
+            {
+                return DirectReadToStream(pathChosen);
+            }
+            
+            int cnt = extractor.ArchiveFileData.Count;
+            List<string> listFileNames = new List<string>();
+
+            for (int i = 0; i < cnt; i++)
+            {
+                listFileNames.Add(extractor.ArchiveFileNames[i]);
+            }
+
+            string fileName = GetFileChosen(listFileNames);
+            MemoryStream stream = new MemoryStream();
+
+            try
+            {
+                extractor.ExtractFile(fileName, stream);
+                stream.Position = 0;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                return null;
+            }
+
+            double fileLength = stream.Length;
+
+            Tuple<Stream, string, double> tuple = new Tuple<Stream, string, double>(stream, fileName, fileLength);
+            return tuple;
+        }
+
+        private Tuple<Stream, string, double> DirectReadToStream(string pathChosen)
+        {
+            FileStream stream = File.OpenRead(pathChosen);
+
+            FileInfo fi = new FileInfo(pathChosen);
+            int index = pathChosen.LastIndexOf(@"\");
+            string fileName = pathChosen.Substring(index + 1, pathChosen.Length - index - 1);
+            double fileLength = (double)fi.Length;
+
+            Tuple<Stream, string, double> tuple = new Tuple<Stream, string, double>(stream, fileName, fileLength);
+            return tuple;
+        }
+
+        private string GetFileChosen(List<string> listFileNames)
+        {
+            string name;
+
+            FormDecompress formDecompress = new FormDecompress(listFileNames);
+            formDecompress.ShowDialog();
+            name = formDecompress.FileName;
+
+            return name;
+        }
+
+        #endregion
+
+        #region Decompress To Folder
+
+        //private void ReadFromFile(string pathChosen)
+        //{
+        //    string path = "";
+
+        //    try
+        //    {
+        //        path = Decompress(pathChosen);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        MessageBox.Show(ex.Message);
+        //    }
+
+        //    try
+        //    {
+        //        listTickData = PbTickSerializer.Read(path);
+        //        FileInfo fi = new FileInfo(path);
+
+        //        int index = path.LastIndexOf(@"\");
+        //        string safeFileName = path.Substring(index + 1, path.Length - index - 1);
+
+        //        strCurrentFileName = string.Format("{0} ({1}/{2}={3})",
+        //            safeFileName, fi.Length, listTickData.Count(), (double)fi.Length / listTickData.Count());
+
+        //        ValueChanged(false);
+
+        //        PbTickCodec Codec = new PbTickCodec();
+
+        //        listTickView = Codec.Data2View(this.listTickData, true);
+        //        dgvTick.DataSource = this.listTickView;
+
+        //        SingleCheck(menuView_Diff);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        MessageBox.Show(ex.ToString());
+        //    }
+        //}
+
+        //private string Decompress(string pathChosen)
+        //{
+        //    int index = pathChosen.LastIndexOf(@".");
+        //    string pathOut = pathChosen.Substring(0, index);
+        //    string suffix = pathChosen.Substring(index + 1, pathChosen.Length - index - 1);
+
+        //    if (suffix != "7z")
+        //    {
+        //        return pathChosen;
+        //    }
+
+        //    using (SevenZipExtractor tmp = new SevenZipExtractor(pathChosen))
+        //    {
+        //        int cnt = tmp.ArchiveFileData.Count;
+
+        //        for (int i = 0; i < cnt; i++)
+        //        {
+        //            tmp.ExtractFiles(pathOut, tmp.ArchiveFileData[i].Index);
+        //        }
+
+        //        if (cnt == 1)
+        //        {
+        //            string decompressedFullPath = pathOut + @"\" + tmp.ArchiveFileData[0].FileName;
+        //            return decompressedFullPath;
+        //        }
+        //        else
+        //        {
+        //            OpenFileDialog openFileDialog = new OpenFileDialog();
+        //            openFileDialog.Filter = "Protobuf Data Zero files (*.pd0)|*.pd0|All files (*.*)|*.*";
+        //            openFileDialog.InitialDirectory = pathOut;
+
+        //            if (openFileDialog.ShowDialog() == DialogResult.OK)
+        //            {
+        //                string decompressedFullPath = openFileDialog.FileName;
+        //                return decompressedFullPath;
+        //            }
+        //            else
+        //            {
+        //                throw new Exception("No file chosen.");
+        //            }
+        //        }
+        //    }
+        //}
+
+        #endregion
     }
 }
