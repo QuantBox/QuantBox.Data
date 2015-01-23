@@ -419,6 +419,15 @@ namespace DataInspector
             {
                 extractor = new SevenZipExtractor(pathChosen);
             }
+            catch (SevenZipException ex)
+            {
+                MessageBox.Show(ex.ToString());
+                return DirectReadToStream(pathChosen);
+            }
+            catch (ArgumentException ex)
+            {
+                return DirectReadToStream(pathChosen);
+            }
             catch (Exception ex)
             {
                 return DirectReadToStream(pathChosen);
@@ -454,7 +463,7 @@ namespace DataInspector
 
         private Tuple<Stream, string, double> DirectReadToStream(string pathChosen)
         {
-            FileStream stream = File.OpenRead(pathChosen);
+            FileStream stream = File.Open(pathChosen, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
 
             FileInfo fi = new FileInfo(pathChosen);
             int index = pathChosen.LastIndexOf(@"\");
