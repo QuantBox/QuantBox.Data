@@ -1,4 +1,4 @@
-using QuantBox.Data.Serializer;
+using QuantBox.Data.Serializer.V2;
 using SevenZip;
 using System;
 using System.Collections.Generic;
@@ -29,15 +29,6 @@ namespace DataInspector
         private bool Selected;
         private int FirstDisplayedScrollingRowIndex;
         private int HorizontalScrollingOffset;
-
-        enum ViewType
-        {
-            Diff,
-            Restore,
-            Convert,
-        }
-
-        private ViewType eViewType;
 
         public FormMain()
         {
@@ -99,22 +90,7 @@ namespace DataInspector
         private void ViewToDataByViewType()
         {
             PbTickCodec Codec = new PbTickCodec();
-            List<PbTick> tempList;
-
-            switch (eViewType)
-            {
-                case ViewType.Diff:
-                    this.listTickData = Codec.View2Data(this.listTickView, true);
-                    break;
-                case ViewType.Restore:
-                    tempList = Codec.View2Data(this.listTickView, true);
-                    this.listTickData = Codec.Diff(tempList);
-                    break;
-                case ViewType.Convert:
-                    tempList = Codec.View2Data(this.listTickView, false);
-                    this.listTickData = Codec.Diff(tempList);
-                    break;
-            }
+            this.listTickData = Codec.View2Data(this.listTickView);
         }
 
         private void SaveChanges()
@@ -128,7 +104,9 @@ namespace DataInspector
 
                 ViewToDataByViewType();
 
-                PbTickSerializer.Write(this.listTickData, pathChosen);
+                PbTickSerializer pts = new PbTickSerializer();
+                pts.Write(this.listTickData, pathChosen);
+
                 ValueChanged(false);
             }
         }
@@ -144,35 +122,42 @@ namespace DataInspector
 
             PbTickView tick2 = listTickView[nTickCurrentRowIndex];
 
-            BarInfoView bi = tick2.Bar;
-            if (bi == null)
-            {
-                //bi = new BarInfoView();
-            }
-            pgBar.SelectedObject = bi;
+            pgBar.SelectedObject = tick2.Bar;
+            pgStatic.SelectedObject = tick2.Static;
+            pgConfig.SelectedObject = tick2.Config;
+            pgSplit.SelectedObject = tick2.Split;
 
-            StaticInfoView si = tick2.Static;
-            if (si == null)
+            if (dgvDepth.CurrentCell == null)
             {
-                //si = new StaticInfoView();
+                dgvDepth.DataSource = tick2.DepthList;
+                return;
             }
-            pgStatic.SelectedObject = si;
 
-            ConfigInfoView ci = tick2.Config;
-            if (ci == null)
+            int ColumnIndex = dgvDepth.CurrentCell.ColumnIndex;
+            int RowIndex = dgvDepth.CurrentCell.RowIndex;
+            bool Selected = dgvDepth.CurrentRow.Selected;
+            int FirstDisplayedScrollingRowIndex = dgvDepth.FirstDisplayedScrollingRowIndex;
+            int HorizontalScrollingOffset = dgvDepth.HorizontalScrollingOffset;
+
+            dgvDepth.DataSource = tick2.DepthList;
+
+            RowIndex = Math.Min(RowIndex, tick2.DepthList.Count-1);
+
+            dgvDepth.CurrentCell = dgvDepth.Rows[RowIndex].Cells[ColumnIndex];
+            if (Selected)
+                dgvDepth.CurrentRow.Selected = Selected;
+            dgvDepth.FirstDisplayedScrollingRowIndex = FirstDisplayedScrollingRowIndex;
+            dgvDepth.HorizontalScrollingOffset = HorizontalScrollingOffset;
+
+            // 设置背景色
+            int pos = DepthListHelper.FindAsk1Position(tick2.DepthList,tick2.AskPrice1);
+            for (int i = 0; i < pos; ++i)
             {
-                //ci = new ConfigInfoView();
+                for (int j = 0; j < dgvDepth.Rows[i].Cells.Count;++j )
+                {
+                    dgvDepth.Rows[i].Cells[j].Style.BackColor = Color.Tomato;
+                }                
             }
-            pgConfig.SelectedObject = ci;
-
-            StockSplitInfoView ssi = tick2.Split;
-            if (ssi == null)
-            {
-                //ssi = new StockSplitInfoView();
-            }
-            pgSplit.SelectedObject = ssi;
-
-            dgvDepth.DataSource = Int2DoubleConverter.ToList(tick2.Depth1_3);
         }
 
         private void ValueChanged(bool changed)
@@ -191,8 +176,8 @@ namespace DataInspector
 
         private void dgvTick_CellValueChanged(object sender, DataGridViewCellEventArgs e)
         {
-            if (listTickView == null || nTickCurrentRowIndex >= listTickView.Count)
-                return;
+            //if (listTickView == null || nTickCurrentRowIndex >= listTickView.Count)
+            //    return;
 
             ValueChanged(true);
         }
@@ -231,16 +216,10 @@ namespace DataInspector
 
         private void dgvDepth_CellValueChanged(object sender, DataGridViewCellEventArgs e)
         {
-            if (listTickView == null || nTickCurrentRowIndex >= listTickView.Count)
-                return;
+            //if (listTickView == null || nTickCurrentRowIndex >= listTickView.Count)
+            //    return;
 
             ValueChanged(true);
-
-            PbTickView tick2 = listTickView[nTickCurrentRowIndex];
-
-            List<DepthDetailView> list = (List<DepthDetailView>)dgvDepth.DataSource;
-
-            tick2.Depth1_3 = Int2DoubleConverter.FromList(list);
         }
 
         private void SingleCheck(object sender)
@@ -251,78 +230,9 @@ namespace DataInspector
             FirstDisplayedScrollingRowIndex = dgvTick.FirstDisplayedScrollingRowIndex;
             HorizontalScrollingOffset = dgvTick.HorizontalScrollingOffset;
 
-            menuView_Diff.Checked = false;
-            menuView_Restore.Checked = false;
-            menuView_Convert.Checked = false;
 
             ToolStripMenuItem current = (ToolStripMenuItem)sender;
             current.Checked = true;
-
-            if (current == menuView_Diff)
-            {
-                eViewType = ViewType.Diff;
-            }
-            else if (current == menuView_Restore)
-            {
-                eViewType = ViewType.Restore;
-            }
-            else
-            {
-                eViewType = ViewType.Convert;
-            }
-        }
-
-        private void menuView_Diff_Click(object sender, EventArgs e)
-        {
-            ViewToDataByViewType();
-
-            SingleCheck(sender);
-
-            PbTickCodec Codec = new PbTickCodec();
-            listTickView = Codec.Data2View(this.listTickData, true);
-            dgvTick.DataSource = this.listTickView;
-
-            dgvTick.CurrentCell = dgvTick.Rows[RowIndex].Cells[ColumnIndex];
-            if (Selected)
-                dgvTick.CurrentRow.Selected = Selected;
-            dgvTick.FirstDisplayedScrollingRowIndex = FirstDisplayedScrollingRowIndex;
-            dgvTick.HorizontalScrollingOffset = HorizontalScrollingOffset;
-        }
-
-        private void menuView_Restore_Click(object sender, EventArgs e)
-        {
-            ViewToDataByViewType();
-
-            SingleCheck(sender);
-
-            PbTickCodec Codec = new PbTickCodec();
-
-            listTickView = Codec.Data2View(Codec.Restore(this.listTickData), true);
-            dgvTick.DataSource = listTickView;
-
-            dgvTick.CurrentCell = dgvTick.Rows[RowIndex].Cells[ColumnIndex];
-            if (Selected)
-                dgvTick.CurrentRow.Selected = Selected;
-            dgvTick.FirstDisplayedScrollingRowIndex = FirstDisplayedScrollingRowIndex;
-            dgvTick.HorizontalScrollingOffset = HorizontalScrollingOffset;
-        }
-
-        private void menuView_Convert_Click(object sender, EventArgs e)
-        {
-            ViewToDataByViewType();
-
-            SingleCheck(sender);
-
-            PbTickCodec Codec = new PbTickCodec();
-
-            listTickView = Codec.Data2View(Codec.Restore(this.listTickData), false);
-            dgvTick.DataSource = listTickView;
-
-            dgvTick.CurrentCell = dgvTick.Rows[RowIndex].Cells[ColumnIndex];
-            if (Selected)
-                dgvTick.CurrentRow.Selected = Selected;
-            dgvTick.FirstDisplayedScrollingRowIndex = FirstDisplayedScrollingRowIndex;
-            dgvTick.HorizontalScrollingOffset = HorizontalScrollingOffset;
         }
 
         private void menuTools_ExportDirectory_Click(object sender, EventArgs e)
@@ -392,7 +302,8 @@ namespace DataInspector
             Stream stream = tuple.Item1;
             try
             {
-                listTickData = PbTickSerializer.Read(stream);
+                PbTickSerializer pts = new PbTickSerializer();
+                listTickData = pts.Read(stream);
 
                 strCurrentFileName = string.Format("{0} ({1}/{2}={3})",
                     tuple.Item2, tuple.Item3, listTickData.Count(), tuple.Item3 / listTickData.Count());
@@ -401,10 +312,8 @@ namespace DataInspector
 
                 PbTickCodec Codec = new PbTickCodec();
 
-                listTickView = Codec.Data2View(this.listTickData, true);
+                listTickView = Codec.Data2View(this.listTickData);
                 dgvTick.DataSource = this.listTickView;
-
-                SingleCheck(menuView_Diff);
             }
             catch (Exception ex)
             {

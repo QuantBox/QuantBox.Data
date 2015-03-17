@@ -1,15 +1,15 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using QuantBox.Data.Serializer;
+using QuantBox.Data.Serializer.V1;
 using System.IO;
 using System.Collections.Generic;
 
 namespace Test
 {
     [TestClass]
-    public class PbTickCodecTest
+    public class PbTickCodecTestV1
     {
-        
+
 
         [TestMethod]
         public void TestConvertDateTime()
@@ -292,7 +292,7 @@ namespace Test
             codec.SetOpenInterest(tick1, 9123456789012345678);
             codec.SetVolume(tick1, 1234567890);
 
-            
+
 
             Assert.AreEqual<double>(123.45, codec.GetAveragePrice(tick1));
             Assert.AreEqual<double>(123.45, codec.GetSettlementPrice(tick1));
@@ -466,7 +466,7 @@ namespace Test
                             tick.Config.ContractMultiplier = 300;
                         }
                         tick.Config.Time_ssf_Diff = 5;
-                        
+
                         pts.Codec.Config = tick.Config;
                         pts.Codec.UseFlat(false);
 
@@ -570,7 +570,7 @@ namespace Test
                 if (Bids.Count > 1)
                 {
                     double diff = Bids[Bids.Count - 1].price - b.price;
-                    if(diff>0)
+                    if (diff > 0)
                         TickSize = Codec.gcd(TickSize, diff);
                 }
                 else
@@ -602,7 +602,7 @@ namespace Test
                 tick.Config.SetTickSize(TickSize);
                 tick.Config.Time_ssf_Diff = 10;
 
-                
+
                 Codec.Config = tick.Config;
                 Codec.UseFlat(false);
 
@@ -621,7 +621,7 @@ namespace Test
                 //}
 
                 int i = 0;
-                foreach(var b in Bids)
+                foreach (var b in Bids)
                 {
                     ++i;
                     Codec.SetBidPrice(tick, i, b.price);
@@ -726,18 +726,18 @@ namespace Test
                         a.size = int.Parse(arr[4]);
 
 
-                        if(last.buy == false && a.buy == true)
+                        if (last.buy == false && a.buy == true)
                         {
                             // 快照的切换点，把上次的存储都取出来，进行保存
                             // sell里先存的数字大的，后存的数字小的,最后的是卖一
                             // buy里也是先存数字大的，后存数字小的，最前的买一
                             // 
-                            foreach(var kv in ccc.dict)
+                            foreach (var kv in ccc.dict)
                             {
                                 kv.Value.MakeTick();
-                                
+
                                 ccc.GetSerializer(kv.Key).Write(kv.Value.tick,
-                                    new Stream[] {ccc.GetStream(kv.Key)});
+                                    new Stream[] { ccc.GetStream(kv.Key) });
                             }
 
                             ccc.dict.Clear();
@@ -747,12 +747,12 @@ namespace Test
                         bbb.symbol = a.symbol;
                         bbb.time = arr[0];
 
-                        if(bbb.symbol == "cu1502")
+                        if (bbb.symbol == "cu1502")
                         {
                             int nTest = 1;
                         }
 
-                        if(a.buy)
+                        if (a.buy)
                         {
                             bbb.AddBid(a);
                         }
@@ -760,7 +760,7 @@ namespace Test
                         {
                             bbb.AddAsk(a);
                         }
-                        
+
 
                         last = a;
                         last_symbol = a.symbol;

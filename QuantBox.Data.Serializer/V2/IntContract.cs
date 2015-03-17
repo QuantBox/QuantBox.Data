@@ -5,55 +5,66 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace QuantBox.Data.Serializer
+namespace QuantBox.Data.Serializer.V2
 {
     [ProtoContract]
     public class DepthTick
     {
         [ProtoMember(1, DataFormat = DataFormat.ZigZag)]
-        public int BidPrice1;
+        public int Value1;
         [ProtoMember(2, DataFormat = DataFormat.ZigZag)]
-        public int BidSize1;
+        public int Value2;
         [ProtoMember(3, DataFormat = DataFormat.ZigZag)]
-        public int AskPrice1;
+        public int Value3;
         [ProtoMember(4, DataFormat = DataFormat.ZigZag)]
-        public int AskSize1;
+        public int Value4;
         [ProtoMember(5, DataFormat = DataFormat.ZigZag)]
-        public int BidPrice2;
+        public int Value5;
         [ProtoMember(6, DataFormat = DataFormat.ZigZag)]
-        public int BidSize2;
+        public int Value6;
         [ProtoMember(7, DataFormat = DataFormat.ZigZag)]
-        public int AskPrice2;
+        public int Value7;
         [ProtoMember(8, DataFormat = DataFormat.ZigZag)]
-        public int AskSize2;
+        public int Value8;
         [ProtoMember(9, DataFormat = DataFormat.ZigZag)]
-        public int BidPrice3;
+        public int Value9;
         [ProtoMember(10, DataFormat = DataFormat.ZigZag)]
-        public int BidSize3;
+        public int Value10;
         [ProtoMember(11, DataFormat = DataFormat.ZigZag)]
-        public int AskPrice3;
+        public int Value11;
         [ProtoMember(12, DataFormat = DataFormat.ZigZag)]
-        public int AskSize3;
-
+        public int Value12;
+        [ProtoMember(13, DataFormat = DataFormat.ZigZag)]
+        public int Value13;
+        [ProtoMember(14, DataFormat = DataFormat.ZigZag)]
+        public int Value14;
         /// <summary>
-        /// 指向下块多档行情
+        /// 指向下块多档行情数据区
         /// </summary>
-        [ProtoMember(13)]
+        [ProtoMember(15)]
         public DepthTick Next;
 
-        [ProtoMember(14, DataFormat = DataFormat.ZigZag)]
-        public int BidCount1;
-        [ProtoMember(15, DataFormat = DataFormat.ZigZag)]
-        public int AskCount1;
-
-        [ProtoMember(16, DataFormat = DataFormat.ZigZag)]
-        public int BidCount2;
-        [ProtoMember(17, DataFormat = DataFormat.ZigZag)]
-        public int AskCount2;
-        [ProtoMember(18, DataFormat = DataFormat.ZigZag)]
-        public int BidCount3;
-        [ProtoMember(19, DataFormat = DataFormat.ZigZag)]
-        public int AskCount3;
+        public bool IsZero
+        {
+            get
+            {
+                return Value1 == 0
+                    && Value2 == 0
+                    && Value3 == 0
+                    && Value4 == 0
+                    && Value5 == 0
+                    && Value6 == 0
+                    && Value7 == 0
+                    && Value8 == 0
+                    && Value9 == 0
+                    && Value10 == 0
+                    && Value11 == 0
+                    && Value12 == 0
+                    && Value13 == 0
+                    && Value14 == 0
+                    && (Next == null || Next.IsZero);
+            }
+        }
     }
 
     [ProtoContract]
@@ -181,6 +192,25 @@ namespace QuantBox.Data.Serializer
         /// </summary>
         [ProtoMember(7)]
         public int Time_ssf_Diff;
+        /// <summary>
+        /// 市场深度，比如说只有一档行情时，由于价格变动时用10,-10一类的表示太占，所这个来截断成10,0
+        /// </summary>
+        [ProtoMember(8)]
+        public int MarketDepth;
+        [ProtoMember(9)]
+        public int MarketType;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [ProtoMember(10)]
+        public int Volume_Total_Or_Increment;
+        /// <summary>
+        /// 
+        /// </summary>
+        [ProtoMember(11)]
+        public int Turnover_Total_Or_Increment;
+
 
         public bool IsZero
         {
@@ -192,7 +222,11 @@ namespace QuantBox.Data.Serializer
                     && SettlementPriceMultiplier == 0
                     && AveragePriceMultiplier == 0
                     && ContractMultiplier == 0
-                    && Time_ssf_Diff == 0;
+                    && Time_ssf_Diff == 0
+                    && MarketDepth == 0
+                    && MarketType == 0
+                    && Volume_Total_Or_Increment == 0
+                    && Turnover_Total_Or_Increment == 0;
             }
         }
 
@@ -204,7 +238,12 @@ namespace QuantBox.Data.Serializer
                 && SettlementPriceMultiplier == config.SettlementPriceMultiplier
                 && AveragePriceMultiplier == config.AveragePriceMultiplier
                 && ContractMultiplier == config.ContractMultiplier
-                && Time_ssf_Diff == config.Time_ssf_Diff;
+                && Time_ssf_Diff == config.Time_ssf_Diff
+                && MarketDepth == config.MarketDepth
+                && MarketType == config.MarketType
+                && Volume_Total_Or_Increment == config.Volume_Total_Or_Increment
+                && Turnover_Total_Or_Increment == config.Turnover_Total_Or_Increment;
+            ;
         }
 
         public void SetTickSize(double val)
@@ -226,26 +265,17 @@ namespace QuantBox.Data.Serializer
 
         public ConfigInfo Default()
         {
-            Version = 1;
+            Version = 2;
             TickSize = 1;
             TickSizeMultiplier = 10000.0;
             SettlementPriceMultiplier = 100;
             AveragePriceMultiplier = 100;
             ContractMultiplier = 1;
             Time_ssf_Diff = 0;
-
-            return this;
-        }
-
-        public ConfigInfo Flat()
-        {
-            Version = 0;
-            TickSize = 1;
-            TickSizeMultiplier = 1;
-            SettlementPriceMultiplier = 1;
-            AveragePriceMultiplier = 1;
-            ContractMultiplier = 1;
-            Time_ssf_Diff = 0;
+            MarketDepth = 0;
+            MarketType = 2;
+            Volume_Total_Or_Increment = 0;
+            Turnover_Total_Or_Increment = 0;
 
             return this;
         }
@@ -292,18 +322,19 @@ namespace QuantBox.Data.Serializer
         ///	
         /// Price = m_fClose*fV - fP;
         /// </summary>
-        public double AdjustingFactor
-        {
-            get
-            {
-                // 这地方可能有问题，先放着
-                double fV = 1 + StockDividend + RightsOffering;
-                double fP = RightsOfferingPrice * RightsOffering - CashDividend;
-                double fS = (PreClose + fP) / fV;
+        
+        //public double AdjustingFactor
+        //{
+        //    get
+        //    {
+        //        // 这地方可能有问题，先放着
+        //        double fV = 1 + StockDividend + RightsOffering;
+        //        double fP = RightsOfferingPrice * RightsOffering - CashDividend;
+        //        double fS = (PreClose + fP) / fV;
 
-                return PreClose/fS;
-            }
-        }
+        //        return PreClose/fS;
+        //    }
+        //}
 
         public bool IsZero
         {
@@ -326,69 +357,126 @@ namespace QuantBox.Data.Serializer
         /// </summary>
         [ProtoMember(1)]
         public ConfigInfo Config;
-        /// <summary>
-        /// 与上一笔的比
-        /// </summary>
+
+        #region 时间部分
         [ProtoMember(2, DataFormat = DataFormat.ZigZag)]
+        public int TradingDay;
+        [ProtoMember(3, DataFormat = DataFormat.ZigZag)]
+        public int ActionDay;
+        [ProtoMember(4, DataFormat = DataFormat.ZigZag)]
+        public int Time_HHmm;
+        [ProtoMember(5, DataFormat = DataFormat.ZigZag)]
+        public int Time_____ssf__;
+        [ProtoMember(6, DataFormat = DataFormat.ZigZag)]
+        public int Time________ff;
+        #endregion
+
+        #region 价格部分
+        [ProtoMember(7, DataFormat = DataFormat.ZigZag)]
         public int LastPrice;
+        /// <summary>
+        /// 指向卖一价，如果不存在卖一价就......
+        /// </summary>
+        [ProtoMember(8, DataFormat = DataFormat.ZigZag)]
+        public int AskPrice1;
+        /// <summary>
+        /// N档数据
+        /// </summary>
+        [ProtoMember(9)]
+        public DepthTick Depth;
+        #endregion
+
+        #region 量部分
         /// <summary>
         /// 成交量
         /// </summary>
-        [ProtoMember(3, DataFormat = DataFormat.ZigZag)]
+        [ProtoMember(10, DataFormat = DataFormat.ZigZag)]
         public long Volume;
         /// <summary>
         /// 持仓量
         /// </summary>
-        [ProtoMember(4, DataFormat = DataFormat.ZigZag)]
+        [ProtoMember(11, DataFormat = DataFormat.ZigZag)]
         public long OpenInterest;
         /// <summary>
         /// 成交额
         /// </summary>
-        [ProtoMember(5, DataFormat = DataFormat.ZigZag)]
+        [ProtoMember(12, DataFormat = DataFormat.ZigZag)]
         public long Turnover;
         /// <summary>
         /// 均价
         /// </summary>
-        [ProtoMember(6, DataFormat = DataFormat.ZigZag)]
+        [ProtoMember(13, DataFormat = DataFormat.ZigZag)]
         public int AveragePrice;
+        #endregion
 
-        /// <summary>
-        /// 交易日
-        /// </summary>
-        [ProtoMember(7, DataFormat = DataFormat.ZigZag)]
-        public int TradingDay;      
-        /// <summary>
-        /// 实际日期
-        /// </summary>
-        [ProtoMember(8, DataFormat = DataFormat.ZigZag)]
-        public int ActionDay;
-        [ProtoMember(9, DataFormat = DataFormat.ZigZag)]
-        public int Time_HHmm;
-        [ProtoMember(10, DataFormat = DataFormat.ZigZag)]
-        public int Time_____ssf__;
-        [ProtoMember(11, DataFormat = DataFormat.ZigZag)]
-        public int Time________ff;
-
-        /// <summary>
-        /// N档数据
-        /// </summary>
-        [ProtoMember(12)]
-        public DepthTick Depth1_3;
         /// <summary>
         /// Bar数据或高开低收
         /// </summary>
-        [ProtoMember(13)]
+        [ProtoMember(14)]
         public BarInfo Bar;
         /// <summary>
         /// 涨跌停价格及结算价
         /// </summary>
-        [ProtoMember(14)]
+        [ProtoMember(15)]
         public StaticInfo Static;
         /// <summary>
         /// 除权除息
         /// </summary>
-        [ProtoMember(15)]
+        [ProtoMember(16)]
         public StockSplitInfo Split;
 
+        /// <summary>
+        /// 内部使用，保存到硬盘时使用Depth
+        /// </summary>
+        public List<DepthItem> DepthList;
+        
+        /// <summary>
+        /// 将列表中的数据平铺到结构体中
+        /// 只在保存到文件时操作,其它时候都不要调用
+        /// 以后用户要使用数据时直接操作列表即可
+        /// </summary>
+        public void PrepareObjectBeforeWrite(ConfigInfo _Config)
+        {
+            if (DepthList == null || DepthList.Count == 0)
+            {
+                Depth = null;
+                return;
+            }
+
+            List<DepthItem> tempList = new List<DepthItem>();
+
+            DepthListHelper.PriceMinusInOneList(DepthList, tempList);
+            
+
+            // 还是使用新的，因为不知道以前是否已经有数据，导致混淆
+            Depth = new DepthTick();
+            //if(tempList.Count>0)
+            //    tempList[0].Price = LastPrice - tempList[0].Price;
+            DepthListHelper.ListToStruct(tempList, _Config.MarketType, Depth);
+        }
+
+        /// <summary>
+        /// 将结构体的数据展开到列表中
+        /// 读取出数据后立即使用展开,其它时候都不要调用
+        /// 以后用户要使用数据时直接操作列表即可
+        /// </summary>
+        public void PrepareObjectAfterRead(ConfigInfo _Config)
+        {
+            if (Depth == null || Depth.IsZero)
+            {
+                DepthList = null;
+                return;
+            }
+
+            List<DepthItem> tempList = new List<DepthItem>();
+
+            DepthListHelper.StructToList(Depth, _Config.MarketType, tempList);
+            // 不能这么写，因为还原时LastPrice还是一个很小的值
+            //if (tempList.Count > 0)
+            //    tempList[0].Price = LastPrice + tempList[0].Price;
+
+            DepthList = new List<DepthItem>();
+            DepthListHelper.PriceAddInOneList(tempList, DepthList);
+        }
     }
 }

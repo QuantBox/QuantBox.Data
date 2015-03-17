@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace QuantBox.Data.Serializer
+namespace QuantBox.Data.Serializer.V1
 {
     public class DepthTickView
     {

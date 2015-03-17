@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 using ProtoBuf;
 
-namespace QuantBox.Data.Serializer
+namespace QuantBox.Data.Serializer.V1
 {
     public class PbTickSerializer
     {

@@ -66,32 +66,32 @@ namespace DataInspector
 
         private void Do(DirectoryInfo di, SearchOption searchOption)
         {
-            foreach (var f in di.GetFiles("*", searchOption))
-            {
-                // 处理
-                string s = f.FullName.Replace(strInput, strOutput) + ".csv";
+            //foreach (var f in di.GetFiles("*", searchOption))
+            //{
+            //    // 处理
+            //    string s = f.FullName.Replace(strInput, strOutput) + ".csv";
 
-                AppendText(s + " - ");
+            //    AppendText(s + " - ");
 
-                if(bSkip)
-                {
-                    if(new FileInfo(s).Exists)
-                    {
-                        AppendText("存在" + Environment.NewLine);
-                        continue;
-                    }
-                }
+            //    if(bSkip)
+            //    {
+            //        if(new FileInfo(s).Exists)
+            //        {
+            //            AppendText("存在" + Environment.NewLine);
+            //            continue;
+            //        }
+            //    }
 
-                try
-                {
-                    PbTickSerializer.WriteCsv(PbTickSerializer.Read(f.FullName), s);
-                    AppendText("成功"+Environment.NewLine);
-                }
-                catch (Exception ex)
-                {
-                    AppendText("失败" + Environment.NewLine);
-                }
-            }
+            //    try
+            //    {
+            //        PbTickSerializer.WriteCsv(PbTickSerializer.Read(f.FullName), s);
+            //        AppendText("成功"+Environment.NewLine);
+            //    }
+            //    catch (Exception ex)
+            //    {
+            //        AppendText("失败" + Environment.NewLine);
+            //    }
+            //}
         }
 
 
