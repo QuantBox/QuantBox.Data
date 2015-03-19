@@ -302,7 +302,7 @@ namespace DataInspector
             Stream stream = tuple.Item1;
             try
             {
-                PbTickSerializer pts = new PbTickSerializer();
+                QuantBox.Data.Serializer.PbTickSerializer pts = new QuantBox.Data.Serializer.PbTickSerializer();
                 listTickData = pts.Read(stream);
 
                 strCurrentFileName = string.Format("{0} ({1}/{2}={3})",

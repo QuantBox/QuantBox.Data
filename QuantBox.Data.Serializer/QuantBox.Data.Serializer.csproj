@@ -45,6 +45,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Converter\V1_to_V2.cs" />
+    <Compile Include="PbTickSerializer.cs" />
     <Compile Include="V1\Double2IntConverter.cs" />
     <Compile Include="V1\DoubleContract.cs" />
     <Compile Include="V1\Int2DoubleConverter.cs" />

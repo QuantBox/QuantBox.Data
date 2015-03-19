@@ -119,33 +119,5 @@ namespace QuantBox.Data.Serializer.V2
             }
         }
 
-        //public static PbTick ReadOne(Stream stream)
-        //{
-        //    PbTick tick = ProtoBuf.Serializer.DeserializeWithLengthPrefix<PbTick>(stream, PrefixStyle.Base128);
-        //    if (tick == null)
-        //        return null;
-        //    tick.PrepareObjectAfterRead(tick.Config);
-        //    return tick;
-        //}
-        //public static void WriteOne(PbTick tick, Stream stream)
-        //{
-        //    tick.PrepareObjectBeforeWrite(tick.Config);
-        //    ProtoBuf.Serializer.SerializeWithLengthPrefix<PbTick>(stream, tick, PrefixStyle.Base128);
-        //}
-
-        //public static void Write(IEnumerable<PbTick> list, Stream stream)
-        //{
-        //    if (list == null)
-        //        return;
-
-        //    foreach (PbTick item in list)
-        //    {
-        //        PbTickSerializer.WriteOne(item, stream);
-        //    }
-        //}
-
-        
-
-        
     }
 }
