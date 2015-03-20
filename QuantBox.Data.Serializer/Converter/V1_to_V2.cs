@@ -99,5 +99,13 @@ namespace QuantBox.Data.Serializer.Converter
 
             return tick;
         }
+
+        //public static V2.PbTickCodec Converter(V1.PbTickCodec oldCodec)
+        //{
+        //    V2.PbTickCodec codec = new V2.PbTickCodec();
+        //    codec.Config.AveragePriceMultiplier = oldCodec.Config.AveragePriceMultiplier;
+        //    codec.Config.ContractMultiplier = oldCodec.Config.AveragePriceMultiplier;
+
+        //}
     }
 }

@@ -78,27 +78,31 @@ namespace QuantBox.Data.Serializer.V2
         /// <param name="source"></param>
         /// <param name="raw"></param>
         /// <returns></returns>
-        public PbTick Read(Stream source, out PbTick raw)
+        public PbTick ReadOne(Stream source)
         {
-            raw = ProtoBuf.Serializer.DeserializeWithLengthPrefix<PbTick>(source, PrefixStyle.Base128);
+            PbTick raw = ProtoBuf.Serializer.DeserializeWithLengthPrefix<PbTick>(source, PrefixStyle.Base128);
             if (raw == null)
                 return null;
             raw.PrepareObjectAfterRead(Codec.Config);
 
             _lastRead = Codec.Restore(_lastRead, raw);
+            if (_lastRead.Config.Version != 2)
+            {
+                throw new InvalidDataException("only support pd0 file version 2");
+            }
+            
             return _lastRead;
         }
 
         public List<PbTick> Read(Stream stream)
         {
             PbTick resotre = null;
-            PbTick raw = null;
 
             List<PbTick> _list = new List<PbTick>();
 
             while (true)
             {
-                resotre = Read(stream, out raw);
+                resotre = ReadOne(stream);
                 if (resotre == null)
                 {
                     break;

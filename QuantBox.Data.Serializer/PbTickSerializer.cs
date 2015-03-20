@@ -15,33 +15,58 @@ namespace QuantBox.Data.Serializer
     {
         private V1.PbTickSerializer v1Reader = new V1.PbTickSerializer();
         private V2.PbTickSerializer v2Reader = new V2.PbTickSerializer();
+        private bool bV2 = true;
 
-        public List<V2.PbTick> Read(Stream stream)
+        //public PbTickCodec Codec = new PbTickCodec();
+
+        public V2.PbTick ReadOne(Stream stream)
         {
+            long Position = stream.Position;
+            V2.PbTick tick = null;
+
             try
             {
-                return v2Reader.Read(stream);
+                if(bV2)
+                {
+                    tick = v2Reader.ReadOne(stream);
+                }
+                else
+                {
+                    V1.PbTick tmp = v1Reader.ReadOne(stream);
+                    if (tmp == null)
+                        return null;
+                    tick = V1_to_V2.Converter(tmp);
+                }
             }
             catch
             {
-                stream.Position = 0;
-                V1.PbTick raw = null;
-                V1.PbTick tmp = null;
-
-                List<V2.PbTick> _list = new List<V2.PbTick>();
-
-                while (true)
-                {
-                    tmp = v1Reader.Read(stream,out raw);
-                    if (tmp == null)
-                    {
-                        break;
-                    }
-
-                    _list.Add(V1_to_V2.Converter(tmp));
-                }
-                return _list;
+                bV2 = false;
+                stream.Seek(Position, SeekOrigin.Begin);
+                V1.PbTick tmp = v1Reader.ReadOne(stream);
+                if (tmp == null)
+                    return null;
+                tick = V1_to_V2.Converter(tmp);
             }
+
+            //Codec.Config = tick.Config;
+            return tick;
+        }
+
+        public List<V2.PbTick> Read(Stream stream)
+        {
+            List<V2.PbTick> _list = new List<V2.PbTick>();
+
+            while (true)
+            {
+                V2.PbTick tmp = ReadOne(stream);
+                if (tmp == null)
+                {
+                    break;
+                }
+
+                _list.Add(tmp);
+            }
+            return _list;
         }
     }
 }

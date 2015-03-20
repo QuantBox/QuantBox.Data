@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SevenZip;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -14,6 +15,15 @@ namespace DataInspector
         [STAThread]
         static void Main()
         {
+            if (Environment.Is64BitProcess)
+            {
+                SevenZipBase.SetLibraryPath("7z64.dll");
+            }
+            else
+            {
+                SevenZipBase.SetLibraryPath("7z.dll");
+            }
+
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new FormMain());

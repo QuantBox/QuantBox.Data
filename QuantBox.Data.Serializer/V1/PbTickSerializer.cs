@@ -44,19 +44,19 @@ namespace QuantBox.Data.Serializer.V1
         /// <param name="source"></param>
         /// <param name="raw"></param>
         /// <returns></returns>
-        public PbTick Read(Stream source, out PbTick raw)
+        public PbTick ReadOne(Stream source)
         {
-            raw = ProtoBuf.Serializer.DeserializeWithLengthPrefix<PbTick>(source, PrefixStyle.Base128);
+            PbTick raw = ProtoBuf.Serializer.DeserializeWithLengthPrefix<PbTick>(source, PrefixStyle.Base128);
             if (raw == null)
                 return null;
             _lastRead = Codec.Restore(_lastRead, raw);
+            if (_lastRead.Config.Version != 1)
+            {
+                throw new InvalidDataException("only support pd0 file version 1");
+            }
             return _lastRead;
         }
 
-        public static PbTick ReadOne(Stream stream)
-        {
-            return ProtoBuf.Serializer.DeserializeWithLengthPrefix<PbTick>(stream, PrefixStyle.Base128);
-        }
         public static void WriteOne(PbTick tick, Stream stream)
         {
             ProtoBuf.Serializer.SerializeWithLengthPrefix<PbTick>(stream, tick, PrefixStyle.Base128);
@@ -104,35 +104,6 @@ namespace QuantBox.Data.Serializer.V1
                     stream.WriteLine(l);
                 }
                 stream.Close();
-            }
-        }
-
-        public static List<PbTick> Read(Stream stream)
-        {
-            PbTick diff = null;
-
-            List<PbTick> _list = new List<PbTick>();
-
-            while (true)
-            {
-                diff = PbTickSerializer.ReadOne(stream);
-                if (diff == null)
-                {
-                    break;
-                }
-
-                _list.Add(diff);
-            }
-            stream.Close();
-
-            return _list;
-        }
-
-        public static List<PbTick> Read(string input)
-        {
-            using (Stream stream = File.Open(input,FileMode.Open,FileAccess.Read,FileShare.ReadWrite))
-            {
-                return Read(stream);
             }
         }
     }
