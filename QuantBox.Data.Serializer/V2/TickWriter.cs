@@ -56,6 +56,8 @@ namespace QuantBox.Data.Serializer.V2
                 if (item.Stream == null)
                 {
                     item.Stream = File.Open(item.FullPath, FileMode.Append, FileAccess.Write, FileShare.Read);
+                    // 换天时，必须重置记录器，不然记录的数据是差分后数据，导致新文件无法解读
+                    item.Serializer.Reset();
                 }
 
                 item.Serializer.Write(item.Tick, item.Stream);

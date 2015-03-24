@@ -507,7 +507,7 @@ namespace QuantBox.Data.Serializer.V2
         /// <returns></returns>
         public static int FindAsk1Position(List<DepthItem> list,int AskPrice1)
         {
-            if (list.Count == 0)
+            if (list == null || list.Count == 0)
                 return -1;
 
             int i = 0;
@@ -524,7 +524,7 @@ namespace QuantBox.Data.Serializer.V2
 
         public static int FindAsk1Position(List<DepthItemView> list, double AskPrice1)
         {
-            if (list.Count == 0)
+            if (list == null || list.Count == 0)
                 return -1;
 
             int i = 0;

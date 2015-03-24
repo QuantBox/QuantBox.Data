@@ -20,6 +20,12 @@ namespace QuantBox.Data.Serializer.V2
         }
         public PbTickCodec Codec { get; private set; }
 
+        public void Reset()
+        {
+            _lastWrite = null;
+            _lastRead = null;
+        }
+
         public PbTick Write(PbTick data, Stream dest)
         {
             PbTick diff = Codec.Diff(_lastWrite, data);

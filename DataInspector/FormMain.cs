@@ -141,7 +141,8 @@ namespace DataInspector
 
             dgvDepth.DataSource = tick2.DepthList;
 
-            RowIndex = Math.Min(RowIndex, tick2.DepthList.Count-1);
+            if (tick2.DepthList != null)
+                RowIndex = Math.Min(RowIndex, tick2.DepthList.Count-1);
 
             dgvDepth.CurrentCell = dgvDepth.Rows[RowIndex].Cells[ColumnIndex];
             if (Selected)
@@ -156,7 +157,7 @@ namespace DataInspector
                 for (int j = 0; j < dgvDepth.Rows[i].Cells.Count;++j )
                 {
                     dgvDepth.Rows[i].Cells[j].Style.BackColor = Color.Tomato;
-                }                
+                }
             }
         }
 
