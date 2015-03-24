@@ -176,8 +176,8 @@ namespace DataInspector
 
         private void dgvTick_CellValueChanged(object sender, DataGridViewCellEventArgs e)
         {
-            //if (listTickView == null || nTickCurrentRowIndex >= listTickView.Count)
-            //    return;
+            if (listTickView == null || nTickCurrentRowIndex >= listTickView.Count)
+                return;
 
             ValueChanged(true);
         }
@@ -216,8 +216,8 @@ namespace DataInspector
 
         private void dgvDepth_CellValueChanged(object sender, DataGridViewCellEventArgs e)
         {
-            //if (listTickView == null || nTickCurrentRowIndex >= listTickView.Count)
-            //    return;
+            if (listTickView == null || nTickCurrentRowIndex >= listTickView.Count)
+                return;
 
             ValueChanged(true);
         }

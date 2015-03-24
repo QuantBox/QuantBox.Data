@@ -11,23 +11,43 @@ namespace QuantBox.Data.Serializer.V2
     {
         public class WriterDataItem
         {
-            public WriterDataItem(FileStream stream, PbTickSerializer serializer, string path)
+            public WriterDataItem(FileStream stream, PbTickSerializer serializer, string path,string symbol)
             {
                 Stream = stream;
                 Serializer = serializer;
-                Path = path;
+                _Symbol = symbol;
+                _Path = path;
             }
 
             public FileStream Stream;
             public PbTickSerializer Serializer;
             public PbTick Tick;
             public DateTime LastWriteTime;
-            public string Path;
+
+            public int TradingDay;
+            public string _Symbol;
+            public string _Path;
+
+            public string FullPath
+            {
+                get
+                {
+                    return Path.Combine(_Path, _Symbol + "_" + TradingDay + ".pd0");
+                }
+            }
+
+            public void Close()
+            {
+                if(Stream != null)
+                {
+                    Stream.Close();
+                    Stream = null;
+                }
+            }
         }
 
-        protected readonly Dictionary<string, WriterDataItem> Items = new Dictionary<string, WriterDataItem>();
+        public readonly Dictionary<string, WriterDataItem> Items = new Dictionary<string, WriterDataItem>();
         readonly string _path;
-        readonly int _tradingDay;
 
         public void WirteToFile(WriterDataItem item, bool flush = false)
         {
@@ -35,7 +55,7 @@ namespace QuantBox.Data.Serializer.V2
             {
                 if (item.Stream == null)
                 {
-                    item.Stream = File.Open(item.Path, FileMode.Append, FileAccess.Write, FileShare.Read);
+                    item.Stream = File.Open(item.FullPath, FileMode.Append, FileAccess.Write, FileShare.Read);
                 }
 
                 item.Serializer.Write(item.Tick, item.Stream);
@@ -49,10 +69,9 @@ namespace QuantBox.Data.Serializer.V2
             }
         }
 
-        public TickWriter(string path, int tradingDay)
+        public TickWriter(string path)
         {
             _path = path;
-            _tradingDay = tradingDay;
         }
 
         public void Close()
@@ -70,7 +89,6 @@ namespace QuantBox.Data.Serializer.V2
         {
             if (!Items.ContainsKey(symbol))
             {
-                var file = Path.Combine(_path, symbol + "_" + _tradingDay + ".pd0");
                 var serializer = new PbTickSerializer();
                 if (tickSize > 0)
                 {
@@ -81,7 +99,7 @@ namespace QuantBox.Data.Serializer.V2
                     serializer.Codec.Config.ContractMultiplier = factor;
                 serializer.Codec.Config.Time_ssf_Diff = Time_ssf_Diff;
 
-                Items.Add(symbol, new WriterDataItem(null, serializer, file));
+                Items.Add(symbol, new WriterDataItem(null, serializer, _path, symbol));
             }
         }
 
@@ -90,11 +108,22 @@ namespace QuantBox.Data.Serializer.V2
             WriterDataItem item;
             if (Items.TryGetValue(tick.Static.Symbol, out item))
             {
-                item.Tick = tick;
-                WirteToFile(item);
+                Write(item, tick);
                 return true;
             }
             return false;
+        }
+
+        public void Write(WriterDataItem item,PbTick tick)
+        {
+            // 对于换交易日，应当将前一天的关闭
+            if (item.TradingDay != tick.TradingDay)
+            {
+                item.Close();
+                item.TradingDay = tick.TradingDay;
+            }
+            item.Tick = tick;
+            WirteToFile(item);
         }
 
         public void Dispose()
