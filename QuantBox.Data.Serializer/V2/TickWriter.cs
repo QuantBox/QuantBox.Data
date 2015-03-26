@@ -105,6 +105,20 @@ namespace QuantBox.Data.Serializer.V2
             }
         }
 
+        public void RemoveInstrument(string symbol)
+        {
+            WriterDataItem item;
+            if (Items.TryGetValue(symbol, out item))
+            {
+                if (item.Stream != null)
+                {
+                    item.Stream.Close();
+                    item.Stream = null;
+                }
+                Items.Remove(symbol);
+            }
+        }
+
         public bool Write(PbTick tick)
         {
             WriterDataItem item;
