@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Timers;
 
 namespace QuantBox.Data.Serializer.V2
 {
@@ -28,6 +29,8 @@ namespace QuantBox.Data.Serializer.V2
             public string _Symbol;
             public string _Path;
 
+            private object locker = new object();
+
             public string FullPath
             {
                 get
@@ -38,84 +41,128 @@ namespace QuantBox.Data.Serializer.V2
 
             public void Close()
             {
-                if(Stream != null)
+                if (Stream == null)
+                    return;
+
+                lock(locker)
                 {
                     Stream.Close();
                     Stream = null;
+                }
+            }
+
+            public void Write(bool flush)
+            {
+                if (Tick == null)
+                    return;
+
+                lock (locker)
+                {
+                    if (Stream == null)
+                    {
+                        Stream = File.Open(FullPath, FileMode.Append, FileAccess.Write, FileShare.Read);
+                        // 换天时，必须重置记录器，不然记录的数据是差分后数据，导致新文件无法解读
+                        Serializer.Reset();
+                    }
+
+                    Serializer.Write(Tick, Stream);
+                    Tick = null;
+
+                    // 这种写法对于一天只有一笔的行情会不保存
+                    Flush(flush);
+                }
+            }
+
+            public void Flush(bool flush)
+            {
+                if (Stream == null)
+                    return;
+
+                lock (locker)
+                {
+                    if (flush || (DateTime.Now - LastWriteTime).TotalSeconds >= 10)
+                    {
+                        Stream.Flush(true);
+                        LastWriteTime = DateTime.Now;
+                    }
                 }
             }
         }
 
         public readonly Dictionary<string, WriterDataItem> Items = new Dictionary<string, WriterDataItem>();
         readonly string _path;
-
-        public void WirteToFile(WriterDataItem item, bool flush = false)
-        {
-            if (item.Tick != null)
-            {
-                if (item.Stream == null)
-                {
-                    item.Stream = File.Open(item.FullPath, FileMode.Append, FileAccess.Write, FileShare.Read);
-                    // 换天时，必须重置记录器，不然记录的数据是差分后数据，导致新文件无法解读
-                    item.Serializer.Reset();
-                }
-
-                item.Serializer.Write(item.Tick, item.Stream);
-
-                item.Tick = null;
-                if (flush || (DateTime.Now - item.LastWriteTime).TotalSeconds >= 10)
-                {
-                    item.Stream.Flush(true);
-                    item.LastWriteTime = DateTime.Now;
-                }
-            }
-        }
+        private object locker = new object();
+        private Timer _Timer = new Timer();
 
         public TickWriter(string path)
         {
             _path = path;
+
+            _Timer.Elapsed += this.OnTimerElapsed;
+            _Timer.Interval = 1000*15;
+            _Timer.Start();
+        }
+
+        private void OnTimerElapsed(object sender, ElapsedEventArgs args)
+        {
+            Flush(false);
         }
 
         public void Close()
         {
-            foreach (var item in Items.Values)
+            lock (locker)
             {
-                WirteToFile(item, true);
-                if (item.Stream != null)
-                    item.Stream.Close();
+                foreach (var item in Items.Values)
+                {
+                    item.Write(true);
+                    item.Close();
+                }
+                Items.Clear();
             }
-            Items.Clear();
+        }
+
+        public void Flush(bool flush)
+        {
+            lock (locker)
+            {
+                foreach (var item in Items.Values)
+                {
+                    item.Flush(flush);
+                }
+            }
         }
 
         public void AddInstrument(string symbol, double tickSize, double factor, int Time_ssf_Diff)
         {
-            if (!Items.ContainsKey(symbol))
+            lock (locker)
             {
-                var serializer = new PbTickSerializer();
-                if (tickSize > 0)
+                if (!Items.ContainsKey(symbol))
                 {
-                    serializer.Codec.Config.SetTickSize(tickSize);
-                    serializer.Codec.TickSize = serializer.Codec.Config.GetTickSize();
-                }
-                if (factor > 0)
-                    serializer.Codec.Config.ContractMultiplier = factor;
-                serializer.Codec.Config.Time_ssf_Diff = Time_ssf_Diff;
+                    var serializer = new PbTickSerializer();
+                    if (tickSize > 0)
+                    {
+                        serializer.Codec.Config.SetTickSize(tickSize);
+                        serializer.Codec.TickSize = serializer.Codec.Config.GetTickSize();
+                    }
+                    if (factor > 0)
+                        serializer.Codec.Config.ContractMultiplier = factor;
+                    serializer.Codec.Config.Time_ssf_Diff = Time_ssf_Diff;
 
-                Items.Add(symbol, new WriterDataItem(null, serializer, _path, symbol));
+                    Items.Add(symbol, new WriterDataItem(null, serializer, _path, symbol));
+                }
             }
         }
 
         public void RemoveInstrument(string symbol)
         {
-            WriterDataItem item;
-            if (Items.TryGetValue(symbol, out item))
+            lock (locker)
             {
-                if (item.Stream != null)
+                WriterDataItem item;
+                if (Items.TryGetValue(symbol, out item))
                 {
-                    item.Stream.Close();
-                    item.Stream = null;
+                    item.Close();
+                    Items.Remove(symbol);
                 }
-                Items.Remove(symbol);
             }
         }
 
@@ -139,11 +186,13 @@ namespace QuantBox.Data.Serializer.V2
                 item.TradingDay = tick.TradingDay;
             }
             item.Tick = tick;
-            WirteToFile(item);
+            item.Write(false);
         }
 
         public void Dispose()
         {
+            _Timer.Elapsed -= this.OnTimerElapsed;
+            _Timer.Stop();
             Close();
         }
     }
