@@ -324,10 +324,12 @@ namespace DataInspector
 
         private Tuple<Stream, string, double> ReadToStream(string pathChosen)
         {
+            int cnt = 0;
             SevenZipExtractor extractor;
             try
             {
                 extractor = new SevenZipExtractor(pathChosen);
+                cnt = extractor.ArchiveFileData.Count;
             }
             catch (SevenZipException ex)
             {
@@ -343,7 +345,6 @@ namespace DataInspector
                 return DirectReadToStream(pathChosen);
             }
             
-            int cnt = extractor.ArchiveFileData.Count;
             List<string> listFileNames = new List<string>();
 
             for (int i = 0; i < cnt; i++)
