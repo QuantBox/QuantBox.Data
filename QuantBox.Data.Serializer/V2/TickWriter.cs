@@ -163,7 +163,8 @@ namespace QuantBox.Data.Serializer.V2
         {
             lock (locker)
             {
-                if (!Items.ContainsKey(symbol))
+                WriterDataItem item;
+                if (!Items.TryGetValue(symbol, out item))
                 {
                     var serializer = new PbTickSerializer();
                     if (tickSize > 0)
@@ -176,6 +177,22 @@ namespace QuantBox.Data.Serializer.V2
                     serializer.Codec.Config.Time_ssf_Diff = Time_ssf_Diff;
 
                     Items.Add(symbol, new WriterDataItem(null, serializer, _path, symbol));
+                }
+                else
+                {
+                    // 有可能要不关软件，连续工作，但tickSize又发生了变化
+                    var serializer = item.Serializer;
+                    if (serializer != null)
+                    {
+                        if (tickSize > 0)
+                        {
+                            serializer.Codec.Config.SetTickSize(tickSize);
+                            serializer.Codec.TickSize = serializer.Codec.Config.GetTickSize();
+                        }
+                        if (factor > 0)
+                            serializer.Codec.Config.ContractMultiplier = factor;
+                        serializer.Codec.Config.Time_ssf_Diff = Time_ssf_Diff;
+                    }
                 }
             }
         }
