@@ -42,11 +42,11 @@ namespace QuantBox.Data.Serializer.V2
 
             public void Close()
             {
-                if (Stream == null)
-                    return;
-
                 lock(locker)
                 {
+                    if (Stream == null)
+                        return;
+
                     Stream.Close();
                     Stream = null;
                 }
@@ -54,11 +54,11 @@ namespace QuantBox.Data.Serializer.V2
 
             public void Write()
             {
-                if (Tick == null)
-                    return;
-
                 lock (locker)
                 {
+                    if (Tick == null)
+                        return;
+
                     if (Stream == null)
                     {
                         Stream = File.Open(FullPath, FileMode.Append, FileAccess.Write, FileShare.Read);
@@ -75,11 +75,11 @@ namespace QuantBox.Data.Serializer.V2
 
             public void FlushInWriter()
             {
-                if (Stream == null)
-                    return;
-
                 lock (locker)
                 {
+                    if (Stream == null)
+                        return;
+
                     double ts = (DateTime.Now - LastWriteTime).TotalSeconds;
                     // 与上次一写入相比大于10s就写入
                     // 但对于行情很少不变动的，会出现没有机会写入的情况，所以需要定时器来帮忙
@@ -93,11 +93,11 @@ namespace QuantBox.Data.Serializer.V2
 
             public void FlushInTimer()
             {
-                if (Stream == null)
-                    return;
-
                 lock (locker)
                 {
+                    if (Stream == null)
+                        return;
+
                     double ts = (DateTime.Now - LastWriteTime).TotalSeconds;
                     // 每10秒写一次
                     if (ts >= 10)
