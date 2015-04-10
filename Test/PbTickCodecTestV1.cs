@@ -63,7 +63,6 @@ namespace Test
             PbTickCodec codec = new PbTickCodec();
 
             codec.Config.SetTickSize(0.2);
-            codec.UseFlat(false);
 
             PbTick tick = new PbTick();
 
@@ -114,7 +113,7 @@ namespace Test
             PbTickCodec ptc = new PbTickCodec();
 
             ptc.Config.SetTickSize(0.2);
-            ptc.UseFlat(false);
+            ptc.TickSize = ptc.Config.GetTickSize();
 
             Assert.AreEqual<int>(5, ptc.PriceToTick(1));
             Assert.AreEqual<int>(6, ptc.PriceToTick(1.2));
@@ -145,8 +144,8 @@ namespace Test
             PbTickCodec codec = new PbTickCodec();
 
             codec.Config.SetTickSize(0.2);
+            codec.TickSize = codec.Config.GetTickSize();
             codec.Config.Time_ssf_Diff = 5;
-            codec.UseFlat(false);
 
             PbTick tick1 = new PbTick();
 
@@ -281,9 +280,9 @@ namespace Test
             PbTickCodec codec = new PbTickCodec();
 
             codec.Config.SetTickSize(0.2);
+            codec.TickSize = codec.Config.GetTickSize();
             codec.Config.ContractMultiplier = 50000;
             codec.Config.Time_ssf_Diff = 5;
-            codec.UseFlat(false);
 
             PbTick tick1 = new PbTick();
             codec.SetAveragePrice(tick1, 123.45);
@@ -332,7 +331,6 @@ namespace Test
             PbTickCodec codec = new PbTickCodec();
 
             codec.Config.SetTickSize(0.2);
-            codec.UseFlat(false);
 
 
             PbTick tick1 = new PbTick();
@@ -362,7 +360,7 @@ namespace Test
         //    //Assert.AreNotEqual(null, tick);
         //}
 
-        [TestMethod]
+        //[TestMethod]
         public void TestReadCsvLeve1()
         {
             FileInfo fi = new FileInfo(@"F:\BaiduYunDownload\IF1406\IF1406.csv");
@@ -370,6 +368,7 @@ namespace Test
 
             PbTickSerializer pts = new PbTickSerializer();
             pts.Codec.Config.SetTickSize(0.2);
+            pts.Codec.TickSize = pts.Codec.Config.GetTickSize();
             pts.Codec.Config.Time_ssf_Diff = 5;
 
             using (Stream stream = File.Open(@"F:\BaiduYunDownload\IF1406\IF1406.pd0", FileMode.Create))
@@ -425,7 +424,7 @@ namespace Test
             Console.WriteLine("结束了");
         }
 
-        [TestMethod]
+        //[TestMethod]
         public void TestReadCsvLeve2()
         {
             FileInfo fi = new FileInfo(@"F:\BaiduYunDownload\20141225\20141225.csv");
@@ -468,7 +467,6 @@ namespace Test
                         tick.Config.Time_ssf_Diff = 5;
 
                         pts.Codec.Config = tick.Config;
-                        pts.Codec.UseFlat(false);
 
                         //if(i == 1)
                         //{
@@ -604,7 +602,6 @@ namespace Test
 
 
                 Codec.Config = tick.Config;
-                Codec.UseFlat(false);
 
                 int HH = int.Parse(time.Substring(0, 2));
                 int mm = int.Parse(time.Substring(3, 2));
@@ -686,7 +683,7 @@ namespace Test
 
 
 
-        [TestMethod]
+        //[TestMethod]
         public void TestReadCsvLeve3()
         {
             FileInfo fi = new FileInfo(@"d:\wukan\Desktop\DepthDataShow\20150120.txt");

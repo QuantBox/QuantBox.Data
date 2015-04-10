@@ -131,7 +131,6 @@ namespace QuantBox.Data.Serializer.V1
             field.Config = Int2Double(tick.Config);
 
             Codec.Config = tick.Config;
-            Codec.UseFlat(flat);
 
             field.Turnover = Codec.GetTurnover(tick);
             field.AveragePrice = Codec.GetAveragePrice(tick);

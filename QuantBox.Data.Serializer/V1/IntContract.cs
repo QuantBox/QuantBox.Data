@@ -236,19 +236,6 @@ namespace QuantBox.Data.Serializer.V1
 
             return this;
         }
-
-        public ConfigInfo Flat()
-        {
-            Version = 0;
-            TickSize = 1;
-            TickSizeMultiplier = 1;
-            SettlementPriceMultiplier = 1;
-            AveragePriceMultiplier = 1;
-            ContractMultiplier = 1;
-            Time_ssf_Diff = 0;
-
-            return this;
-        }
     }
 
     /// <summary>

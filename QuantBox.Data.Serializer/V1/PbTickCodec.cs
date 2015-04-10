@@ -9,30 +9,21 @@ namespace QuantBox.Data.Serializer.V1
     public class PbTickCodec
     {
         private ConfigInfo _config;
-        private ConfigInfo config_flat;
-        public ConfigInfo Config { get; set; }
+        public ConfigInfo Config
+        {
+            get { return _config; }
+            set
+            {
+                _config = value;
+                TickSize = _config.GetTickSize();
+            }
+        }
 
-        private double TickSize;
+        public double TickSize;
 
         public PbTickCodec()
         {
             Config = new ConfigInfo().Default();
-            config_flat = new ConfigInfo().Flat();
-
-            UseFlat(false);
-        }
-
-        public void UseFlat(bool flat)
-        {
-            if(flat)
-            {
-                _config = config_flat;
-            }
-            else
-            {
-                _config = Config;
-            }
-            TickSize = _config.GetTickSize();
         }
 
         static long gcd(long a, long b)

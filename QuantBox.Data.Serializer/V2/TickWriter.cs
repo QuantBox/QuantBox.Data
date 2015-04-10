@@ -18,6 +18,7 @@ namespace QuantBox.Data.Serializer.V2
                 Serializer = serializer;
                 _Symbol = symbol;
                 _Path = path;
+                LastWriteTime = DateTime.Now;
             }
 
             public FileStream Stream;
@@ -51,7 +52,7 @@ namespace QuantBox.Data.Serializer.V2
                 }
             }
 
-            public void Write(bool flush)
+            public void Write()
             {
                 if (Tick == null)
                     return;
@@ -67,23 +68,48 @@ namespace QuantBox.Data.Serializer.V2
 
                     Serializer.Write(Tick, Stream);
                     Tick = null;
-
-                    // 这种写法对于一天只有一笔的行情会不保存
-                    Flush(flush);
+                    
+                    FlushInWriter();
                 }
             }
 
-            public void Flush(bool flush)
+            public void FlushInWriter()
             {
                 if (Stream == null)
                     return;
 
                 lock (locker)
                 {
-                    if (flush || (DateTime.Now - LastWriteTime).TotalSeconds >= 10)
+                    double ts = (DateTime.Now - LastWriteTime).TotalSeconds;
+                    // 与上次一写入相比大于10s就写入
+                    // 但对于行情很少不变动的，会出现没有机会写入的情况，所以需要定时器来帮忙
+                    if (ts >= 10)
                     {
                         Stream.Flush(true);
                         LastWriteTime = DateTime.Now;
+                    }
+                }
+            }
+
+            public void FlushInTimer()
+            {
+                if (Stream == null)
+                    return;
+
+                lock (locker)
+                {
+                    double ts = (DateTime.Now - LastWriteTime).TotalSeconds;
+                    // 每10秒写一次
+                    if (ts >= 10)
+                    {
+                        Stream.Flush(true);
+
+                        // 1分钟没有写入数据就关闭文件句柄
+                        // 这样留下机会可以进行删除
+                        if (ts > 1 * 60)
+                        {
+                            Close();
+                        }
                     }
                 }
             }
@@ -99,13 +125,14 @@ namespace QuantBox.Data.Serializer.V2
             _path = path;
 
             _Timer.Elapsed += this.OnTimerElapsed;
+            // 每15秒遍历一次
             _Timer.Interval = 1000*15;
             _Timer.Start();
         }
 
         private void OnTimerElapsed(object sender, ElapsedEventArgs args)
         {
-            Flush(false);
+            FlushInTimer();
         }
 
         public void Close()
@@ -114,20 +141,20 @@ namespace QuantBox.Data.Serializer.V2
             {
                 foreach (var item in Items.Values)
                 {
-                    item.Write(true);
+                    item.Write();
                     item.Close();
                 }
                 Items.Clear();
             }
         }
 
-        public void Flush(bool flush)
+        public void FlushInTimer()
         {
             lock (locker)
             {
                 foreach (var item in Items.Values)
                 {
-                    item.Flush(flush);
+                    item.FlushInTimer();
                 }
             }
         }
@@ -186,7 +213,7 @@ namespace QuantBox.Data.Serializer.V2
                 item.TradingDay = tick.TradingDay;
             }
             item.Tick = tick;
-            item.Write(false);
+            item.Write();
         }
 
         public void Dispose()
