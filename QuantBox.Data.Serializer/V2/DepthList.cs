@@ -538,5 +538,21 @@ namespace QuantBox.Data.Serializer.V2
             }
             return i;
         }
+
+        public static int FindAsk1PositionDescending(List<DepthItemView> list, double AskPrice1)
+        {
+            if (list == null || list.Count == 0)
+                return -1;
+
+            int i = 0;
+            for (; i < list.Count; ++i)
+            {
+                DepthItemView currItem = list[i];
+                if (currItem.Price > AskPrice1)
+                    continue;
+                return i;
+            }
+            return i;
+        }
     }
 }

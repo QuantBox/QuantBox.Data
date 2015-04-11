@@ -730,7 +730,7 @@ namespace QuantBox.Data.Serializer.V2
             return _list;
         }
 
-        public List<PbTickView> Data2View(IEnumerable<PbTick> list)
+        public List<PbTickView> Data2View(IEnumerable<PbTick> list, bool descending)
         {
             if (list == null)
                 return null;
@@ -740,12 +740,12 @@ namespace QuantBox.Data.Serializer.V2
 
             foreach (var l in list)
             {
-                tempList.Add(converter.Int2Double(l));
+                tempList.Add(converter.Int2Double(l, descending));
             }
             return tempList;
         }
 
-        public List<PbTick> View2Data(IEnumerable<PbTickView> list)
+        public List<PbTick> View2Data(IEnumerable<PbTickView> list, bool descending)
         {
             if (list == null)
                 return null;
@@ -755,7 +755,7 @@ namespace QuantBox.Data.Serializer.V2
 
             foreach (var l in list)
             {
-                tempList.Add(converter.Double2Int(l));
+                tempList.Add(converter.Double2Int(l, descending));
             }
             return tempList;
         }

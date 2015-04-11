@@ -11,6 +11,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Timers;
 using System.Windows.Forms;
 
 namespace DataInspector
@@ -90,7 +91,7 @@ namespace DataInspector
         private void ViewToDataByViewType()
         {
             PbTickCodec Codec = new PbTickCodec();
-            this.listTickData = Codec.View2Data(this.listTickView);
+            this.listTickData = Codec.View2Data(this.listTickView, true);
         }
 
         private void SaveChanges()
@@ -112,6 +113,11 @@ namespace DataInspector
         }
 
         private void dgvTick_SelectionChanged(object sender, EventArgs e)
+        {
+            dgvTick_SelectionChanged();
+        }
+
+        private void dgvTick_SelectionChanged()
         {
             if (dgvTick.CurrentRow == null)
                 return;
@@ -142,7 +148,7 @@ namespace DataInspector
             dgvDepth.DataSource = tick2.DepthList;
 
             if (tick2.DepthList != null)
-                RowIndex = Math.Min(RowIndex, tick2.DepthList.Count-1);
+                RowIndex = Math.Min(RowIndex, tick2.DepthList.Count - 1);
 
             dgvDepth.CurrentCell = dgvDepth.Rows[RowIndex].Cells[ColumnIndex];
             if (Selected)
@@ -150,11 +156,13 @@ namespace DataInspector
             dgvDepth.FirstDisplayedScrollingRowIndex = FirstDisplayedScrollingRowIndex;
             dgvDepth.HorizontalScrollingOffset = HorizontalScrollingOffset;
 
+
             // 设置背景色
-            int pos = DepthListHelper.FindAsk1Position(tick2.DepthList,tick2.AskPrice1);
-            for (int i = 0; i < pos; ++i)
+            int pos = DepthListHelper.FindAsk1PositionDescending(tick2.DepthList, tick2.AskPrice1);
+
+            for (int i = 0; i <= pos; ++i)
             {
-                for (int j = 0; j < dgvDepth.Rows[i].Cells.Count;++j )
+                for (int j = 0; j < dgvDepth.Rows[i].Cells.Count; ++j)
                 {
                     dgvDepth.Rows[i].Cells[j].Style.BackColor = Color.Tomato;
                 }
@@ -313,7 +321,7 @@ namespace DataInspector
 
                 PbTickCodec Codec = new PbTickCodec();
 
-                listTickView = Codec.Data2View(this.listTickData);
+                listTickView = Codec.Data2View(this.listTickData, true);
                 dgvTick.DataSource = this.listTickView;
             }
             catch (Exception ex)
@@ -397,6 +405,42 @@ namespace DataInspector
         }
 
         #endregion
+
+
+        private System.Timers.Timer _Timer = new System.Timers.Timer();
+        private void menuControl_Play_Click(object sender, EventArgs e)
+        {
+            _Timer.Elapsed += this.OnTimerElapsed;
+            // 每0.5秒遍历一次
+            _Timer.Interval = 500;
+            _Timer.Start();
+        }
+
+        private void menuControl_Stop_Click(object sender, EventArgs e)
+        {
+            _Timer.Elapsed -= this.OnTimerElapsed;
+            _Timer.Stop();
+        }
+
+        private void OnTimerElapsed(object sender, ElapsedEventArgs args)
+        {
+            ColumnIndex = dgvTick.CurrentCell.ColumnIndex;
+            RowIndex = dgvTick.CurrentCell.RowIndex;
+            Selected = dgvTick.CurrentRow.Selected;
+            FirstDisplayedScrollingRowIndex = dgvTick.FirstDisplayedScrollingRowIndex;
+            HorizontalScrollingOffset = dgvTick.HorizontalScrollingOffset;
+
+            RowIndex = Math.Min(RowIndex+1, dgvTick.RowCount - 1);
+
+            this.Invoke((EventHandler)delegate
+            {
+                dgvTick.CurrentCell = dgvTick.Rows[RowIndex].Cells[ColumnIndex];
+                if (Selected)
+                    dgvTick.CurrentRow.Selected = Selected;
+            });
+        }
+
+        
 
         #region Decompress To Folder
 

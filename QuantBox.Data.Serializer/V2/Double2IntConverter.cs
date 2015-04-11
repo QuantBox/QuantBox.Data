@@ -81,7 +81,7 @@ namespace QuantBox.Data.Serializer.V2
             return field;
         }
 
-        public List<DepthItem> Double2Int(List<DepthItemView> oldList)
+        public List<DepthItem> Double2Int(List<DepthItemView> oldList, bool descending)
         {
             if (oldList == null || oldList.Count == 0)
                 return null;
@@ -98,10 +98,15 @@ namespace QuantBox.Data.Serializer.V2
                 });
             }
 
+            if(descending)
+            {
+                newList.Reverse();
+            }
+
             return newList;
         }
 
-        public PbTick Double2Int(PbTickView tick)
+        public PbTick Double2Int(PbTickView tick, bool descending)
         {
             if (tick == null)
                 return null;
@@ -135,7 +140,7 @@ namespace QuantBox.Data.Serializer.V2
             field.Bar = Double2Int(tick.Bar);
             field.Static = Double2Int(tick.Static);
             field.Split = Double2Int(tick.Split);
-            field.DepthList = Double2Int(tick.DepthList);
+            field.DepthList = Double2Int(tick.DepthList, descending);
 
             return field;
         }

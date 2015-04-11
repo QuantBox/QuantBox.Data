@@ -62,7 +62,7 @@ namespace QuantBox.Data.Serializer.V2
             PbTickCodec Codec = new PbTickCodec();
 
             // 将差分数据生成界面数据
-            IEnumerable<PbTickView> _list = Codec.Data2View(Codec.Restore(list));
+            IEnumerable<PbTickView> _list = Codec.Data2View(Codec.Restore(list), false);
 
             // 保存
             using (TextWriter stream = new StreamWriter(output))
