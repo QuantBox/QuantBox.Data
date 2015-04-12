@@ -1,4 +1,4 @@
-# QuantBox.Data数据存储格式
+﻿# QuantBox.Data数据存储格式
 
 ##介绍
 自定义的二进制行情数据存储格式，支持兼容Bar和Tick数据，支持无限深度行情，支持除权除息信息。将行情使用此格式编码后再用7z或zip压缩后再存储。<br/>
@@ -10,6 +10,7 @@
 3. **DataInspector**,数据文件查看、编辑、转换工具
 4. **QuantBox行情数据存储方案**,文件格式设计思路
 5. **Data**,行情示例文件
+6. **SelfDecode**,.pd0/.7z子解压程序.解压当前目录以及子目录下的数据,到csv文件.默认解压到当前目录的SelfDecodeData下面
 
 ## 在自己的项目中使用
 引用**QuantBox\.Data\.Serializer**库即可，参考**DataInspector**中的使用方法，再转换成自己系统中的数据格式<br/>
