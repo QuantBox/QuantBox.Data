@@ -91,14 +91,10 @@
       <Name>QuantBox.Data.Serializer</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Content Include="7z.dll" />
-    <Content Include="7z64.dll" />
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PreBuildEvent>copy "$(ProjectDir)7z.dll" "$(TargetDir)"
-copy "$(ProjectDir)7z64.dll" "$(TargetDir)"</PreBuildEvent>
+    <PreBuildEvent>copy "$(SolutionDir)Lib\7z.dll" "$(TargetDir)"
+copy "$(SolutionDir)Lib\7z64.dll" "$(TargetDir)"</PreBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
