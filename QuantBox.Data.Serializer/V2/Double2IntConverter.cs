@@ -140,6 +140,7 @@ namespace QuantBox.Data.Serializer.V2
             field.Bar = Double2Int(tick.Bar);
             field.Static = Double2Int(tick.Static);
             field.Split = Double2Int(tick.Split);
+            field.LocalTime_Msec = tick.LocalTime_Msec;
             field.DepthList = Double2Int(tick.DepthList, descending);
 
             return field;

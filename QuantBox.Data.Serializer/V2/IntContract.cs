@@ -424,6 +424,11 @@ namespace QuantBox.Data.Serializer.V2
         /// </summary>
         [ProtoMember(16)]
         public StockSplitInfo Split;
+        /// <summary>
+        /// 在ActionDay+Time的基础上加N毫秒
+        /// </summary>
+        [ProtoMember(17, DataFormat = DataFormat.ZigZag)]
+        public int LocalTime_Msec;
 
         /// <summary>
         /// 内部使用，保存到硬盘时使用Depth

@@ -440,8 +440,6 @@ namespace DataInspector
             });
         }
 
-        
-
         #region Decompress To Folder
 
         //private void ReadFromFile(string pathChosen)

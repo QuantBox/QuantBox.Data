@@ -7,35 +7,6 @@ using System.Threading.Tasks;
 
 namespace QuantBox.Data.Serializer.V2
 {
-    //public class DepthTickView
-    //{
-    //    public double BidPrice1 { get; set; }
-    //    public int BidSize1 { get; set; }
-    //    public double AskPrice1 { get; set; }
-    //    public int AskSize1 { get; set; }
-    //    public double BidPrice2 { get; set; }
-    //    public int BidSize2 { get; set; }
-    //    public double AskPrice2 { get; set; }
-    //    public int AskSize2 { get; set; }
-    //    public double BidPrice3 { get; set; }
-    //    public int BidSize3 { get; set; }
-    //    public double AskPrice3 { get; set; }
-    //    public int AskSize3 { get; set; }
-
-    //    /// <summary>
-    //    /// 指向下块多档行情
-    //    /// </summary>
-    //    public DepthTickView Next { get; set; }
-
-    //    public int BidCount1 { get; set; }
-    //    public int AskCount1 { get; set; }
-
-    //    public int BidCount2 { get; set; }
-    //    public int AskCount2 { get; set; }
-    //    public int BidCount3 { get; set; }
-    //    public int AskCount3 { get; set; }
-    //}
-
     public class StaticInfoView
     {
         /// <summary>
@@ -161,12 +132,12 @@ namespace QuantBox.Data.Serializer.V2
 
         public StockSplitInfoView Split { get; set; }
 
+        public int LocalTime_Msec { get; set; }
+
         /// <summary>
         /// N档数据
         /// </summary>
         public List<DepthItemView> DepthList { get; set; }
-
-
 
         public string ToCsvHeader()
         {

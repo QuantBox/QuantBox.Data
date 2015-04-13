@@ -398,7 +398,7 @@ namespace QuantBox.Data.Serializer.V2
             GetUpdateTime(tick.Time_HHmm, tick.Time_____ssf__, tick.Time________ff, out time, out ms);
         }
 
-        public TimeSpan GetUpdateTime(int hhmm, int ssf, int ff)
+        public TimeSpan GetUpdateTime(int hhmm, int ssf, int ff,int msec)
         {
             int time;
             int ms;
@@ -406,12 +406,17 @@ namespace QuantBox.Data.Serializer.V2
             var hours = time / 10000;
             var minutes = (time % 10000) / 100;
             var seconds = time % 100;
-            return new TimeSpan(0, hours, minutes, seconds, ms);
+            return new TimeSpan(0, hours, minutes, seconds, ms + msec);
         }
 
         public TimeSpan GetUpdateTime(PbTick tick)
         {
-            return GetUpdateTime(tick.Time_HHmm, tick.Time_____ssf__, tick.Time________ff);
+            return GetUpdateTime(tick.Time_HHmm, tick.Time_____ssf__, tick.Time________ff,0);
+        }
+
+        public TimeSpan GetLocalTime(PbTick tick)
+        {
+            return GetUpdateTime(tick.Time_HHmm, tick.Time_____ssf__, tick.Time________ff, tick.LocalTime_Msec);
         }
         #endregion
         
@@ -526,6 +531,7 @@ namespace QuantBox.Data.Serializer.V2
             tick.Time________ff = current.Time________ff - prev.Time________ff;
             // 这个地方有区别要减去一个差，将时间再缩小
             tick.Time_____ssf__ = current.Time_____ssf__ - prev.Time_____ssf__ - _config.Time_ssf_Diff;
+            tick.LocalTime_Msec = current.LocalTime_Msec - prev.LocalTime_Msec;
             #endregion
 
             #region Bar数据
@@ -649,6 +655,7 @@ namespace QuantBox.Data.Serializer.V2
             tick.Time________ff = prev.Time________ff + diff.Time________ff;
             // 还原时间
             tick.Time_____ssf__ = prev.Time_____ssf__ + diff.Time_____ssf__ + _config.Time_ssf_Diff;
+            tick.LocalTime_Msec = prev.LocalTime_Msec + diff.LocalTime_Msec;
             #endregion
 
             #region Bar数据
