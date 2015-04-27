@@ -94,7 +94,7 @@ namespace QuantBox.Data.Serializer.V2
             _lastRead = Codec.Restore(_lastRead, raw);
             if (_lastRead.Config.Version != 2)
             {
-                throw new InvalidDataException("only support pd0 file version 2");
+                throw new ProtobufDataZeroException("only support pd0 file version 2", _lastRead.Config.Version, 2);
             }
             
             return _lastRead;

@@ -46,6 +46,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Converter\V1_to_V2.cs" />
+    <Compile Include="ProtobufDataZeroException.cs" />
     <Compile Include="PbTickSerializer.cs" />
     <Compile Include="V1\Double2IntConverter.cs" />
     <Compile Include="V1\DoubleContract.cs" />

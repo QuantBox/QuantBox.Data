@@ -15,40 +15,53 @@ namespace QuantBox.Data.Serializer
     {
         private V1.PbTickSerializer v1Reader = new V1.PbTickSerializer();
         private V2.PbTickSerializer v2Reader = new V2.PbTickSerializer();
-        private bool bV2 = true;
-
-        //public PbTickCodec Codec = new PbTickCodec();
-
+        private int nVersion = 2;
+        private int nMaxVersion = 2;
+        
         public V2.PbTick ReadOne(Stream stream)
         {
+            // 计划如果简单的将V2和V1的文件合并成一个文件也能读取
             long Position = stream.Position;
             V2.PbTick tick = null;
 
-            try
-            {
-                if(bV2)
-                {
-                    tick = v2Reader.ReadOne(stream);
-                }
-                else
-                {
-                    V1.PbTick tmp = v1Reader.ReadOne(stream);
-                    if (tmp == null)
-                        return null;
-                    tick = V1_to_V2.Converter(tmp);
-                }
-            }
-            catch
-            {
-                bV2 = false;
-                stream.Seek(Position, SeekOrigin.Begin);
-                V1.PbTick tmp = v1Reader.ReadOne(stream);
-                if (tmp == null)
-                    return null;
-                tick = V1_to_V2.Converter(tmp);
-            }
+            bool bFisrtException = true;
 
-            //Codec.Config = tick.Config;
+            do
+            {
+                try
+                {
+                    switch (nVersion)
+                    {
+                        case 1:
+                            tick = V1_to_V2.Converter(v1Reader.ReadOne(stream));
+                            break;
+                        case 2:
+                            tick = v2Reader.ReadOne(stream);
+                            break;
+                        default:
+                            throw new Exception(string.Format("Invalid file, version {0}", nVersion));
+                    }
+                    return tick;
+                }
+                catch (ProtobufDataZeroException ex)
+                {
+                    bFisrtException = false;
+                    nVersion = ex.CurrentVersion;
+                    stream.Seek(Position, SeekOrigin.Begin);
+                }
+                catch(ProtoException ex)
+                {
+                    // 第一次出现问题后，从最新格式开始向后进行解析
+                    if (bFisrtException)
+                        nVersion = nMaxVersion;
+                    else
+                        --nVersion;
+
+                    bFisrtException = false;
+                    stream.Seek(Position, SeekOrigin.Begin);
+                }
+            }while(true);
+
             return tick;
         }
 

@@ -16,9 +16,13 @@ namespace QuantBox.Data.Serializer.Converter
         /// <returns></returns>
         public static V2.PbTick Converter(V1.PbTick oldTick)
         {
+            if (oldTick == null)
+                return null;
+
             V2.PbTick tick = new V2.PbTick();
 
             tick.Config = new V2.ConfigInfo().Default();
+            tick.Config.Version = oldTick.Config.Version;
             tick.Config.AveragePriceMultiplier = oldTick.Config.AveragePriceMultiplier;
             tick.Config.ContractMultiplier = oldTick.Config.ContractMultiplier;
             tick.Config.SettlementPriceMultiplier = oldTick.Config.SettlementPriceMultiplier;
