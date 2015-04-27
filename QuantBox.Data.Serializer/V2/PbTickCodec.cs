@@ -752,6 +752,14 @@ namespace QuantBox.Data.Serializer.V2
             return tempList;
         }
 
+        public PbTickView Data2View(PbTick tick, bool descending)
+        {
+            if (tick == null)
+                return null;
+            Int2DoubleConverter converter = new Int2DoubleConverter();
+            return converter.Int2Double(tick, descending);
+        }
+
         public List<PbTick> View2Data(IEnumerable<PbTickView> list, bool descending)
         {
             if (list == null)
