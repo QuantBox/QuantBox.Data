@@ -111,7 +111,6 @@
             // 
             // checkBox_AllSubfolders
             // 
-            this.checkBox_AllSubfolders.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.checkBox_AllSubfolders.AutoSize = true;
             this.checkBox_AllSubfolders.Location = new System.Drawing.Point(15, 67);
             this.checkBox_AllSubfolders.Name = "checkBox_AllSubfolders";
@@ -134,9 +133,8 @@
             // 
             // checkBox_SkipExistingFile
             // 
-            this.checkBox_SkipExistingFile.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.checkBox_SkipExistingFile.AutoSize = true;
-            this.checkBox_SkipExistingFile.Location = new System.Drawing.Point(123, 64);
+            this.checkBox_SkipExistingFile.Location = new System.Drawing.Point(123, 68);
             this.checkBox_SkipExistingFile.Name = "checkBox_SkipExistingFile";
             this.checkBox_SkipExistingFile.Size = new System.Drawing.Size(119, 17);
             this.checkBox_SkipExistingFile.TabIndex = 4;

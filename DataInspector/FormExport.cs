@@ -1,4 +1,6 @@
 ﻿using QuantBox.Data.Serializer;
+using QuantBox.Data.Serializer.V2;
+using SevenZip;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -66,35 +68,61 @@ namespace DataInspector
 
         private void Do(DirectoryInfo di, SearchOption searchOption)
         {
-            //foreach (var f in di.GetFiles("*", searchOption))
-            //{
-            //    // 处理
-            //    string s = f.FullName.Replace(strInput, strOutput) + ".csv";
+            foreach (var f in di.GetFiles("*", searchOption))
+            {
+                // 处理
+                string s = f.FullName.Replace(strInput, strOutput + Path.DirectorySeparatorChar) + ".csv";
+                var fi = new FileInfo(s);
 
-            //    AppendText(s + " - ");
+                if (bSkip)
+                {
+                    if (fi.Exists)
+                    {
+                        AppendText(string.Format("{0} - 存在{1}", fi.FullName, Environment.NewLine));
+                        continue;
+                    }
+                }
 
-            //    if(bSkip)
-            //    {
-            //        if(new FileInfo(s).Exists)
-            //        {
-            //            AppendText("存在" + Environment.NewLine);
-            //            continue;
-            //        }
-            //    }
-
-            //    try
-            //    {
-            //        PbTickSerializer.WriteCsv(PbTickSerializer.Read(f.FullName), s);
-            //        AppendText("成功"+Environment.NewLine);
-            //    }
-            //    catch (Exception ex)
-            //    {
-            //        AppendText("失败" + Environment.NewLine);
-            //    }
-            //}
+                try
+                {
+                    ExportCSV(f, fi);
+                    
+                    AppendText(string.Format("{0} - 成功{1}", fi.FullName, Environment.NewLine));
+                }
+                catch (Exception ex)
+                {
+                    AppendText(string.Format("{0} - 失败{1}", fi.FullName, Environment.NewLine));
+                    AppendText(string.Format("{0}", ex.Message, Environment.NewLine));
+                }
+            }
         }
 
+        private void ExportCSV(FileInfo file_input,FileInfo file_output)
+        {
+            Stream _stream = new MemoryStream();
+            // 加载文件，支持7z解压
+            var fileStream = file_input.Open(FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+            {
+                try
+                {
+                    using (var zip = new SevenZipExtractor(fileStream))
+                    {
+                        zip.ExtractFile(0, _stream);
+                        _stream.Seek(0, SeekOrigin.Begin);
+                    }
+                }
+                catch
+                {
+                    _stream = fileStream;
+                    _stream.Seek(0, SeekOrigin.Begin);
+                }
+            }
 
+            PbTickCodec codec = new PbTickCodec();
+            QuantBox.Data.Serializer.PbTickSerializer Serializer = new QuantBox.Data.Serializer.PbTickSerializer();
+            List<PbTickView> list = Serializer.Read2View(_stream);
+            
+        }
 
         private void AppendText(string s)
         {

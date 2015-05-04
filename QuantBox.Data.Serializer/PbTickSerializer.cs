@@ -15,6 +15,7 @@ namespace QuantBox.Data.Serializer
     {
         private V1.PbTickSerializer v1Reader = new V1.PbTickSerializer();
         private V2.PbTickSerializer v2Reader = new V2.PbTickSerializer();
+        private V2.PbTickCodec v2Codec = new V2.PbTickCodec();
         private int nVersion = 2;
         private int nMaxVersion = 2;
         
@@ -80,6 +81,16 @@ namespace QuantBox.Data.Serializer
                 _list.Add(tmp);
             }
             return _list;
+        }
+
+        public V2.PbTickView ReadOne2View(Stream stream)
+        {
+            return v2Codec.Data2View(ReadOne(stream), false);
+        }
+
+        public List<V2.PbTickView> Read2View(Stream stream)
+        {
+            return v2Codec.Data2View(Read(stream), false);
         }
     }
 }
