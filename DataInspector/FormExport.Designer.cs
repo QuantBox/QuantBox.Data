@@ -38,6 +38,9 @@
             this.checkBox_AllSubfolders = new System.Windows.Forms.CheckBox();
             this.textBox_Log = new System.Windows.Forms.TextBox();
             this.checkBox_SkipExistingFile = new System.Windows.Forms.CheckBox();
+            this.numericUpDown_DepthLevel = new System.Windows.Forms.NumericUpDown();
+            this.label3 = new System.Windows.Forms.Label();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_DepthLevel)).BeginInit();
             this.SuspendLayout();
             // 
             // textBox_Input
@@ -112,7 +115,7 @@
             // checkBox_AllSubfolders
             // 
             this.checkBox_AllSubfolders.AutoSize = true;
-            this.checkBox_AllSubfolders.Location = new System.Drawing.Point(15, 67);
+            this.checkBox_AllSubfolders.Location = new System.Drawing.Point(15, 68);
             this.checkBox_AllSubfolders.Name = "checkBox_AllSubfolders";
             this.checkBox_AllSubfolders.Size = new System.Drawing.Size(102, 17);
             this.checkBox_AllSubfolders.TabIndex = 4;
@@ -141,11 +144,39 @@
             this.checkBox_SkipExistingFile.Text = "Skip the existing file";
             this.checkBox_SkipExistingFile.UseVisualStyleBackColor = true;
             // 
+            // numericUpDown_DepthLevel
+            // 
+            this.numericUpDown_DepthLevel.Location = new System.Drawing.Point(323, 67);
+            this.numericUpDown_DepthLevel.Maximum = new decimal(new int[] {
+            1000,
+            0,
+            0,
+            0});
+            this.numericUpDown_DepthLevel.Name = "numericUpDown_DepthLevel";
+            this.numericUpDown_DepthLevel.Size = new System.Drawing.Size(55, 20);
+            this.numericUpDown_DepthLevel.TabIndex = 6;
+            this.numericUpDown_DepthLevel.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(253, 71);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(65, 13);
+            this.label3.TabIndex = 7;
+            this.label3.Text = "Depth Level";
+            // 
             // FormExport
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(703, 319);
+            this.Controls.Add(this.label3);
+            this.Controls.Add(this.numericUpDown_DepthLevel);
             this.Controls.Add(this.textBox_Log);
             this.Controls.Add(this.checkBox_SkipExistingFile);
             this.Controls.Add(this.checkBox_AllSubfolders);
@@ -158,6 +189,7 @@
             this.Controls.Add(this.textBox_Input);
             this.Name = "FormExport";
             this.Text = "Export";
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_DepthLevel)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -175,5 +207,7 @@
         private System.Windows.Forms.CheckBox checkBox_AllSubfolders;
         private System.Windows.Forms.TextBox textBox_Log;
         private System.Windows.Forms.CheckBox checkBox_SkipExistingFile;
+        private System.Windows.Forms.NumericUpDown numericUpDown_DepthLevel;
+        private System.Windows.Forms.Label label3;
     }
 }
