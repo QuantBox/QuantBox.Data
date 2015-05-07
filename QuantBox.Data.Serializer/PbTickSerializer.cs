@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
 using ProtoBuf;
 using QuantBox.Data.Serializer.V2;
 using QuantBox.Data.Serializer.Converter;
