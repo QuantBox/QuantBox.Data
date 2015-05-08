@@ -56,19 +56,15 @@ namespace QuantBox.Data.Serializer
             } while (true);
         }
 
-        public List<V2.PbTick> Read(Stream stream)
+        public IEnumerable<V2.PbTick> Read(Stream stream)
         {
-            var list = new List<V2.PbTick>();
-
             while (true) {
                 var tick = ReadOne(stream);
                 if (tick == null) {
                     break;
                 }
-
-                list.Add(tick);
+                yield return tick;
             }
-            return list;
         }
 
         public V2.PbTickView ReadOne2View(Stream stream)
