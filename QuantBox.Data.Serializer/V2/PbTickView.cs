@@ -24,6 +24,7 @@ namespace QuantBox.Data.Serializer.V2
         public DepthItemView Bid1 { get; set; }
         public int AskPos { get; set; }
         public int BidPos { get; set; }
+        public bool descending { get; set; }
 
         /// <summary>
         /// 成交量
@@ -70,30 +71,65 @@ namespace QuantBox.Data.Serializer.V2
             return LastPrice.ToString(CultureInfo.InvariantCulture);
         }
 
-        public void LoadQuote()
+        public void LoadQuote(bool descending)
         {
-            AskPos = DepthListHelper.FindAsk1Position(DepthList, AskPrice1);
-            BidPos = AskPos - 1;
-            Ask1 = GetAsk(0);
-            Bid1 = GetBid(0);
+            this.descending = descending;
+            if(descending)
+            {
+                AskPos = DepthListHelper.FindAsk1PositionDescending(DepthList, AskPrice1);
+                BidPos = AskPos + 1;
+                Ask1 = GetAsk(1);
+                Bid1 = GetBid(1);
+            }
+            else
+            {
+                AskPos = DepthListHelper.FindAsk1Position(DepthList, AskPrice1);
+                BidPos = AskPos - 1;
+                Ask1 = GetAsk(1);
+                Bid1 = GetBid(1);
+            }
         }
 
         public DepthItemView GetBid(int level)
         {
             if (level > 0) {
-                var pos = BidPos - (level - 1);
-                if (pos >= 0) {
-                    return DepthList[pos];
+                if(descending)
+                {
+                    var pos = BidPos + (level - 1);
+                    if (pos <= DepthList.Count - 1)
+                    {
+                        return DepthList[pos];
+                    }
                 }
+                else
+                {
+                    var pos = BidPos - (level - 1);
+                    if (pos >= 0)
+                    {
+                        return DepthList[pos];
+                    }
+                }
+                
             }
             return null;
         }
         public DepthItemView GetAsk(int level)
         {
             if (level > 0) {
-                var pos = AskPos + (level - 1);
-                if (pos <= DepthList.Count - 1) {
-                    return DepthList[pos];
+                if (descending)
+                {
+                    var pos = AskPos - (level - 1);
+                    if (pos >= 0)
+                    {
+                        return DepthList[pos];
+                    }
+                }
+                else
+                {
+                    var pos = AskPos + (level - 1);
+                    if (pos <= DepthList.Count - 1) {
+                        return DepthList[pos];
+                    }
                 }
             }
             return null;

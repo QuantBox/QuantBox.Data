@@ -138,7 +138,7 @@ namespace QuantBox.Data.Serializer.V2
             view.Split = Int2Double(tick.Split);
             view.LocalTime_Msec = tick.LocalTime_Msec;
             view.DepthList = Int2Double(tick.DepthList, descending);
-            view.LoadQuote();
+            view.LoadQuote(descending);
             return view;
         }
     }
