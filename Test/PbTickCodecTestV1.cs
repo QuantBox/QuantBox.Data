@@ -9,8 +9,6 @@ namespace Test
     [TestClass]
     public class PbTickCodecTestV1
     {
-
-
         [TestMethod]
         public void TestConvertDateTime()
         {
@@ -25,25 +23,25 @@ namespace Test
             var codec = new PbTickCodec();
 
             codec.SetUpdateTime(span, out hhmm_____, out ____ssf__, out _______ff);
-            Assert.AreEqual<int>(1234, hhmm_____);
-            Assert.AreEqual<int>(567, ____ssf__);
-            Assert.AreEqual<int>(89, _______ff);
+            Assert.AreEqual(1234, hhmm_____);
+            Assert.AreEqual(567, ____ssf__);
+            Assert.AreEqual(89, _______ff);
 
             codec.SetUpdateTime(time, ms, out hhmm_____, out ____ssf__, out _______ff);
-            Assert.AreEqual<int>(1234, hhmm_____);
-            Assert.AreEqual<int>(567, ____ssf__);
-            Assert.AreEqual<int>(89, _______ff);
+            Assert.AreEqual(1234, hhmm_____);
+            Assert.AreEqual(567, ____ssf__);
+            Assert.AreEqual(89, _______ff);
 
             codec.GetUpdateTime(hhmm_____, ____ssf__, _______ff, out time, out ms);
-            Assert.AreEqual<int>(123456, time);
-            Assert.AreEqual<int>(789, ms);
+            Assert.AreEqual(123456, time);
+            Assert.AreEqual(789, ms);
 
             span = codec.GetUpdateTime(hhmm_____, ____ssf__, _______ff);
-            Assert.AreEqual<int>(0, span.Days);
-            Assert.AreEqual<int>(12, span.Hours);
-            Assert.AreEqual<int>(34, span.Minutes);
-            Assert.AreEqual<int>(56, span.Seconds);
-            Assert.AreEqual<int>(789, span.Milliseconds);
+            Assert.AreEqual(0, span.Days);
+            Assert.AreEqual(12, span.Hours);
+            Assert.AreEqual(34, span.Minutes);
+            Assert.AreEqual(56, span.Seconds);
+            Assert.AreEqual(789, span.Milliseconds);
 
             var date1 = 20141104;
             var date2 = 20141105;
@@ -51,46 +49,45 @@ namespace Test
             var tick = new PbTick();
             codec.SetActionDay(tick, new DateTime(2014, 11, 4));
             codec.SetTradingDay(tick, new DateTime(2014, 11, 5));
-            Assert.AreEqual<int>(date1, tick.ActionDay);
-            Assert.AreEqual<int>(date2, tick.TradingDay);
-            Assert.AreEqual<DateTime>(new DateTime(2014, 11, 4), codec.GetDateTime(tick.ActionDay));
-            Assert.AreEqual<DateTime>(new DateTime(2014, 11, 5), codec.GetDateTime(tick.TradingDay));
+            Assert.AreEqual(date1, tick.ActionDay);
+            Assert.AreEqual(date2, tick.TradingDay);
+            Assert.AreEqual(new DateTime(2014, 11, 4), codec.GetDateTime(tick.ActionDay));
+            Assert.AreEqual(new DateTime(2014, 11, 5), codec.GetDateTime(tick.TradingDay));
         }
 
         [TestMethod]
         public void TestGetSetPrice()
         {
-            PbTickCodec codec = new PbTickCodec();
-
+            var codec = new PbTickCodec();
             codec.Config.SetTickSize(0.2);
 
             PbTick tick = new PbTick();
 
-            Assert.AreEqual<double>(0, codec.GetBidPrice(tick, 1));
-            Assert.AreEqual<double>(0, codec.GetBidPrice(tick, 4));
-            Assert.AreEqual<double>(0, codec.GetBidPrice(tick, 10));
+            Assert.AreEqual(0, codec.GetBidPrice(tick, 1));
+            Assert.AreEqual(0, codec.GetBidPrice(tick, 4));
+            Assert.AreEqual(0, codec.GetBidPrice(tick, 10));
 
             codec.SetBidPrice(tick, 1, 1.0);
             codec.SetBidPrice(tick, 4, 2.4);
             codec.SetBidPrice(tick, 10, 5.8);
 
-            Assert.AreEqual<double>(1, codec.GetBidPrice(tick, 1));
-            Assert.AreEqual<double>(2.4, codec.GetBidPrice(tick, 4));
-            Assert.AreEqual<double>(5.8, codec.GetBidPrice(tick, 10));
+            Assert.AreEqual(1, codec.GetBidPrice(tick, 1));
+            Assert.AreEqual(2.4, codec.GetBidPrice(tick, 4));
+            Assert.AreEqual(5.8, codec.GetBidPrice(tick, 10));
 
 
 
-            Assert.AreEqual<double>(0, codec.GetAskPrice(tick, 1));
-            Assert.AreEqual<double>(0, codec.GetAskPrice(tick, 4));
-            Assert.AreEqual<double>(0, codec.GetAskPrice(tick, 10));
+            Assert.AreEqual(0, codec.GetAskPrice(tick, 1));
+            Assert.AreEqual(0, codec.GetAskPrice(tick, 4));
+            Assert.AreEqual(0, codec.GetAskPrice(tick, 10));
 
             codec.SetAskPrice(tick, 1, -1.0);
             codec.SetAskPrice(tick, 4, 2.4);
             codec.SetAskPrice(tick, 10, -5.8);
 
-            Assert.AreEqual<double>(-1.0, codec.GetAskPrice(tick, 1));
-            Assert.AreEqual<double>(2.4, codec.GetAskPrice(tick, 4));
-            Assert.AreEqual<double>(-5.8, codec.GetAskPrice(tick, 10));
+            Assert.AreEqual(-1.0, codec.GetAskPrice(tick, 1));
+            Assert.AreEqual(2.4, codec.GetAskPrice(tick, 4));
+            Assert.AreEqual(-5.8, codec.GetAskPrice(tick, 10));
 
             codec.SetAskCount(tick, 1, 4);
             codec.SetAskCount(tick, 4, 5);
@@ -101,10 +98,10 @@ namespace Test
             Assert.AreEqual<double>(-9, codec.GetAskCount(tick, 10));
 
             codec.SetSettlementPrice(tick, 1234.56);
-            Assert.AreEqual<double>(1234.56, codec.GetSettlementPrice(tick), "SettlementPrice");
+            Assert.AreEqual(1234.56, codec.GetSettlementPrice(tick), "SettlementPrice");
 
             codec.SetTurnover(tick, 4567.8);
-            Assert.AreEqual<double>(4567.8, codec.GetTurnover(tick), "Turnover");
+            Assert.AreEqual(4567.8, codec.GetTurnover(tick), "Turnover");
         }
 
         [TestMethod]
@@ -115,27 +112,27 @@ namespace Test
             ptc.Config.SetTickSize(0.2);
             ptc.TickSize = ptc.Config.GetTickSize();
 
-            Assert.AreEqual<int>(5, ptc.PriceToTick(1));
-            Assert.AreEqual<int>(6, ptc.PriceToTick(1.2));
-            Assert.AreEqual<int>(7, ptc.PriceToTick(1.4));
-            Assert.AreEqual<int>(8, ptc.PriceToTick(1.6));
-            Assert.AreEqual<int>(9, ptc.PriceToTick(1.8));
-            Assert.AreEqual<int>(10, ptc.PriceToTick(2.0));
+            Assert.AreEqual(5, ptc.PriceToTick(1));
+            Assert.AreEqual(6, ptc.PriceToTick(1.2));
+            Assert.AreEqual(7, ptc.PriceToTick(1.4));
+            Assert.AreEqual(8, ptc.PriceToTick(1.6));
+            Assert.AreEqual(9, ptc.PriceToTick(1.8));
+            Assert.AreEqual(10, ptc.PriceToTick(2.0));
 
-            Assert.AreEqual<int>(-5, ptc.PriceToTick(-1));
-            Assert.AreEqual<int>(-6, ptc.PriceToTick(-1.2));
-            Assert.AreEqual<int>(-7, ptc.PriceToTick(-1.4));
-            Assert.AreEqual<int>(-8, ptc.PriceToTick(-1.6));
-            Assert.AreEqual<int>(-9, ptc.PriceToTick(-1.8));
-            Assert.AreEqual<int>(-10, ptc.PriceToTick(-2.0));
+            Assert.AreEqual(-5, ptc.PriceToTick(-1));
+            Assert.AreEqual(-6, ptc.PriceToTick(-1.2));
+            Assert.AreEqual(-7, ptc.PriceToTick(-1.4));
+            Assert.AreEqual(-8, ptc.PriceToTick(-1.6));
+            Assert.AreEqual(-9, ptc.PriceToTick(-1.8));
+            Assert.AreEqual(-10, ptc.PriceToTick(-2.0));
 
 
-            Assert.AreEqual<double>(0.2, ptc.TickToPrice(1));
-            Assert.AreEqual<double>(0.4, ptc.TickToPrice(2));
+            Assert.AreEqual(0.2, ptc.TickToPrice(1));
+            Assert.AreEqual(0.4, ptc.TickToPrice(2));
 
-            Assert.AreEqual<double>(-0.2, ptc.TickToPrice(-1));
-            Assert.AreEqual<double>(-0.4, ptc.TickToPrice(-2));
-            Assert.AreEqual<double>(-2, ptc.TickToPrice(-10));
+            Assert.AreEqual(-0.2, ptc.TickToPrice(-1));
+            Assert.AreEqual(-0.4, ptc.TickToPrice(-2));
+            Assert.AreEqual(-2, ptc.TickToPrice(-10));
         }
 
         [TestMethod]
@@ -232,46 +229,46 @@ namespace Test
 
             var diff = codec.Diff(tick1, tick2);
 
-            Assert.AreEqual<int>(0, diff.ActionDay);
-            Assert.AreEqual<int>(0, diff.TradingDay);
+            Assert.AreEqual(0, diff.ActionDay);
+            Assert.AreEqual(0, diff.TradingDay);
             Assert.AreEqual(null, diff.Static);
             Assert.AreEqual(null, diff.Bar);
-            Assert.AreEqual<int>(0, diff.Depth1_3.AskPrice1, "AskPrice1");
-            Assert.AreEqual<int>(0, diff.Depth1_3.AskSize1, "AskSize1");
-            Assert.AreEqual<int>(0, diff.Depth1_3.AskPrice2, "AskPrice2");
-            Assert.AreEqual<int>(2, diff.Depth1_3.AskSize2, "AskSize2");
-            Assert.AreEqual<int>(0, diff.Depth1_3.AskPrice3, "AskPrice3");
-            Assert.AreEqual<int>(3, diff.Depth1_3.AskSize3, "AskSize3");
+            Assert.AreEqual(0, diff.Depth1_3.AskPrice1, "AskPrice1");
+            Assert.AreEqual(0, diff.Depth1_3.AskSize1, "AskSize1");
+            Assert.AreEqual(0, diff.Depth1_3.AskPrice2, "AskPrice2");
+            Assert.AreEqual(2, diff.Depth1_3.AskSize2, "AskSize2");
+            Assert.AreEqual(0, diff.Depth1_3.AskPrice3, "AskPrice3");
+            Assert.AreEqual(3, diff.Depth1_3.AskSize3, "AskSize3");
 
-            Assert.AreEqual<int>(0, diff.Time_____ssf__);
+            Assert.AreEqual(0, diff.Time_____ssf__);
 
 
             var tick3 = codec.Restore(tick1, diff);
 
-            Assert.AreEqual<int>(tick2.Depth1_3.AskPrice1, tick3.Depth1_3.AskPrice1);
-            Assert.AreEqual<int>(tick2.Depth1_3.AskPrice2, tick3.Depth1_3.AskPrice2);
-            Assert.AreEqual<int>(tick2.Depth1_3.AskPrice3, tick3.Depth1_3.AskPrice3);
-            Assert.AreEqual<int>(tick2.Depth1_3.AskSize1, tick3.Depth1_3.AskSize1);
-            Assert.AreEqual<int>(tick2.Depth1_3.AskSize2, tick3.Depth1_3.AskSize2);
-            Assert.AreEqual<int>(tick2.Depth1_3.AskSize3, tick3.Depth1_3.AskSize3);
+            Assert.AreEqual(tick2.Depth1_3.AskPrice1, tick3.Depth1_3.AskPrice1);
+            Assert.AreEqual(tick2.Depth1_3.AskPrice2, tick3.Depth1_3.AskPrice2);
+            Assert.AreEqual(tick2.Depth1_3.AskPrice3, tick3.Depth1_3.AskPrice3);
+            Assert.AreEqual(tick2.Depth1_3.AskSize1, tick3.Depth1_3.AskSize1);
+            Assert.AreEqual(tick2.Depth1_3.AskSize2, tick3.Depth1_3.AskSize2);
+            Assert.AreEqual(tick2.Depth1_3.AskSize3, tick3.Depth1_3.AskSize3);
 
-            Assert.AreEqual<int>(tick2.Depth1_3.BidPrice1, tick3.Depth1_3.BidPrice1);
-            Assert.AreEqual<int>(tick2.Depth1_3.BidPrice2, tick3.Depth1_3.BidPrice2);
-            Assert.AreEqual<int>(tick2.Depth1_3.BidPrice3, tick3.Depth1_3.BidPrice3);
-            Assert.AreEqual<int>(tick2.Depth1_3.BidSize1, tick3.Depth1_3.BidSize1);
-            Assert.AreEqual<int>(tick2.Depth1_3.BidSize2, tick3.Depth1_3.BidSize2);
-            Assert.AreEqual<int>(tick2.Depth1_3.BidSize3, tick3.Depth1_3.BidSize3);
+            Assert.AreEqual(tick2.Depth1_3.BidPrice1, tick3.Depth1_3.BidPrice1);
+            Assert.AreEqual(tick2.Depth1_3.BidPrice2, tick3.Depth1_3.BidPrice2);
+            Assert.AreEqual(tick2.Depth1_3.BidPrice3, tick3.Depth1_3.BidPrice3);
+            Assert.AreEqual(tick2.Depth1_3.BidSize1, tick3.Depth1_3.BidSize1);
+            Assert.AreEqual(tick2.Depth1_3.BidSize2, tick3.Depth1_3.BidSize2);
+            Assert.AreEqual(tick2.Depth1_3.BidSize3, tick3.Depth1_3.BidSize3);
 
-            Assert.AreEqual<double>(codec.GetLowerLimitPrice(tick1), codec.GetLowerLimitPrice(tick3));
-            Assert.AreEqual<double>(codec.GetUpperLimitPrice(tick1), codec.GetUpperLimitPrice(tick3));
-            Assert.AreEqual<double>(codec.GetSettlementPrice(tick1), codec.GetSettlementPrice(tick3));
+            Assert.AreEqual(codec.GetLowerLimitPrice(tick1), codec.GetLowerLimitPrice(tick3));
+            Assert.AreEqual(codec.GetUpperLimitPrice(tick1), codec.GetUpperLimitPrice(tick3));
+            Assert.AreEqual(codec.GetSettlementPrice(tick1), codec.GetSettlementPrice(tick3));
 
-            Assert.AreEqual<double>(codec.GetOpen(tick1), codec.GetOpen(tick3));
-            Assert.AreEqual<double>(codec.GetHigh(tick1), codec.GetHigh(tick3));
-            Assert.AreEqual<double>(codec.GetLow(tick1), codec.GetLow(tick3));
-            Assert.AreEqual<double>(codec.GetClose(tick1), codec.GetClose(tick3));
+            Assert.AreEqual(codec.GetOpen(tick1), codec.GetOpen(tick3));
+            Assert.AreEqual(codec.GetHigh(tick1), codec.GetHigh(tick3));
+            Assert.AreEqual(codec.GetLow(tick1), codec.GetLow(tick3));
+            Assert.AreEqual(codec.GetClose(tick1), codec.GetClose(tick3));
 
-            Assert.AreEqual<int>(572, tick3.Time_____ssf__);
+            Assert.AreEqual(572, tick3.Time_____ssf__);
         }
 
         [TestMethod]
@@ -293,19 +290,19 @@ namespace Test
 
 
 
-            Assert.AreEqual<double>(123.45, codec.GetAveragePrice(tick1));
-            Assert.AreEqual<double>(123.45, codec.GetSettlementPrice(tick1));
-            Assert.AreEqual<double>(1234567890120000, codec.GetTurnover(tick1));
-            Assert.AreEqual<long>(9123456789012345678, codec.GetOpenInterest(tick1));
-            Assert.AreEqual<long>(1234567890, codec.GetVolume(tick1));
+            Assert.AreEqual(123.45, codec.GetAveragePrice(tick1));
+            Assert.AreEqual(123.45, codec.GetSettlementPrice(tick1));
+            Assert.AreEqual(1234567890120000, codec.GetTurnover(tick1));
+            Assert.AreEqual(9123456789012345678, codec.GetOpenInterest(tick1));
+            Assert.AreEqual(1234567890, codec.GetVolume(tick1));
 
             codec.Config.ContractMultiplier = 5;
             codec.SetTurnover(tick1, 1234567890123456);
-            Assert.AreEqual<double>(1234567890123456, codec.GetTurnover(tick1));
+            Assert.AreEqual(1234567890123456, codec.GetTurnover(tick1));
 
             codec.Config.ContractMultiplier = 0.1;
             codec.SetTurnover(tick1, 12345678901234.56);
-            Assert.AreEqual<double>(12345678901234.56, codec.GetTurnover(tick1));
+            Assert.AreEqual(12345678901234.56, codec.GetTurnover(tick1));
         }
 
         [TestMethod]
@@ -313,16 +310,16 @@ namespace Test
         {
             PbTickCodec codec = new PbTickCodec();
 
-            Assert.AreEqual<double>(0.00001, codec.gcd());
-            Assert.AreEqual<double>(0.3, codec.gcd(100.3f - 100.0f));
-            Assert.AreEqual<double>(0.2, codec.gcd(100.3f - 100.1f));
-            Assert.AreEqual<double>(0.1, codec.gcd(100.3f - 100.0f, 100.2f - 100.0f));
-            Assert.AreEqual<double>(0.1, codec.gcd(100.3f - 100.0f, 100.2f - 100.0f, 100.1f - 100.0f));
-            Assert.AreEqual<double>(0.05, codec.gcd(100.3f - 100.0f, 100.2f - 100.0f, 100.1f - 100.0f, 100.1f - 100.05f));
+            Assert.AreEqual(0.00001, codec.gcd());
+            Assert.AreEqual(0.3, codec.gcd(100.3f - 100.0f));
+            Assert.AreEqual(0.2, codec.gcd(100.3f - 100.1f));
+            Assert.AreEqual(0.1, codec.gcd(100.3f - 100.0f, 100.2f - 100.0f));
+            Assert.AreEqual(0.1, codec.gcd(100.3f - 100.0f, 100.2f - 100.0f, 100.1f - 100.0f));
+            Assert.AreEqual(0.05, codec.gcd(100.3f - 100.0f, 100.2f - 100.0f, 100.1f - 100.0f, 100.1f - 100.05f));
 
-            Assert.AreEqual<double>(0.1, codec.gcd(100.0f - 100.3f, 100.0f - 100.2f));
-            Assert.AreEqual<double>(0.05, codec.gcd(100.0f - 100.3f, 100.0f - 100.2f, 100.0f - 100.1f, 100.05f - 100.1f));
-            Assert.AreEqual<double>(10, codec.gcd(1000, 41430));
+            Assert.AreEqual(0.1, codec.gcd(100.0f - 100.3f, 100.0f - 100.2f));
+            Assert.AreEqual(0.05, codec.gcd(100.0f - 100.3f, 100.0f - 100.2f, 100.0f - 100.1f, 100.05f - 100.1f));
+            Assert.AreEqual(10, codec.gcd(1000, 41430));
         }
 
         [TestMethod]

@@ -14,8 +14,8 @@ namespace QuantBox.Data.Serializer.V2
             if (bar == null)
                 return null;
 
-            BarInfoView field = new BarInfoView();
-            
+            var field = new BarInfoView();
+
             field.Open = Codec.TickToPrice(bar.Open);
             field.High = Codec.TickToPrice(bar.High);
             field.Low = Codec.TickToPrice(bar.Low);
@@ -30,7 +30,7 @@ namespace QuantBox.Data.Serializer.V2
             if (Static == null)
                 return null;
 
-            StaticInfoView field = new StaticInfoView();
+            var field = new StaticInfoView();
 
             field.LowerLimitPrice = Codec.GetLowerLimitPrice(Static);
             field.UpperLimitPrice = Codec.GetUpperLimitPrice(Static);
@@ -47,7 +47,7 @@ namespace QuantBox.Data.Serializer.V2
             if (config == null)
                 return null;
 
-            ConfigInfoView field = new ConfigInfoView();
+            var field = new ConfigInfoView();
 
             field.Version = config.Version;
             field.TickSize = config.TickSize;
@@ -69,7 +69,7 @@ namespace QuantBox.Data.Serializer.V2
             if (split == null)
                 return null;
 
-            StockSplitInfoView field = new StockSplitInfoView();
+            var field = new StockSplitInfoView();
 
             field.CashDividend = split.CashDividend;
             field.StockDividend = split.StockDividend;
@@ -86,10 +86,9 @@ namespace QuantBox.Data.Serializer.V2
             if (oldList == null || oldList.Count == 0)
                 return null;
 
-            List<DepthItemView> newList = new List<DepthItemView>();
+            var newList = new List<DepthItemView>();
 
-            foreach(var o in oldList)
-            {
+            foreach (var o in oldList) {
                 newList.Add(new DepthItemView() {
                     Price = Codec.TickToPrice(o.Price),
                     Size = o.Size,
@@ -97,8 +96,7 @@ namespace QuantBox.Data.Serializer.V2
                 });
             }
 
-            if (descending)
-            {
+            if (descending) {
                 newList.Reverse();
             }
 
@@ -110,40 +108,38 @@ namespace QuantBox.Data.Serializer.V2
             if (tick == null)
                 return null;
 
-            PbTickView field = new PbTickView();
-            
+            var view = new PbTickView();
+
             // 利用此机会设置TickSize
-            if(Codec == null)
-            {
+            if (Codec == null) {
                 Codec = new PbTickCodec();
             }
-            field.Config = Int2Double(tick.Config);
+            view.Config = Int2Double(tick.Config);
 
             Codec.Config = tick.Config;
 
-            field.Turnover = Codec.GetTurnover(tick);
-            field.AveragePrice = Codec.GetAveragePrice(tick);
+            view.Turnover = Codec.GetTurnover(tick);
+            view.AveragePrice = Codec.GetAveragePrice(tick);
 
-            field.LastPrice = Codec.TickToPrice(tick.LastPrice);
-            field.AskPrice1 = Codec.TickToPrice(tick.AskPrice1);
-
+            view.LastPrice = Codec.TickToPrice(tick.LastPrice);
+            view.AskPrice1 = Codec.TickToPrice(tick.AskPrice1);
             
-            field.Volume = tick.Volume;
-            field.OpenInterest = tick.OpenInterest;
-            
-            field.TradingDay = tick.TradingDay;
-            field.ActionDay = tick.ActionDay;
-            field.Time_HHmm = tick.Time_HHmm;
-            field.Time_____ssf__ = tick.Time_____ssf__;
-            field.Time________ff = tick.Time________ff;
+            view.Volume = tick.Volume;
+            view.OpenInterest = tick.OpenInterest;
 
-            field.Bar = Int2Double(tick.Bar);
-            field.Static = Int2Double(tick.Static);
-            field.Split = Int2Double(tick.Split);
-            field.LocalTime_Msec = tick.LocalTime_Msec;
-            field.DepthList = Int2Double(tick.DepthList, descending);
+            view.TradingDay = tick.TradingDay;
+            view.ActionDay = tick.ActionDay;
+            view.Time_HHmm = tick.Time_HHmm;
+            view.Time_____ssf__ = tick.Time_____ssf__;
+            view.Time________ff = tick.Time________ff;
 
-            return field;
+            view.Bar = Int2Double(tick.Bar);
+            view.Static = Int2Double(tick.Static);
+            view.Split = Int2Double(tick.Split);
+            view.LocalTime_Msec = tick.LocalTime_Msec;
+            view.DepthList = Int2Double(tick.DepthList, descending);
+            view.LoadQuote();
+            return view;
         }
     }
 }

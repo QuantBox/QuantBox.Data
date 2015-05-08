@@ -11,7 +11,7 @@ namespace QuantBox.Data.Serializer.V2
         private ConfigInfo _config;
         public ConfigInfo Config
         {
-            get { return _config;}
+            get { return _config; }
             set
             {
                 _config = value;
@@ -39,12 +39,10 @@ namespace QuantBox.Data.Serializer.V2
             if (val.Length == 0)
                 return 1 / TickSizeMultiplier;
 
-            long a = (long)Math.Round(Math.Abs(val[0]) * TickSizeMultiplier, 0);
+            var a = (long)Math.Round(Math.Abs(val[0]) * TickSizeMultiplier, 0);
 
-            if (val.Length > 1)
-            {
-                for (int i = 1; i < val.Length; ++i)
-                {
+            if (val.Length > 1) {
+                for (var i = 1; i < val.Length; ++i) {
                     var b = (long)Math.Round(Math.Abs(val[i]) * TickSizeMultiplier, 0);
                     a = gcd(a, b);
                 }
@@ -365,7 +363,7 @@ namespace QuantBox.Data.Serializer.V2
             // 由于肯定Millisec这个每次都会变，0变5，2变7，如果让他127内变不就更合适？
             // 时间123456，只取前面的1234，到分钟，然后相减，也就是分钟变一次
             // 时间123456.200，只取562，然后相减，也就是最大是599变成0,一般情况是变5
-            int t = time * 1000 + ms;
+            var t = time * 1000 + ms;
             hhmm_____ = t / 100000;
             ____ssf__ = t % 100000 / 100;
             _______ff = t % 100;
@@ -398,7 +396,7 @@ namespace QuantBox.Data.Serializer.V2
             GetUpdateTime(tick.Time_HHmm, tick.Time_____ssf__, tick.Time________ff, out time, out ms);
         }
 
-        public TimeSpan GetUpdateTime(int hhmm, int ssf, int ff,int msec)
+        public TimeSpan GetUpdateTime(int hhmm, int ssf, int ff, int msec)
         {
             int time;
             int ms;
@@ -411,7 +409,7 @@ namespace QuantBox.Data.Serializer.V2
 
         public TimeSpan GetUpdateTime(PbTick tick)
         {
-            return GetUpdateTime(tick.Time_HHmm, tick.Time_____ssf__, tick.Time________ff,0);
+            return GetUpdateTime(tick.Time_HHmm, tick.Time_____ssf__, tick.Time________ff, 0);
         }
 
         public TimeSpan GetLocalTime(PbTick tick)
@@ -419,7 +417,6 @@ namespace QuantBox.Data.Serializer.V2
             return GetUpdateTime(tick.Time_HHmm, tick.Time_____ssf__, tick.Time________ff, tick.LocalTime_Msec);
         }
         #endregion
-        
 
         public void SetLastPrice(PbTick tick, double price)
         {
@@ -475,25 +472,22 @@ namespace QuantBox.Data.Serializer.V2
         /// <returns></returns>
         public PbTick Diff(PbTick prev, PbTick current)
         {
-            if (prev == null)
-            {
+            if (prev == null) {
                 if (current.Config == null)
                     throw new Exception("快照的配置不能为空");
 
                 return current;
             }
 
-            PbTick tick = new PbTick();
+            var tick = new PbTick();
 
             #region 配置数据
             // 当前数据为空或前后相同，表示
-            if(current.Config == null || prev.Config.IsSame(current.Config))
-            {
+            if (current.Config == null || prev.Config.IsSame(current.Config)) {
                 tick.Config = null;
                 // 可以继续下去
             }
-            else
-            {
+            else {
                 // 是新数据，返回快照
                 Config = current.Config;
                 return current;
@@ -507,8 +501,8 @@ namespace QuantBox.Data.Serializer.V2
             tick.AskPrice1 = current.AskPrice1 - prev.AskPrice1;
 
             // 在这假定两个数据都是完整的
-            List<DepthItem> newPrevList = new List<DepthItem>();
-            List<DepthItem> newCurrList = new List<DepthItem>();
+            var newPrevList = new List<DepthItem>();
+            var newCurrList = new List<DepthItem>();
 
             // 先将两个队列变成同长
             DepthListHelper.ExpandTwoListsToSameLength(
@@ -536,8 +530,7 @@ namespace QuantBox.Data.Serializer.V2
 
             #region Bar数据
             // Bar数据要进行差分计算
-            if (current.Bar != null || prev.Bar != null)
-            {
+            if (current.Bar != null || prev.Bar != null) {
                 tick.Bar = new BarInfo();
                 if (current.Bar == null)
                     current.Bar = new BarInfo();
@@ -556,8 +549,7 @@ namespace QuantBox.Data.Serializer.V2
             #endregion
 
             #region 静态数据
-            if (current.Static != null || prev.Static != null)
-            {
+            if (current.Static != null || prev.Static != null) {
                 tick.Static = new StaticInfo();
                 if (current.Static == null)
                     current.Static = new StaticInfo();
@@ -568,12 +560,12 @@ namespace QuantBox.Data.Serializer.V2
                 tick.Static.UpperLimitPrice = current.Static.UpperLimitPrice - prev.Static.UpperLimitPrice;
                 tick.Static.SettlementPrice = current.Static.SettlementPrice - prev.Static.SettlementPrice;
 
-                if (!string.Equals(current.Static.Exchange,prev.Static.Exchange))
+                if (!string.Equals(current.Static.Exchange, prev.Static.Exchange))
                     tick.Static.Exchange = current.Static.Exchange;
 
                 if (!string.Equals(current.Static.Symbol, prev.Static.Symbol))
                     tick.Static.Symbol = current.Static.Symbol;
-                
+
 
                 if (tick.Static.IsZero)
                     tick.Static = null;
@@ -582,8 +574,7 @@ namespace QuantBox.Data.Serializer.V2
 
             #region 除权除息数据
             // 除权除息数据本来就是稀疏矩阵，不需要做差分
-            if (current.Split != null)
-            {
+            if (current.Split != null) {
                 tick.Split = current.Split;
 
                 if (tick.Split.IsZero)
@@ -596,8 +587,7 @@ namespace QuantBox.Data.Serializer.V2
 
         public PbTick Restore(PbTick prev, PbTick diff)
         {
-            if (prev == null)
-            {
+            if (prev == null) {
                 if (diff.Config == null)
                     throw new Exception("快照的配置不能为空");
                 // 记下配置，要用到
@@ -609,13 +599,11 @@ namespace QuantBox.Data.Serializer.V2
             var tick = new PbTick();
 
             #region 配置数据
-            if (diff.Config == null)
-            {
+            if (diff.Config == null) {
                 // 使用上条的配置
                 tick.Config = prev.Config;
             }
-            else
-            {
+            else {
                 // 新配置
                 _config = diff.Config;
 
@@ -630,9 +618,9 @@ namespace QuantBox.Data.Serializer.V2
             tick.AskPrice1 = prev.AskPrice1 + diff.AskPrice1;
 
             // 前一个是完整的，后一个是做过Size和Price的调整，如何还原
-            List<DepthItem> newPrevList = new List<DepthItem>();
-            List<DepthItem> newDiffList = new List<DepthItem>();
-            
+            var newPrevList = new List<DepthItem>();
+            var newDiffList = new List<DepthItem>();
+
             // 换成同长度
             DepthListHelper.ExpandTwoListsToSameLength(
                 prev.DepthList, diff.DepthList,
@@ -659,8 +647,7 @@ namespace QuantBox.Data.Serializer.V2
             #endregion
 
             #region Bar数据
-            if (prev.Bar != null || diff.Bar != null)
-            {
+            if (prev.Bar != null || diff.Bar != null) {
                 tick.Bar = new BarInfo();
                 if (prev.Bar == null)
                     prev.Bar = new BarInfo();
@@ -676,8 +663,7 @@ namespace QuantBox.Data.Serializer.V2
             #endregion
 
             #region 静态数据
-            if (prev.Static != null || diff.Static != null)
-            {
+            if (prev.Static != null || diff.Static != null) {
                 tick.Static = new StaticInfo();
                 if (prev.Static == null)
                     prev.Static = new StaticInfo();
@@ -695,8 +681,7 @@ namespace QuantBox.Data.Serializer.V2
 
             #region 除权除息数据
             // 没有做过差分，所以直接返回
-            if (diff.Split != null)
-            {
+            if (diff.Split != null) {
                 tick.Split = diff.Split;
             }
             #endregion
@@ -709,11 +694,10 @@ namespace QuantBox.Data.Serializer.V2
             if (list == null)
                 return null;
 
-            List<PbTick> _list = new List<PbTick>();
+            var _list = new List<PbTick>();
 
             PbTick last = null;
-            foreach (var item in list)
-            {
+            foreach (var item in list) {
                 last = Restore(last, item);
                 _list.Add(last);
             }
@@ -725,38 +709,36 @@ namespace QuantBox.Data.Serializer.V2
             if (list == null)
                 return null;
 
-            List<PbTick> _list = new List<PbTick>();
+            var _list = new List<PbTick>();
 
             PbTick last = null;
-            foreach (var item in list)
-            {
-                PbTick diff = Diff(last, item);
+            foreach (var item in list) {
+                var diff = Diff(last, item);
                 last = item;
                 _list.Add(diff);
             }
             return _list;
         }
 
-        public List<PbTickView> Data2View(IEnumerable<PbTick> list, bool descending)
+        public List<PbTickView> Data2View(IEnumerable<PbTick> ticks, bool descending)
         {
-            if (list == null)
+            if (ticks == null)
                 return null;
 
-            Int2DoubleConverter converter = new Int2DoubleConverter();
-            List<PbTickView> tempList = new List<PbTickView>();
+            var converter = new Int2DoubleConverter();
+            var views = new List<PbTickView>();
 
-            foreach (var l in list)
-            {
-                tempList.Add(converter.Int2Double(l, descending));
+            foreach (var tick in ticks) {
+                views.Add(converter.Int2Double(tick, descending));
             }
-            return tempList;
+            return views;
         }
 
         public PbTickView Data2View(PbTick tick, bool descending)
         {
             if (tick == null)
                 return null;
-            Int2DoubleConverter converter = new Int2DoubleConverter();
+            var converter = new Int2DoubleConverter();
             return converter.Int2Double(tick, descending);
         }
 
@@ -765,11 +747,10 @@ namespace QuantBox.Data.Serializer.V2
             if (list == null)
                 return null;
 
-            Double2IntConverter converter = new Double2IntConverter();
-            List<PbTick> tempList = new List<PbTick>();
+            var converter = new Double2IntConverter();
+            var tempList = new List<PbTick>();
 
-            foreach (var l in list)
-            {
+            foreach (var l in list) {
                 tempList.Add(converter.Double2Int(l, descending));
             }
             return tempList;
