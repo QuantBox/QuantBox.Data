@@ -1,0 +1,1 @@
+﻿请将protobuf-cpp-3.0.0-alpha-2.zip中的src/goolge放到当前目录下
