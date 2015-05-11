@@ -52,12 +52,6 @@
     <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\QuantBox.Data.Serializer\QuantBox.Data.Serializer.csproj">
-      <Project>{9aa6166d-06e2-4981-8c6a-639c49ab04d9}</Project>
-      <Name>QuantBox.Data.Serializer</Name>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>copy "$(SolutionDir)Lib\7z.dll" "$(TargetDir)"

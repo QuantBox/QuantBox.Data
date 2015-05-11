@@ -58,7 +58,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\QuantBox.Data.Serializer\QuantBox.Data.Serializer.csproj">
+    <ProjectReference Include="..\csharp\QuantBox.Data.Serializer\QuantBox.Data.Serializer.csproj">
       <Project>{9aa6166d-06e2-4981-8c6a-639c49ab04d9}</Project>
       <Name>QuantBox.Data.Serializer</Name>
     </ProjectReference>
