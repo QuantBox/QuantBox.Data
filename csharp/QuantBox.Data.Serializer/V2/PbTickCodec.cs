@@ -396,6 +396,11 @@ namespace QuantBox.Data.Serializer.V2
             GetUpdateTime(tick.Time_HHmm, tick.Time_____ssf__, tick.Time________ff, out time, out ms);
         }
 
+        public void GetUpdateTime(PbTickView tickView, out int time, out int ms)
+        {
+            GetUpdateTime(tickView.Time_HHmm, tickView.Time_____ssf__, tickView.Time________ff, out time, out ms);
+        }
+
         public TimeSpan GetUpdateTime(int hhmm, int ssf, int ff, int msec)
         {
             int time;
@@ -410,6 +415,11 @@ namespace QuantBox.Data.Serializer.V2
         public TimeSpan GetUpdateTime(PbTick tick)
         {
             return GetUpdateTime(tick.Time_HHmm, tick.Time_____ssf__, tick.Time________ff, 0);
+        }
+
+        public TimeSpan GetUpdateTime(PbTickView tickView)
+        {
+            return GetUpdateTime(tickView.Time_HHmm, tickView.Time_____ssf__, tickView.Time________ff, 0);
         }
 
         public TimeSpan GetLocalTime(PbTick tick)
