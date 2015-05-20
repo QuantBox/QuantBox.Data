@@ -92,6 +92,9 @@ namespace QuantBox.Data.Serializer.V2
 
         public DepthItemView GetBid(int level)
         {
+            if (DepthList == null)
+                return null;
+
             if (level > 0) {
                 if(descending)
                 {
@@ -115,6 +118,9 @@ namespace QuantBox.Data.Serializer.V2
         }
         public DepthItemView GetAsk(int level)
         {
+            if (DepthList == null)
+                return null;
+
             if (level > 0) {
                 if (descending)
                 {

@@ -25,6 +25,7 @@ namespace QuantBox.Data.Serializer.V2
             public PbTickSerializer Serializer;
             public PbTick Tick;
             public DateTime LastWriteTime;
+            //public bool HasData;
 
             public int TradingDay;
             public string _Symbol;
@@ -68,6 +69,7 @@ namespace QuantBox.Data.Serializer.V2
 
                     Serializer.Write(Tick, Stream);
                     Tick = null;
+                    //HasData = true;
                     
                     FlushInWriter();
                 }
@@ -85,7 +87,9 @@ namespace QuantBox.Data.Serializer.V2
                     // 但对于行情很少不变动的，会出现没有机会写入的情况，所以需要定时器来帮忙
                     if (ts >= 10)
                     {
-                        Stream.Flush(true);
+                        //if(HasData)
+                            Stream.Flush(true);
+                        //HasData = false;
                         LastWriteTime = DateTime.Now;
                     }
                 }
@@ -102,7 +106,9 @@ namespace QuantBox.Data.Serializer.V2
                     // 每10秒写一次
                     if (ts >= 10)
                     {
-                        Stream.Flush(true);
+                        //if (HasData)
+                            Stream.Flush(true);
+                        //HasData = false;
 
                         // 1分钟没有写入数据就关闭文件句柄
                         // 这样留下机会可以进行删除
