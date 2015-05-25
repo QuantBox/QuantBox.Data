@@ -15,7 +15,7 @@ namespace Test
 
         }
 
-        static void Main1(string[] args)
+        static void Main(string[] args)
         {
             List<DepthItem> oldPrevList = new List<DepthItem>();
             List<DepthItem> oldCurrList = new List<DepthItem>();
@@ -29,6 +29,21 @@ namespace Test
             oldPrevList.Add(new DepthItem(1, 100, 0));
             oldPrevList.Add(new DepthItem(7, 100, 0));
             oldPrevList.Add(new DepthItem(12, 100, 0));
+
+            int j11 = DepthListHelper.FindAsk1Position(oldPrevList, 0);
+            int j12 = DepthListHelper.FindAsk1Position(oldPrevList, 1);
+            int j13 = DepthListHelper.FindAsk1Position(oldPrevList, 12);
+            int j14 = DepthListHelper.FindAsk1Position(oldPrevList, 15);
+
+            List<DepthItemView> oldPrevListV = new List<DepthItemView>();
+            oldPrevListV.Add(new DepthItemView() { Price = 10});
+            oldPrevListV.Add(new DepthItemView() { Price = 5 });
+            oldPrevListV.Add(new DepthItemView() { Price = 1 });
+
+            int j21 = DepthListHelper.FindAsk1PositionDescending(oldPrevListV, 12);
+            int j22 = DepthListHelper.FindAsk1PositionDescending(oldPrevListV, 10);
+            int j23 = DepthListHelper.FindAsk1PositionDescending(oldPrevListV, 1);
+            int j24 = DepthListHelper.FindAsk1PositionDescending(oldPrevListV, 0);
 
             //oldCurrList.Add(new DepthItem(5, 100, 0));
             //oldCurrList.Add(new DepthItem(8, 100, 0));
@@ -357,7 +372,7 @@ namespace Test
             }
         }
 
-        static void Main(string[] args)
+        static void Main3(string[] args)
         {
             FileInfo fi = new FileInfo(@"F:\办公文档\数据\DepthDataShow\20150120.txt");
             //FileInfo fo = new FileInfo(@"F:\BaiduYunDownload\DepthDataShow\20150120.pd0");

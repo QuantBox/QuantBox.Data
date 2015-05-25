@@ -514,11 +514,16 @@ namespace QuantBox.Data.Serializer.V2
             for (; i < list.Count;++i )
             {
                 DepthItem currItem = list[i];
-                if(currItem.Price >= AskPrice1)
+                if(currItem.Price > AskPrice1)
                 {
-                    break;
+                    return i - 1;
+                }
+                else if(currItem.Price == AskPrice1)
+                {
+                    return i;
                 }
             }
+            
             return i;
         }
 
@@ -531,11 +536,16 @@ namespace QuantBox.Data.Serializer.V2
             for (; i < list.Count; ++i)
             {
                 DepthItemView currItem = list[i];
-                if (currItem.Price >= AskPrice1)
+                if (currItem.Price > AskPrice1)
                 {
-                    break;
+                    return i - 1;
+                }
+                else if (currItem.Price == AskPrice1)
+                {
+                    return i;
                 }
             }
+
             return i;
         }
 
@@ -548,11 +558,17 @@ namespace QuantBox.Data.Serializer.V2
             for (; i < list.Count; ++i)
             {
                 DepthItemView currItem = list[i];
-                if (currItem.Price > AskPrice1)
-                    continue;
-                return i;
+                if (currItem.Price < AskPrice1)
+                {
+                    return i - 1;
+                }
+                else if (currItem.Price == AskPrice1)
+                {
+                    return i;
+                }
             }
             return i;
+            
         }
     }
 }
