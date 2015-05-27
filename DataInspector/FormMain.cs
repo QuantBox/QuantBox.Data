@@ -22,6 +22,7 @@ namespace DataInspector
         private List<PbTickView> listTickView;
 
         private string strCurrentFileName;
+        private string strCurrentFilePath;
         private int nTickCurrentRowIndex;
         private bool bValueChanged;
 
@@ -301,7 +302,9 @@ namespace DataInspector
         #region Decompress To Stream
         private void ReadFromFile(string pathChosen)
         {
-            Tuple<Stream, string, double> tuple = ReadToStream(pathChosen);
+            strCurrentFilePath = pathChosen;
+
+            Tuple<Stream, string, double> tuple = ReadToStream(strCurrentFilePath);
             
             if (tuple == null)
             {
@@ -437,6 +440,30 @@ namespace DataInspector
                 dgvTick.CurrentCell = dgvTick.Rows[RowIndex].Cells[ColumnIndex];
                 if (Selected)
                     dgvTick.CurrentRow.Selected = Selected;
+            });
+        }
+
+        private void menuFile_Reload_Click(object sender, EventArgs e)
+        {
+            CheckSaved();
+
+            ColumnIndex = dgvTick.CurrentCell.ColumnIndex;
+            RowIndex = dgvTick.CurrentCell.RowIndex;
+            Selected = dgvTick.CurrentRow.Selected;
+            FirstDisplayedScrollingRowIndex = dgvTick.FirstDisplayedScrollingRowIndex;
+            HorizontalScrollingOffset = dgvTick.HorizontalScrollingOffset;
+
+            //RowIndex = Math.Min(RowIndex + 1, dgvTick.RowCount - 1);
+
+            ReadFromFile(strCurrentFilePath);
+
+            this.Invoke((EventHandler)delegate
+            {
+                dgvTick.CurrentCell = dgvTick.Rows[RowIndex].Cells[ColumnIndex];
+                if (Selected)
+                    dgvTick.CurrentRow.Selected = Selected;
+                dgvTick.FirstDisplayedScrollingRowIndex = FirstDisplayedScrollingRowIndex;
+                dgvTick.HorizontalScrollingOffset = HorizontalScrollingOffset;
             });
         }
 

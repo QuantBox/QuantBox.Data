@@ -47,7 +47,7 @@
             // 
             this.textBox_Input.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBox_Input.Location = new System.Drawing.Point(104, 12);
+            this.textBox_Input.Location = new System.Drawing.Point(120, 12);
             this.textBox_Input.Name = "textBox_Input";
             this.textBox_Input.Size = new System.Drawing.Size(390, 20);
             this.textBox_Input.TabIndex = 0;
@@ -56,7 +56,7 @@
             // 
             this.textBox_Output.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBox_Output.Location = new System.Drawing.Point(104, 38);
+            this.textBox_Output.Location = new System.Drawing.Point(120, 38);
             this.textBox_Output.Name = "textBox_Output";
             this.textBox_Output.Size = new System.Drawing.Size(390, 20);
             this.textBox_Output.TabIndex = 0;
@@ -64,7 +64,7 @@
             // button_Input
             // 
             this.button_Input.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button_Input.Location = new System.Drawing.Point(500, 10);
+            this.button_Input.Location = new System.Drawing.Point(516, 10);
             this.button_Input.Name = "button_Input";
             this.button_Input.Size = new System.Drawing.Size(75, 23);
             this.button_Input.TabIndex = 1;
@@ -75,7 +75,7 @@
             // button_Output
             // 
             this.button_Output.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button_Output.Location = new System.Drawing.Point(500, 36);
+            this.button_Output.Location = new System.Drawing.Point(516, 36);
             this.button_Output.Name = "button_Output";
             this.button_Output.Size = new System.Drawing.Size(75, 23);
             this.button_Output.TabIndex = 1;
@@ -104,7 +104,7 @@
             // button_Process
             // 
             this.button_Process.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button_Process.Location = new System.Drawing.Point(585, 35);
+            this.button_Process.Location = new System.Drawing.Point(601, 35);
             this.button_Process.Name = "button_Process";
             this.button_Process.Size = new System.Drawing.Size(75, 23);
             this.button_Process.TabIndex = 3;
@@ -137,7 +137,7 @@
             // checkBox_SkipExistingFile
             // 
             this.checkBox_SkipExistingFile.AutoSize = true;
-            this.checkBox_SkipExistingFile.Location = new System.Drawing.Point(123, 68);
+            this.checkBox_SkipExistingFile.Location = new System.Drawing.Point(137, 68);
             this.checkBox_SkipExistingFile.Name = "checkBox_SkipExistingFile";
             this.checkBox_SkipExistingFile.Size = new System.Drawing.Size(119, 17);
             this.checkBox_SkipExistingFile.TabIndex = 4;
@@ -146,7 +146,7 @@
             // 
             // numericUpDown_DepthLevel
             // 
-            this.numericUpDown_DepthLevel.Location = new System.Drawing.Point(323, 67);
+            this.numericUpDown_DepthLevel.Location = new System.Drawing.Point(364, 65);
             this.numericUpDown_DepthLevel.Maximum = new decimal(new int[] {
             1000,
             0,
@@ -164,7 +164,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(253, 71);
+            this.label3.Location = new System.Drawing.Point(285, 69);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(65, 13);
             this.label3.TabIndex = 7;
