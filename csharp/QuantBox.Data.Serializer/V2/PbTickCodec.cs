@@ -322,6 +322,81 @@ namespace QuantBox.Data.Serializer.V2
 
             return tick.Static.Exchange;
         }
+
+        public void SetPreClosePrice(StaticInfo Static, double price)
+        {
+            Static.PreClosePrice = PriceToTick(price);
+        }
+
+        public void SetPreClosePrice(PbTick tick, double price)
+        {
+            if (tick.Static == null)
+                tick.Static = new StaticInfo();
+            SetPreClosePrice(tick.Static, price);
+        }
+
+        public double GetPreClosePrice(StaticInfo Static)
+        {
+            if (Static == null)
+                return 0;
+
+            return TickToPrice(Static.PreClosePrice);
+        }
+
+        public double GetPreClosePrice(PbTick tick)
+        {
+            return GetPreClosePrice(tick.Static);
+        }
+
+        public void SetPreSettlementPrice(StaticInfo Static, double price)
+        {
+            Static.PreSettlementPrice = PriceToTick(price * _config.SettlementPriceMultiplier);
+        }
+
+        public void SetPreSettlementPrice(PbTick tick, double price)
+        {
+            if (tick.Static == null)
+                tick.Static = new StaticInfo();
+            SetPreSettlementPrice(tick.Static, price);
+        }
+
+        public double GetPreSettlementPrice(StaticInfo Static)
+        {
+            if (Static == null)
+                return 0;
+
+            return (TickToPrice(Static.PreSettlementPrice) / _config.SettlementPriceMultiplier);
+        }
+
+        public double GetPreSettlementPrice(PbTick tick)
+        {
+            return GetPreSettlementPrice(tick.Static);
+        }
+
+        public void SetPreOpenInterest(StaticInfo Static, long val)
+        {
+            Static.PreOpenInterest = val;
+        }
+
+        public void SetPreOpenInterest(PbTick tick, long val)
+        {
+            if (tick.Static == null)
+                tick.Static = new StaticInfo();
+            SetPreOpenInterest(tick.Static, val);
+        }
+
+        public long GetPreOpenInterest(StaticInfo Static)
+        {
+            if (Static == null)
+                return 0;
+
+            return Static.PreOpenInterest;
+        }
+
+        public long GetPreOpenInterest(PbTick tick)
+        {
+            return GetPreOpenInterest(tick.Static);
+        }
         #endregion
 
         #region 时间处理

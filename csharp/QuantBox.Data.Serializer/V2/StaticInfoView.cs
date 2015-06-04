@@ -28,5 +28,9 @@ namespace QuantBox.Data.Serializer.V2
         /// 交易所
         /// </summary>
         public string Exchange { get; set; }
+
+        public double PreClosePrice { get; set; }
+        public double PreSettlementPrice { get; set; }
+        public long PreOpenInterest { get; set; }
     }
 }

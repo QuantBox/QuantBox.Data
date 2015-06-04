@@ -30,6 +30,23 @@ namespace QuantBox.Data.Serializer.V2
         /// </summary>
         [ProtoMember(5)]
         public string Exchange;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [ProtoMember(6, DataFormat = DataFormat.ZigZag)]
+        public int PreClosePrice;
+        /// <summary>
+        /// 实际数*100，因为IF交割日结算价两位小数
+        /// </summary>
+        [ProtoMember(7, DataFormat = DataFormat.ZigZag)]
+        public int PreSettlementPrice;
+        /// <summary>
+        /// 
+        /// </summary>
+        [ProtoMember(8, DataFormat = DataFormat.ZigZag)]
+        public long PreOpenInterest;
+
         public bool IsZero
         {
             get
@@ -38,7 +55,10 @@ namespace QuantBox.Data.Serializer.V2
                        && UpperLimitPrice == 0
                        && SettlementPrice == 0
                        && string.IsNullOrWhiteSpace(Symbol)
-                       && string.IsNullOrWhiteSpace(Exchange);
+                       && string.IsNullOrWhiteSpace(Exchange)
+                       && PreClosePrice == 0
+                       && PreSettlementPrice == 0
+                       && PreOpenInterest == 0;
             }
         }
     }

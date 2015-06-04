@@ -39,6 +39,10 @@ namespace QuantBox.Data.Serializer.V2
             field.Symbol = Static.Symbol;
             field.Exchange = Static.Exchange;
 
+            Codec.SetPreClosePrice(field, Static.PreClosePrice);
+            Codec.SetPreSettlementPrice(field, Static.PreSettlementPrice);
+            Codec.SetPreOpenInterest(field, Static.PreOpenInterest);
+
             return field;
         }
 
