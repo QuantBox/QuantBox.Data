@@ -1,0 +1,72 @@
+package QuantBox.Data.Serializer.V2;
+
+message BarInfo {
+   optional sint32 Open = 1 [default = 0];
+   optional sint32 High = 2 [default = 0];
+   optional sint32 Low = 3 [default = 0];
+   optional sint32 Close = 4 [default = 0];
+   optional sint32 BarSize = 5 [default = 0];
+}
+message ConfigInfo {
+   optional int32 Version = 1 [default = 0];
+   optional int32 TickSize = 2 [default = 0];
+   optional double TickSizeMultiplier = 3 [default = 0];
+   optional int32 SettlementPriceMultiplier = 4 [default = 0];
+   optional int32 AveragePriceMultiplier = 5 [default = 0];
+   optional double ContractMultiplier = 6 [default = 0];
+   optional int32 Time_ssf_Diff = 7 [default = 0];
+   optional int32 MarketDepth = 8 [default = 0];
+   optional int32 MarketType = 9 [default = 0];
+   optional int32 Volume_Total_Or_Increment = 10 [default = 0];
+   optional int32 Turnover_Total_Or_Increment = 11 [default = 0];
+}
+message DepthTick {
+   optional sint32 Value1 = 1 [default = 0];
+   optional sint32 Value2 = 2 [default = 0];
+   optional sint32 Value3 = 3 [default = 0];
+   optional sint32 Value4 = 4 [default = 0];
+   optional sint32 Value5 = 5 [default = 0];
+   optional sint32 Value6 = 6 [default = 0];
+   optional sint32 Value7 = 7 [default = 0];
+   optional sint32 Value8 = 8 [default = 0];
+   optional sint32 Value9 = 9 [default = 0];
+   optional sint32 Value10 = 10 [default = 0];
+   optional sint32 Value11 = 11 [default = 0];
+   optional sint32 Value12 = 12 [default = 0];
+   optional sint32 Value13 = 13 [default = 0];
+   optional sint32 Value14 = 14 [default = 0];
+   optional DepthTick Next = 15;
+}
+message PbTick {
+   optional ConfigInfo Config = 1;
+   optional sint32 TradingDay = 2 [default = 0];
+   optional sint32 ActionDay = 3 [default = 0];
+   optional sint32 Time_HHmm = 4 [default = 0];
+   optional sint32 Time_____ssf__ = 5 [default = 0];
+   optional sint32 Time________ff = 6 [default = 0];
+   optional sint32 LastPrice = 7 [default = 0];
+   optional sint32 AskPrice1 = 8 [default = 0];
+   optional DepthTick Depth = 9;
+   optional sint64 Volume = 10 [default = 0];
+   optional sint64 OpenInterest = 11 [default = 0];
+   optional sint64 Turnover = 12 [default = 0];
+   optional sint32 AveragePrice = 13 [default = 0];
+   optional BarInfo Bar = 14;
+   optional StaticInfo Static = 15;
+   optional StockSplitInfo Split = 16;
+   optional sint32 LocalTime_Msec = 17 [default = 0];
+}
+message StaticInfo {
+   optional sint32 LowerLimitPrice = 1 [default = 0];
+   optional sint32 UpperLimitPrice = 2 [default = 0];
+   optional sint32 SettlementPrice = 3 [default = 0];
+   optional string Symbol = 4;
+   optional string Exchange = 5;
+}
+message StockSplitInfo {
+   optional double CashDividend = 1 [default = 0];
+   optional double StockDividend = 2 [default = 0];
+   optional double RightsOffering = 3 [default = 0];
+   optional double RightsOfferingPrice = 4 [default = 0];
+   optional double PreClose = 5 [default = 0];
+}

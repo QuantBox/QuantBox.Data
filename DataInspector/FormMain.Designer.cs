@@ -36,6 +36,7 @@
             this.timeHHmmDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.timessfDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.timeffDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.localTimeMsecDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.lastPriceDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.askPrice1DataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.volumeDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -67,6 +68,7 @@
             this.controlToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuControl_Play = new System.Windows.Forms.ToolStripMenuItem();
             this.menuControl_Stop = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuFile_Reload = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -124,6 +126,7 @@
             this.timeHHmmDataGridViewTextBoxColumn,
             this.timessfDataGridViewTextBoxColumn,
             this.timeffDataGridViewTextBoxColumn,
+            this.localTimeMsecDataGridViewTextBoxColumn,
             this.lastPriceDataGridViewTextBoxColumn,
             this.askPrice1DataGridViewTextBoxColumn,
             this.volumeDataGridViewTextBoxColumn,
@@ -182,6 +185,14 @@
             this.timeffDataGridViewTextBoxColumn.HeaderText = "Time________ff";
             this.timeffDataGridViewTextBoxColumn.Name = "timeffDataGridViewTextBoxColumn";
             this.timeffDataGridViewTextBoxColumn.Width = 50;
+            // 
+            // localTimeMsecDataGridViewTextBoxColumn
+            // 
+            this.localTimeMsecDataGridViewTextBoxColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
+            this.localTimeMsecDataGridViewTextBoxColumn.DataPropertyName = "LocalTime_Msec";
+            this.localTimeMsecDataGridViewTextBoxColumn.HeaderText = "LocalTime_Msec";
+            this.localTimeMsecDataGridViewTextBoxColumn.Name = "localTimeMsecDataGridViewTextBoxColumn";
+            this.localTimeMsecDataGridViewTextBoxColumn.Width = 50;
             // 
             // lastPriceDataGridViewTextBoxColumn
             // 
@@ -372,20 +383,23 @@
             // 
             // priceDataGridViewTextBoxColumn
             // 
+            this.priceDataGridViewTextBoxColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
             this.priceDataGridViewTextBoxColumn.DataPropertyName = "Price";
             this.priceDataGridViewTextBoxColumn.HeaderText = "Price";
             this.priceDataGridViewTextBoxColumn.Name = "priceDataGridViewTextBoxColumn";
-            this.priceDataGridViewTextBoxColumn.Width = 56;
+            this.priceDataGridViewTextBoxColumn.Width = 60;
             // 
             // sizeDataGridViewTextBoxColumn
             // 
+            this.sizeDataGridViewTextBoxColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
             this.sizeDataGridViewTextBoxColumn.DataPropertyName = "Size";
             this.sizeDataGridViewTextBoxColumn.HeaderText = "Size";
             this.sizeDataGridViewTextBoxColumn.Name = "sizeDataGridViewTextBoxColumn";
-            this.sizeDataGridViewTextBoxColumn.Width = 52;
+            this.sizeDataGridViewTextBoxColumn.Width = 60;
             // 
             // countDataGridViewTextBoxColumn
             // 
+            this.countDataGridViewTextBoxColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
             this.countDataGridViewTextBoxColumn.DataPropertyName = "Count";
             this.countDataGridViewTextBoxColumn.HeaderText = "Count";
             this.countDataGridViewTextBoxColumn.Name = "countDataGridViewTextBoxColumn";
@@ -399,6 +413,7 @@
             // 
             this.menuFile.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.menuFile_Open,
+            this.menuFile_Reload,
             this.menuFile_Save,
             this.menuFile_Export,
             this.menuFile_Exit});
@@ -476,16 +491,23 @@
             // menuControl_Play
             // 
             this.menuControl_Play.Name = "menuControl_Play";
-            this.menuControl_Play.Size = new System.Drawing.Size(152, 22);
+            this.menuControl_Play.Size = new System.Drawing.Size(105, 22);
             this.menuControl_Play.Text = "&Play...";
             this.menuControl_Play.Click += new System.EventHandler(this.menuControl_Play_Click);
             // 
             // menuControl_Stop
             // 
             this.menuControl_Stop.Name = "menuControl_Stop";
-            this.menuControl_Stop.Size = new System.Drawing.Size(152, 22);
+            this.menuControl_Stop.Size = new System.Drawing.Size(105, 22);
             this.menuControl_Stop.Text = "&Stop";
             this.menuControl_Stop.Click += new System.EventHandler(this.menuControl_Stop_Click);
+            // 
+            // menuFile_Reload
+            // 
+            this.menuFile_Reload.Name = "menuFile_Reload";
+            this.menuFile_Reload.Size = new System.Drawing.Size(163, 22);
+            this.menuFile_Reload.Text = "Reload";
+            this.menuFile_Reload.Click += new System.EventHandler(this.menuFile_Reload_Click);
             // 
             // FormMain
             // 
@@ -549,24 +571,26 @@
         private System.Windows.Forms.SplitContainer splitContainer5;
         private System.Windows.Forms.PropertyGrid pgSplit;
         private System.Windows.Forms.BindingSource pbTickViewBindingSource;
-        private System.Windows.Forms.DataGridViewTextBoxColumn priceDataGridViewTextBoxColumn;
-        private System.Windows.Forms.DataGridViewTextBoxColumn sizeDataGridViewTextBoxColumn;
-        private System.Windows.Forms.DataGridViewTextBoxColumn countDataGridViewTextBoxColumn;
         private System.Windows.Forms.BindingSource depthItemViewBindingSource;
+        private System.Windows.Forms.ToolStripMenuItem controlToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem menuControl_Play;
+        private System.Windows.Forms.ToolStripMenuItem menuControl_Stop;
         private System.Windows.Forms.DataGridViewTextBoxColumn tradingDayDataGridViewTextBoxColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn actionDayDataGridViewTextBoxColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn timeHHmmDataGridViewTextBoxColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn timessfDataGridViewTextBoxColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn timeffDataGridViewTextBoxColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn localTimeMsecDataGridViewTextBoxColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn lastPriceDataGridViewTextBoxColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn askPrice1DataGridViewTextBoxColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn volumeDataGridViewTextBoxColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn openInterestDataGridViewTextBoxColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn turnoverDataGridViewTextBoxColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn averagePriceDataGridViewTextBoxColumn;
-        private System.Windows.Forms.ToolStripMenuItem controlToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem menuControl_Play;
-        private System.Windows.Forms.ToolStripMenuItem menuControl_Stop;
+        private System.Windows.Forms.DataGridViewTextBoxColumn priceDataGridViewTextBoxColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn sizeDataGridViewTextBoxColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn countDataGridViewTextBoxColumn;
+        private System.Windows.Forms.ToolStripMenuItem menuFile_Reload;
 
     }
 }
