@@ -31,6 +31,7 @@ namespace SelfDecode
             {
                 string filename = Path.GetFileName(file);
                 string[] fe = filename.Split('.');
+                // 没有拓展名的,直接尝试解压
                 if(fe.Length == 1)
                 {
                     Console.WriteLine("File: OK, {0}", file);
@@ -94,9 +95,21 @@ namespace SelfDecode
                 }
             }
             sw.WriteLine(data);
+            string aPx,aSz,bPx,bSz;
             // 写数据
             foreach(var tickView in listTickView)
             {
+                if (tickView.DepthList == null)
+                {
+                    aPx = "";
+                    aSz = "";
+                    bPx = "";
+                    bSz = "";
+                }
+                else
+                {
+                    aPx = String.Format{"{0}", }
+                }
                 data = String.Format("{0},{1},{2},{3},{4},{5},{6},{7},{8},{9},{10},{11}",
                     tickView.TradingDay, 
                     tickView.ActionDay, 
@@ -185,7 +198,7 @@ namespace SelfDecode
                 listFileNames.Add(extractor.ArchiveFileNames[i]);
             }
 
-            string fileName = "default";
+            string fileName = listFileNames.Count == 0? "default" : listFileNames[0];
             MemoryStream stream = new MemoryStream();
 
             try
