@@ -527,7 +527,7 @@ namespace QuantBox.Data.Serializer.V2
             return i;
         }
 
-        public static int FindAsk1Position(List<DepthItemView> list, double AskPrice1)
+        public static int FindAsk1Position(List<DepthItemView> list, double askPrice1)
         {
             if (list == null || list.Count == 0)
                 return -1;
@@ -535,12 +535,12 @@ namespace QuantBox.Data.Serializer.V2
             int i = 0;
             for (; i < list.Count; ++i)
             {
-                DepthItemView currItem = list[i];
-                if (currItem.Price > AskPrice1)
+                var currItem = list[i];
+                if (currItem.Price > askPrice1)
                 {
                     return i - 1;
                 }
-                else if (currItem.Price == AskPrice1)
+                if (currItem.Price == askPrice1)
                 {
                     return i;
                 }
@@ -549,7 +549,7 @@ namespace QuantBox.Data.Serializer.V2
             return i;
         }
 
-        public static int FindAsk1PositionDescending(List<DepthItemView> list, double AskPrice1)
+        public static int FindAsk1PositionDescending(List<DepthItemView> list, double askPrice1)
         {
             if (list == null || list.Count == 0)
                 return -1;
@@ -558,11 +558,11 @@ namespace QuantBox.Data.Serializer.V2
             for (; i < list.Count; ++i)
             {
                 DepthItemView currItem = list[i];
-                if (currItem.Price < AskPrice1)
+                if (currItem.Price < askPrice1)
                 {
                     return i - 1;
                 }
-                else if (currItem.Price == AskPrice1)
+                if (currItem.Price == askPrice1)
                 {
                     return i;
                 }

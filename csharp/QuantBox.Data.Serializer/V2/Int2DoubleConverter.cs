@@ -89,9 +89,14 @@ namespace QuantBox.Data.Serializer.V2
         {
             if (oldList == null || oldList.Count == 0)
                 return null;
+            if (descending) {
+                oldList.Sort((x, y) => y.Price.CompareTo(x.Price));
+            }
+            else {
+                oldList.Sort((x, y) => x.Price.CompareTo(y.Price));
+            }
 
             var newList = new List<DepthItemView>();
-
             foreach (var o in oldList) {
                 newList.Add(new DepthItemView() {
                     Price = Codec.TickToPrice(o.Price),
@@ -99,11 +104,6 @@ namespace QuantBox.Data.Serializer.V2
                     Count = o.Count,
                 });
             }
-
-            if (descending) {
-                newList.Reverse();
-            }
-
             return newList;
         }
 
@@ -127,7 +127,7 @@ namespace QuantBox.Data.Serializer.V2
 
             view.LastPrice = Codec.TickToPrice(tick.LastPrice);
             view.AskPrice1 = Codec.TickToPrice(tick.AskPrice1);
-            
+
             view.Volume = tick.Volume;
             view.OpenInterest = tick.OpenInterest;
 
