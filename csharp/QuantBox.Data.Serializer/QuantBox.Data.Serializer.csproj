@@ -58,8 +58,10 @@
     <Compile Include="V2\BarInfoView.cs" />
     <Compile Include="V2\ConfigInfo.cs" />
     <Compile Include="V2\ConfigInfoView.cs" />
+    <Compile Include="V2\DepthItem.cs" />
     <Compile Include="V2\DepthItemView.cs" />
     <Compile Include="V2\DepthList.cs" />
+    <Compile Include="V2\DepthListHelper.cs" />
     <Compile Include="V2\DepthTick.cs" />
     <Compile Include="V2\StaticInfo.cs" />
     <Compile Include="V2\StaticInfoView.cs" />
