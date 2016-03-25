@@ -29,7 +29,7 @@ namespace QuantBox.Data.Serializer.V1
         /// <param name="dest"></param>
         public PbTick Write(PbTick data, params Stream[] dest)
         {
-            PbTick diff = Codec.Diff(_lastWrite, data);
+            var diff = Codec.Diff(_lastWrite, data);
             _lastWrite = data;
             foreach (var d in dest)
             {
@@ -46,7 +46,7 @@ namespace QuantBox.Data.Serializer.V1
         /// <returns></returns>
         public PbTick ReadOne(Stream source)
         {
-            PbTick raw = ProtoBuf.Serializer.DeserializeWithLengthPrefix<PbTick>(source, PrefixStyle.Base128);
+            var raw = ProtoBuf.Serializer.DeserializeWithLengthPrefix<PbTick>(source, PrefixStyle.Base128);
             if (raw == null)
                 return null;
             _lastRead = Codec.Restore(_lastRead, raw);
@@ -67,7 +67,7 @@ namespace QuantBox.Data.Serializer.V1
             if (list == null)
                 return;
 
-            foreach (PbTick item in list)
+            foreach (var item in list)
             {
                 PbTickSerializer.WriteOne(item, stream);
             }
@@ -88,7 +88,7 @@ namespace QuantBox.Data.Serializer.V1
             if (list == null)
                 return;
 
-            PbTickCodec Codec = new PbTickCodec();
+            var Codec = new PbTickCodec();
 
             // 将差分数据生成界面数据
             IEnumerable<PbTickView> _list = Codec.Data2View(Codec.Restore(list), false);
@@ -96,7 +96,7 @@ namespace QuantBox.Data.Serializer.V1
             // 保存
             using (TextWriter stream = new StreamWriter(output))
             {
-                PbTickView t = new PbTickView();
+                var t = new PbTickView();
                 stream.WriteLine(t.ToCsvHeader());
 
                 foreach (var l in _list)

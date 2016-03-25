@@ -242,11 +242,11 @@ namespace Test
                 {
                     double diff = a.price - Asks[Asks.Count - 1].price;
                     if (diff > 0)
-                        TickSize = Codec.gcd(TickSize, diff);
+                        TickSize = PbTickCodec.gcd(TickSize, diff);
                 }
                 else
                 {
-                    TickSize = Codec.gcd(TickSize, a.price);
+                    TickSize = PbTickCodec.gcd(TickSize, a.price);
                 }
                 Asks.Add(a);
             }
@@ -258,11 +258,11 @@ namespace Test
                 {
                     double diff = Bids[Bids.Count - 1].price - b.price;
                     if (diff > 0)
-                        TickSize = Codec.gcd(TickSize, diff);
+                        TickSize = PbTickCodec.gcd(TickSize, diff);
                 }
                 else
                 {
-                    TickSize = Codec.gcd(TickSize, b.price);
+                    TickSize = PbTickCodec.gcd(TickSize, b.price);
                 }
                 Bids.Add(b);
             }
@@ -274,7 +274,7 @@ namespace Test
                     double ts3 = Asks[0].price - Bids[Bids.Count - 1].price;
                     if (ts3 > 0)
                     {
-                        TickSize = Codec.gcd(TickSize, ts3);
+                        TickSize = PbTickCodec.gcd(TickSize, ts3);
                     }
                 }
             }

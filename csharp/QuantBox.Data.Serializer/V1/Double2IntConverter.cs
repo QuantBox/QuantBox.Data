@@ -21,7 +21,7 @@ namespace QuantBox.Data.Serializer.V1
             if (bar == null)
                 return null;
 
-            BarInfo field = new BarInfo();
+            var field = new BarInfo();
             
             field.Open = Codec.PriceToTick(bar.Open);
             field.High = Codec.PriceToTick(bar.High);
@@ -37,7 +37,7 @@ namespace QuantBox.Data.Serializer.V1
             if (Static == null)
                 return null;
 
-            StaticInfo field = new StaticInfo();
+            var field = new StaticInfo();
             
             Codec.SetLowerLimitPrice(field, Static.LowerLimitPrice);
             Codec.SetUpperLimitPrice(field, Static.UpperLimitPrice);
@@ -54,7 +54,7 @@ namespace QuantBox.Data.Serializer.V1
             if (config == null)
                 return null;
 
-            ConfigInfo field = new ConfigInfo();
+            var field = new ConfigInfo();
 
             field.Version = config.Version;
             field.TickSize = config.TickSize;
@@ -72,7 +72,7 @@ namespace QuantBox.Data.Serializer.V1
             if (split == null)
                 return null;
 
-            StockSplitInfo field = new StockSplitInfo();
+            var field = new StockSplitInfo();
 
             field.CashDividend = split.CashDividend;
             field.StockDividend = split.StockDividend;
@@ -89,7 +89,7 @@ namespace QuantBox.Data.Serializer.V1
             if (depthTick == null)
                 return null;
 
-            DepthTick field = new DepthTick();
+            var field = new DepthTick();
 
             field.BidPrice1 = Codec.PriceToTick(depthTick.BidPrice1);
             field.BidSize1 = depthTick.BidSize1;
@@ -122,7 +122,7 @@ namespace QuantBox.Data.Serializer.V1
             if (tick == null)
                 return null;
 
-            PbTick field = new PbTick();
+            var field = new PbTick();
 
             // 利用此机会设置TickSize
             if (Codec == null)

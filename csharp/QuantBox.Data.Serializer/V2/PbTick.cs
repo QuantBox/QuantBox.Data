@@ -33,7 +33,7 @@ namespace QuantBox.Data.Serializer.V2
         [ProtoMember(7, DataFormat = DataFormat.ZigZag)]
         public int LastPrice;
         /// <summary>
-        /// 指向卖一价，如果不存在卖一价就......
+        /// 指向卖一价，如果不存在卖一价就指向买一价
         /// </summary>
         [ProtoMember(8, DataFormat = DataFormat.ZigZag)]
         public int AskPrice1;
@@ -89,7 +89,7 @@ namespace QuantBox.Data.Serializer.V2
         public int LocalTime_Msec;
 
         /// <summary>
-        /// 内部使用，保存到硬盘时使用Depth
+        /// 方便数据读取，存储传输时使用 Depth
         /// </summary>
         public List<DepthItem> DepthList;
         
@@ -98,7 +98,7 @@ namespace QuantBox.Data.Serializer.V2
         /// 只在保存到文件时操作,其它时候都不要调用
         /// 以后用户要使用数据时直接操作列表即可
         /// </summary>
-        public void PrepareObjectBeforeWrite(ConfigInfo _Config)
+        public void PrepareObjectBeforeWrite(ConfigInfo config)
         {
             if (DepthList == null || DepthList.Count == 0)
             {
@@ -106,7 +106,7 @@ namespace QuantBox.Data.Serializer.V2
                 return;
             }
 
-            List<DepthItem> tempList = new List<DepthItem>();
+            var tempList = new List<DepthItem>();
 
             DepthListHelper.PriceMinusInOneList(DepthList, tempList);
             
@@ -115,7 +115,7 @@ namespace QuantBox.Data.Serializer.V2
             Depth = new DepthTick();
             //if(tempList.Count>0)
             //    tempList[0].Price = LastPrice - tempList[0].Price;
-            DepthListHelper.ListToStruct(tempList, _Config.MarketType, Depth);
+            DepthListHelper.ListToStruct(tempList, config.MarketType, Depth);
         }
 
         /// <summary>
@@ -123,7 +123,7 @@ namespace QuantBox.Data.Serializer.V2
         /// 读取出数据后立即使用展开,其它时候都不要调用
         /// 以后用户要使用数据时直接操作列表即可
         /// </summary>
-        public void PrepareObjectAfterRead(ConfigInfo _Config)
+        public void PrepareObjectAfterRead(ConfigInfo config)
         {
             if (Depth == null || Depth.IsZero)
             {
@@ -131,9 +131,9 @@ namespace QuantBox.Data.Serializer.V2
                 return;
             }
 
-            List<DepthItem> tempList = new List<DepthItem>();
+            var tempList = new List<DepthItem>();
 
-            DepthListHelper.StructToList(Depth, _Config.MarketType, tempList);
+            DepthListHelper.StructToList(Depth, config.MarketType, tempList);
             // 不能这么写，因为还原时LastPrice还是一个很小的值
             //if (tempList.Count > 0)
             //    tempList[0].Price = LastPrice + tempList[0].Price;

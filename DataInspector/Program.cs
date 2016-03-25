@@ -15,12 +15,10 @@ namespace DataInspector
         [STAThread]
         static void Main()
         {
-            if (Environment.Is64BitProcess)
-            {
+            if (Environment.Is64BitProcess) {
                 SevenZipBase.SetLibraryPath("7z64.dll");
             }
-            else
-            {
+            else {
                 SevenZipBase.SetLibraryPath("7z.dll");
             }
 

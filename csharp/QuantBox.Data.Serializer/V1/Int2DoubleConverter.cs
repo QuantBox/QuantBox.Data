@@ -20,7 +20,7 @@ namespace QuantBox.Data.Serializer.V1
             if (bar == null)
                 return null;
 
-            BarInfoView field = new BarInfoView();
+            var field = new BarInfoView();
             
             field.Open = Codec.TickToPrice(bar.Open);
             field.High = Codec.TickToPrice(bar.High);
@@ -36,7 +36,7 @@ namespace QuantBox.Data.Serializer.V1
             if (Static == null)
                 return null;
 
-            StaticInfoView field = new StaticInfoView();
+            var field = new StaticInfoView();
 
             field.LowerLimitPrice = Codec.GetLowerLimitPrice(Static);
             field.UpperLimitPrice = Codec.GetUpperLimitPrice(Static);
@@ -53,7 +53,7 @@ namespace QuantBox.Data.Serializer.V1
             if (config == null)
                 return null;
 
-            ConfigInfoView field = new ConfigInfoView();
+            var field = new ConfigInfoView();
 
             field.Version = config.Version;
             field.TickSize = config.TickSize;
@@ -71,7 +71,7 @@ namespace QuantBox.Data.Serializer.V1
             if (split == null)
                 return null;
 
-            StockSplitInfoView field = new StockSplitInfoView();
+            var field = new StockSplitInfoView();
 
             field.CashDividend = split.CashDividend;
             field.StockDividend = split.StockDividend;
@@ -88,7 +88,7 @@ namespace QuantBox.Data.Serializer.V1
             if (depthTick == null)
                 return null;
 
-            DepthTickView field = new DepthTickView();
+            var field = new DepthTickView();
 
             field.BidPrice1 = Codec.TickToPrice(depthTick.BidPrice1);
             field.BidSize1 = depthTick.BidSize1;
@@ -121,7 +121,7 @@ namespace QuantBox.Data.Serializer.V1
             if (tick == null)
                 return null;
 
-            PbTickView field = new PbTickView();
+            var field = new PbTickView();
             
             // 利用此机会设置TickSize
             if(Codec == null)
@@ -157,10 +157,10 @@ namespace QuantBox.Data.Serializer.V1
         #region 深度行情的显示方式转换
         public static List<DepthDetailView> ToList(DepthTickView deep)
         {
-            List<DepthDetailView> list = new List<DepthDetailView>();
+            var list = new List<DepthDetailView>();
             DepthDetailView detail;
 
-            DepthTickView last = deep;
+            var last = deep;
             while (last != null)
             {
                 if (last.BidSize1 == 0 && last.AskSize1 == 0)
@@ -213,9 +213,9 @@ namespace QuantBox.Data.Serializer.V1
             DepthTickView first = null;
             DepthTickView next = null;
 
-            for(int i=0;i<list.Count;++i)
+            for(var i=0;i<list.Count;++i)
             {
-                DepthDetailView detail = list[i];
+                var detail = list[i];
                 switch(i%3)
                 {
                     case 0:

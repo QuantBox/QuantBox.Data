@@ -40,7 +40,7 @@ namespace DataInspector
 
         private void CheckSaved()
         {
-            if (this.bValueChanged)
+            if (bValueChanged)
             {
                 bool b = MessageBox.Show("Save changes?", "", MessageBoxButtons.YesNo) == DialogResult.Yes;
                 if (b)
@@ -85,14 +85,14 @@ namespace DataInspector
                 // 将界面数据生成差分数据
                 ViewToDataByViewType();
 
-                PbTickSerializer.WriteCsv(this.listTickData, pathChosen);
+                PbTickSerializer.WriteCsv(listTickData, pathChosen);
             }
         }
 
         private void ViewToDataByViewType()
         {
             PbTickCodec Codec = new PbTickCodec();
-            this.listTickData = Codec.View2Data(this.listTickView, true);
+            listTickData = Codec.View2Data(listTickView, true);
         }
 
         private void SaveChanges()
@@ -107,7 +107,7 @@ namespace DataInspector
                 ViewToDataByViewType();
 
                 PbTickSerializer pts = new PbTickSerializer();
-                pts.Write(this.listTickData, pathChosen);
+                pts.Write(listTickData, pathChosen);
 
                 ValueChanged(false);
             }
@@ -174,11 +174,11 @@ namespace DataInspector
         {
             if (changed)
             {
-                this.Text = "*" + strCurrentFileName;
+                Text = "*" + strCurrentFileName;
             }
             else
             {
-                this.Text = strCurrentFileName;
+                Text = strCurrentFileName;
             }
 
             bValueChanged = changed;
@@ -254,7 +254,7 @@ namespace DataInspector
         private void dgvTick_RowPostPaint(object sender, DataGridViewRowPostPaintEventArgs e)
         {
             DataGridView dgv = (DataGridView)sender;
-            System.Drawing.Rectangle rectangle = new System.Drawing.Rectangle(e.RowBounds.Location.X,
+            Rectangle rectangle = new Rectangle(e.RowBounds.Location.X,
                 e.RowBounds.Location.Y,
                 dgv.RowHeadersWidth - 4,
                 e.RowBounds.Height);
@@ -269,7 +269,7 @@ namespace DataInspector
         private void dgvDepth_RowPostPaint(object sender, DataGridViewRowPostPaintEventArgs e)
         {
             DataGridView dgv = (DataGridView)sender;
-            System.Drawing.Rectangle rectangle = new System.Drawing.Rectangle(e.RowBounds.Location.X,
+            Rectangle rectangle = new Rectangle(e.RowBounds.Location.X,
                 e.RowBounds.Location.Y,
                 dgv.RowHeadersWidth - 4,
                 e.RowBounds.Height);
@@ -283,7 +283,7 @@ namespace DataInspector
 
         private void dgvTick_DragDrop(object sender, DragEventArgs e)
         {
-            string pathChosen = ((System.Array)e.Data.GetData(DataFormats.FileDrop)).GetValue(0).ToString();
+            string pathChosen = ((Array)e.Data.GetData(DataFormats.FileDrop)).GetValue(0).ToString();
             ReadFromFile(pathChosen);
         }
 
@@ -324,8 +324,8 @@ namespace DataInspector
 
                 PbTickCodec Codec = new PbTickCodec();
 
-                listTickView = Codec.Data2View(this.listTickData, true);
-                dgvTick.DataSource = this.listTickView;
+                listTickView = Codec.Data2View(listTickData, true);
+                dgvTick.DataSource = listTickView;
             }
             catch (Exception ex)
             {
@@ -413,7 +413,7 @@ namespace DataInspector
         private System.Timers.Timer _Timer = new System.Timers.Timer();
         private void menuControl_Play_Click(object sender, EventArgs e)
         {
-            _Timer.Elapsed += this.OnTimerElapsed;
+            _Timer.Elapsed += OnTimerElapsed;
             // 每0.5秒遍历一次
             _Timer.Interval = 500;
             _Timer.Start();
@@ -421,7 +421,7 @@ namespace DataInspector
 
         private void menuControl_Stop_Click(object sender, EventArgs e)
         {
-            _Timer.Elapsed -= this.OnTimerElapsed;
+            _Timer.Elapsed -= OnTimerElapsed;
             _Timer.Stop();
         }
 
@@ -435,7 +435,7 @@ namespace DataInspector
 
             RowIndex = Math.Min(RowIndex+1, dgvTick.RowCount - 1);
 
-            this.Invoke((EventHandler)delegate
+            Invoke((EventHandler)delegate
             {
                 dgvTick.CurrentCell = dgvTick.Rows[RowIndex].Cells[ColumnIndex];
                 if (Selected)
@@ -457,7 +457,7 @@ namespace DataInspector
 
             ReadFromFile(strCurrentFilePath);
 
-            this.Invoke((EventHandler)delegate
+            Invoke((EventHandler)delegate
             {
                 dgvTick.CurrentCell = dgvTick.Rows[RowIndex].Cells[ColumnIndex];
                 if (Selected)

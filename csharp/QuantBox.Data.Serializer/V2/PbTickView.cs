@@ -14,9 +14,6 @@ namespace QuantBox.Data.Serializer.V2
         public int Time_____ssf__ { get; set; }
         public int Time________ff { get; set; }
 
-        /// <summary>
-        /// 与上一笔的比
-        /// </summary>
         public double LastPrice { get; set; }
         public double AskPrice1 { get; set; }
 
@@ -24,7 +21,7 @@ namespace QuantBox.Data.Serializer.V2
         public DepthItemView Bid1 { get; set; }
         public int AskPos { get; set; }
         public int BidPos { get; set; }
-        public bool descending { get; set; }
+        public bool Descending { get; set; }
 
         /// <summary>
         /// 成交量
@@ -43,15 +40,8 @@ namespace QuantBox.Data.Serializer.V2
         /// </summary>
         public double AveragePrice { get; set; }
 
-        /// <summary>
-        /// Bar数据或高开低收
-        /// </summary>
         public BarInfoView Bar { get; set; }
-        /// <summary>
-        /// 涨跌停价格及结算价
-        /// </summary>
         public StaticInfoView Static { get; set; }
-
         public StockSplitInfoView Split { get; set; }
 
         public int LocalTime_Msec { get; set; }
@@ -61,7 +51,7 @@ namespace QuantBox.Data.Serializer.V2
         /// </summary>
         public List<DepthItemView> DepthList { get; set; }
 
-        public string ToCsvHeader()
+        public static string ToCsvHeader()
         {
             return "BidPrice,BidSize,BidCount,AskPrice,AskSize,AskCount";
         }
@@ -73,7 +63,7 @@ namespace QuantBox.Data.Serializer.V2
 
         public void LoadQuote(bool descending)
         {
-            this.descending = descending;
+            Descending = descending;
             if (descending) {
                 AskPos = DepthListHelper.FindAsk1PositionDescending(DepthList, AskPrice1);
                 BidPos = AskPos + 1;
@@ -94,7 +84,7 @@ namespace QuantBox.Data.Serializer.V2
                 return null;
 
             if (level > 0) {
-                if (descending) {
+                if (Descending) {
                     var pos = BidPos + (level - 1);
                     if (pos < DepthList.Count && pos >= 0) {
                         return DepthList[pos];
@@ -116,7 +106,7 @@ namespace QuantBox.Data.Serializer.V2
                 return null;
 
             if (level > 0) {
-                if (descending) {
+                if (Descending) {
                     var pos = AskPos - (level - 1);
                     if (pos >= 0 && pos < DepthList.Count) {
                         return DepthList[pos];

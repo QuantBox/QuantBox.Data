@@ -119,24 +119,18 @@ namespace QuantBox.Data.Serializer.V2
                 Codec = new PbTickCodec();
             }
             view.Config = Int2Double(tick.Config);
-
             Codec.Config = tick.Config;
-
             view.Turnover = Codec.GetTurnover(tick);
             view.AveragePrice = Codec.GetAveragePrice(tick);
-
             view.LastPrice = Codec.TickToPrice(tick.LastPrice);
             view.AskPrice1 = Codec.TickToPrice(tick.AskPrice1);
-
             view.Volume = tick.Volume;
             view.OpenInterest = tick.OpenInterest;
-
             view.TradingDay = tick.TradingDay;
             view.ActionDay = tick.ActionDay;
             view.Time_HHmm = tick.Time_HHmm;
             view.Time_____ssf__ = tick.Time_____ssf__;
             view.Time________ff = tick.Time________ff;
-
             view.Bar = Int2Double(tick.Bar);
             view.Static = Int2Double(tick.Static);
             view.Split = Int2Double(tick.Split);

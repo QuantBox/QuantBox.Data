@@ -26,28 +26,28 @@ namespace QuantBox.Data.Serializer.V2
             Config = new ConfigInfo().Default();
         }
 
-        static long gcd(long a, long b)
+        private static long gcd(long a, long b)
         {
             return b == 0 ? a : gcd(b, a % b);
         }
 
-        public double gcd(params double[] val)
+        public static double gcd(params double[] val)
         {
             // 先用把浮点变成整数才能做GCD
-            double TickSizeMultiplier = 100000;
+            const double tickSizeMultiplier = 100000;
 
             if (val.Length == 0)
-                return 1 / TickSizeMultiplier;
+                return 1 / tickSizeMultiplier;
 
-            var a = (long)Math.Round(Math.Abs(val[0]) * TickSizeMultiplier, 0);
+            var a = (long)Math.Round(Math.Abs(val[0]) * tickSizeMultiplier, 0);
 
             if (val.Length > 1) {
                 for (var i = 1; i < val.Length; ++i) {
-                    var b = (long)Math.Round(Math.Abs(val[i]) * TickSizeMultiplier, 0);
+                    var b = (long)Math.Round(Math.Abs(val[i]) * tickSizeMultiplier, 0);
                     a = gcd(a, b);
                 }
             }
-            return a / TickSizeMultiplier;
+            return a / tickSizeMultiplier;
         }
 
         public void SetAveragePrice(PbTick tick, double price)
@@ -537,9 +537,6 @@ namespace QuantBox.Data.Serializer.V2
         // 全是浮点，表示是原始数
         public int DiffPrice(double price1, double price2)
         {
-            if (price1 == price2)
-                return 0;
-
             return PriceToTick(price1) - PriceToTick(price2);
         }
 

@@ -85,7 +85,7 @@ namespace QuantBox.Data.Serializer.V2
                     if (Stream == null)
                         return;
 
-                    double ts = (DateTime.Now - LastWriteTime).TotalSeconds;
+                    var ts = (DateTime.Now - LastWriteTime).TotalSeconds;
                     // 与上次一写入相比大于10s就写入
                     // 但对于行情很少不变动的，会出现没有机会写入的情况，所以需要定时器来帮忙
                     if (ts >= 10)
@@ -105,7 +105,7 @@ namespace QuantBox.Data.Serializer.V2
                     if (Stream == null)
                         return;
 
-                    double ts = (DateTime.Now - LastWriteTime).TotalSeconds;
+                    var ts = (DateTime.Now - LastWriteTime).TotalSeconds;
                     // 每10秒写一次
                     if (ts >= 10)
                     {

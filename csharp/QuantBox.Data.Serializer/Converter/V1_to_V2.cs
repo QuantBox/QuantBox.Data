@@ -19,7 +19,7 @@ namespace QuantBox.Data.Serializer.Converter
             if (oldTick == null)
                 return null;
 
-            V2.PbTick tick = new V2.PbTick();
+            var tick = new V2.PbTick();
 
             tick.Config = new V2.ConfigInfo().Default();
             tick.Config.Version = oldTick.Config.Version;
@@ -31,7 +31,7 @@ namespace QuantBox.Data.Serializer.Converter
             tick.Config.Time_ssf_Diff = oldTick.Config.Time_ssf_Diff;
 
             tick.DepthList = new List<V2.DepthItem>();
-            V1.DepthTick next = oldTick.Depth1_3;
+            var next = oldTick.Depth1_3;
             if (next != null)
             {
                 if (next.AskSize1 != 0)

@@ -1,4 +1,5 @@
-﻿using ProtoBuf;
+﻿using System;
+using ProtoBuf;
 
 namespace QuantBox.Data.Serializer.V2
 {
@@ -70,10 +71,10 @@ namespace QuantBox.Data.Serializer.V2
             {
                 return Version == 0
                        && TickSize == 0
-                       && TickSizeMultiplier == 0
+                       && Math.Abs(TickSizeMultiplier) < double.Epsilon
                        && SettlementPriceMultiplier == 0
                        && AveragePriceMultiplier == 0
-                       && ContractMultiplier == 0
+                       && Math.Abs(ContractMultiplier) < double.Epsilon
                        && Time_ssf_Diff == 0
                        && MarketDepth == 0
                        && MarketType == 0
@@ -86,16 +87,15 @@ namespace QuantBox.Data.Serializer.V2
         {
             return Version == config.Version
                    && TickSize == config.TickSize
-                   && TickSizeMultiplier == config.TickSizeMultiplier
+                   && Math.Abs(TickSizeMultiplier - config.TickSizeMultiplier) < double.Epsilon
                    && SettlementPriceMultiplier == config.SettlementPriceMultiplier
                    && AveragePriceMultiplier == config.AveragePriceMultiplier
-                   && ContractMultiplier == config.ContractMultiplier
+                   && Math.Abs(ContractMultiplier - config.ContractMultiplier) < double.Epsilon
                    && Time_ssf_Diff == config.Time_ssf_Diff
                    && MarketDepth == config.MarketDepth
                    && MarketType == config.MarketType
                    && Volume_Total_Or_Increment == config.Volume_Total_Or_Increment
                    && Turnover_Total_Or_Increment == config.Turnover_Total_Or_Increment;
-            ;
         }
 
         public void SetTickSize(double val)

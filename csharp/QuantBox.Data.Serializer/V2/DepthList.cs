@@ -20,9 +20,9 @@ namespace QuantBox.Data.Serializer.V2
 
         public DepthItem(int price, int size, int count)
         {
-            this.Price = price;
-            this.Size = size;
-            this.Count = count;
+            Price = price;
+            Size = size;
+            Count = count;
         }
 
         public bool IsZero
@@ -45,10 +45,10 @@ namespace QuantBox.Data.Serializer.V2
         public int Start;
         public int AskPrice1;
         public int End;
-        
-        public List<DepthItem> List = new List<DepthItem>();
 
-        public void AddStart(int price,int size,int count)
+        public readonly List<DepthItem> List = new List<DepthItem>();
+
+        public void AddStart(int price, int size, int count)
         {
             List.Clear();
             List.Add(new DepthItem(price, size, count));
@@ -74,7 +74,7 @@ namespace QuantBox.Data.Serializer.V2
     public class DepthListHelper
     {
         #region List中的算法操作
-        public static void ExpandTwoListsToSameLength(List<DepthItem> oldPrevList,List<DepthItem> oldCurrList,int StartPrice,int EndPrice,List<DepthItem> newPrevList,List<DepthItem> newCurrList)
+        public static void ExpandTwoListsToSameLength(List<DepthItem> oldPrevList, List<DepthItem> oldCurrList, int StartPrice, int EndPrice, List<DepthItem> newPrevList, List<DepthItem> newCurrList)
         {
             newPrevList.Clear();
             newCurrList.Clear();
@@ -85,23 +85,20 @@ namespace QuantBox.Data.Serializer.V2
                 oldCurrList = new List<DepthItem>();
 
             DepthItem prevItem = null;
-            DepthItem currItem = null;
 
             // 从新一条记录开始算起
-            int i = 0;
-            int j = 0;
-            for (; i < oldCurrList.Count; ++i)
-            {
-                currItem = oldCurrList[i];
-                
+            var i = 0;
+            var j = 0;
+            for (; i < oldCurrList.Count; ++i) {
+                var currItem = oldCurrList[i];
+
                 // 处理新列表中数据的范围
                 if (currItem.Price < StartPrice)
                     continue;
                 if (currItem.Price > EndPrice)
                     break;
 
-                for (; j < oldPrevList.Count; ++j)
-                {
+                for (; j < oldPrevList.Count; ++j) {
                     prevItem = oldPrevList[j];
 
 
@@ -111,48 +108,40 @@ namespace QuantBox.Data.Serializer.V2
                     if (prevItem.Price > EndPrice && currItem.Price > EndPrice)
                         break;
 
-                    if(currItem.Price == prevItem.Price)
-                    {
+                    if (currItem.Price == prevItem.Price) {
                         // 两边都有,直接两边都复制
                         newPrevList.Add(prevItem);
                         newCurrList.Add(currItem);
-                        
+
                         // 这样将两个指针都向后移动
                         ++j;
                         break;
                     }
-                    else if (currItem.Price < prevItem.Price)
-                    {
+                    if (currItem.Price < prevItem.Price) {
                         // 新序列的价格小，按新的复制，然后将新的指针向后移动
                         newCurrList.Add(currItem);
-                        newPrevList.Add(new DepthItem() { Price = currItem.Price});
+                        newPrevList.Add(new DepthItem() { Price = currItem.Price });
                         break;
                     }
-                    else
-                    {
-                        // 老的价格小，按老的复制，然后继续遍历老序列
-                        newPrevList.Add(prevItem);
-                        newCurrList.Add(new DepthItem() { Price = prevItem.Price });
-                    }
+                    // 老的价格小，按老的复制，然后继续遍历老序列
+                    newPrevList.Add(prevItem);
+                    newCurrList.Add(new DepthItem() { Price = prevItem.Price });
                 }
 
                 // 历史的已经刷完，当前的还有
-                if(j == oldPrevList.Count)
-                {
+                if (j == oldPrevList.Count) {
                     if (currItem.Price > EndPrice)
                         break;
 
                     // 只有新数据，没有老数据的情况
-                    if(prevItem == null || currItem.Price>prevItem.Price)
-                    {
+                    if (prevItem == null || currItem.Price > prevItem.Price) {
                         newCurrList.Add(currItem);
                         newPrevList.Add(new DepthItem() { Price = currItem.Price });
                     }
                 }
             }
             // 当前的已经刷完，去刷历史了
-            for (; j < oldPrevList.Count; ++j)
-            {
+            for (; j < oldPrevList.Count; ++j) {
                 prevItem = oldPrevList[j];
 
                 // 只有历史没有最新
@@ -164,38 +153,34 @@ namespace QuantBox.Data.Serializer.V2
                 newPrevList.Add(prevItem);
                 newCurrList.Add(new DepthItem() { Price = prevItem.Price });
             }
-            
         }
+
         public static void SizeMinusInTwoLists(List<DepthItem> oldPrevList, List<DepthItem> oldCurrList, List<DepthItem> newList)
         {
-            if(oldPrevList.Count != oldCurrList.Count)
-            {
-                
+            if (oldPrevList.Count != oldCurrList.Count) {
+
             }
 
             newList.Clear();
-            for (int i = 0; i < oldPrevList.Count; ++i)
-            {
-                DepthItem prevItem = oldPrevList[i];
-                DepthItem currItem = oldCurrList[i];
+            for (var i = 0; i < oldPrevList.Count; ++i) {
+                var prevItem = oldPrevList[i];
+                var currItem = oldCurrList[i];
                 newList.Add(new DepthItem(currItem.Price, currItem.Size - prevItem.Size, currItem.Count - prevItem.Count));
             }
         }
 
         public static void SizeAddInTwoLists(List<DepthItem> oldPrevList, List<DepthItem> oldCurrList, List<DepthItem> newList)
         {
-            if (oldPrevList.Count != oldCurrList.Count)
-            {
+            if (oldPrevList.Count != oldCurrList.Count) {
 
             }
 
             newList.Clear();
-            for (int i = 0; i < oldPrevList.Count; ++i)
-            {
-                DepthItem prevItem = oldPrevList[i];
-                DepthItem currItem = oldCurrList[i];
+            for (var i = 0; i < oldPrevList.Count; ++i) {
+                var prevItem = oldPrevList[i];
+                var currItem = oldCurrList[i];
                 // 为0的跳过，减少无效的显示
-                int size = currItem.Size + prevItem.Size;
+                var size = currItem.Size + prevItem.Size;
                 if (size != 0)
                     newList.Add(new DepthItem(currItem.Price, size, currItem.Count + prevItem.Count));
             }
@@ -204,22 +189,19 @@ namespace QuantBox.Data.Serializer.V2
         public static void PriceMinusInOneList(List<DepthItem> oldList, List<DepthItem> newList)
         {
             newList.Clear();
-            
+
             DepthItem prevItem = null;
 
-            for (int i = 0; i < oldList.Count; ++i)
-            {
-                DepthItem currItem = oldList[i];
+            for (var i = 0; i < oldList.Count; ++i) {
+                var currItem = oldList[i];
                 // 这里为0的丢弃
                 if (currItem.Size == 0)
                     continue;
 
-                if(prevItem == null)
-                {
+                if (prevItem == null) {
                     newList.Add(currItem);
                 }
-                else
-                {
+                else {
                     newList.Add(new DepthItem(currItem.Price - prevItem.Price - 1, currItem.Size, currItem.Count));
                 }
 
@@ -227,23 +209,18 @@ namespace QuantBox.Data.Serializer.V2
             }
         }
 
-        public static void PriceAddInOneList(List<DepthItem> oldList, List<DepthItem> newList)
+        public static void PriceAddInOneList(IEnumerable<DepthItem> oldList, List<DepthItem> newList)
         {
             newList.Clear();
 
             DepthItem prevItem = null;
 
-            for (int i = 0; i < oldList.Count; ++i)
-            {
-                DepthItem currItem = oldList[i];
-
-                if (prevItem == null)
-                {
+            foreach (var currItem in oldList) {
+                if (prevItem == null) {
                     prevItem = currItem;
                     newList.Add(currItem);
                 }
-                else
-                {
+                else {
                     prevItem = new DepthItem(currItem.Price + prevItem.Price + 1, currItem.Size, currItem.Count);
                     newList.Add(prevItem);
                 }
@@ -254,110 +231,105 @@ namespace QuantBox.Data.Serializer.V2
         #region List到结构体的转换
         public static int GetDepthTick14(DepthTick tick, int pos)
         {
-            DepthTick from_next = tick;
+            var fromNext = tick;
 
-            switch (pos)
-            {
+            switch (pos) {
                 case 1:
-                    return from_next.Value1;
+                    return fromNext.Value1;
                 case 2:
-                    return from_next.Value2;
+                    return fromNext.Value2;
                 case 3:
-                    return from_next.Value3;
+                    return fromNext.Value3;
                 case 4:
-                    return from_next.Value4;
+                    return fromNext.Value4;
                 case 5:
-                    return from_next.Value5;
+                    return fromNext.Value5;
                 case 6:
-                    return from_next.Value6;
+                    return fromNext.Value6;
                 case 7:
-                    return from_next.Value7;
+                    return fromNext.Value7;
                 case 8:
-                    return from_next.Value8;
+                    return fromNext.Value8;
                 case 9:
-                    return from_next.Value9;
+                    return fromNext.Value9;
                 case 10:
-                    return from_next.Value10;
+                    return fromNext.Value10;
                 case 11:
-                    return from_next.Value11;
+                    return fromNext.Value11;
                 case 12:
-                    return from_next.Value12;
+                    return fromNext.Value12;
                 case 13:
-                    return from_next.Value13;
+                    return fromNext.Value13;
                 case 14:
-                    return from_next.Value14;
+                    return fromNext.Value14;
             }
             return 0;
         }
 
         public static void SetDepthTick14(DepthTick tick, int pos, int value)
         {
-            DepthTick from_next = tick;
-            switch (pos)
-            {
+            var fromNext = tick;
+            switch (pos) {
                 case 1:
-                    from_next.Value1 = value;
+                    fromNext.Value1 = value;
                     break;
                 case 2:
-                    from_next.Value2 = value;
+                    fromNext.Value2 = value;
                     break;
                 case 3:
-                    from_next.Value3 = value;
+                    fromNext.Value3 = value;
                     break;
                 case 4:
-                    from_next.Value4 = value;
+                    fromNext.Value4 = value;
                     break;
                 case 5:
-                    from_next.Value5 = value;
+                    fromNext.Value5 = value;
                     break;
                 case 6:
-                    from_next.Value6 = value;
+                    fromNext.Value6 = value;
                     break;
                 case 7:
-                    from_next.Value7 = value;
+                    fromNext.Value7 = value;
                     break;
                 case 8:
-                    from_next.Value8 = value;
+                    fromNext.Value8 = value;
                     break;
                 case 9:
-                    from_next.Value9 = value;
+                    fromNext.Value9 = value;
                     break;
                 case 10:
-                    from_next.Value10 = value;
+                    fromNext.Value10 = value;
                     break;
                 case 11:
-                    from_next.Value11 = value;
+                    fromNext.Value11 = value;
                     break;
                 case 12:
-                    from_next.Value12 = value;
+                    fromNext.Value12 = value;
                     break;
                 case 13:
-                    from_next.Value13 = value;
+                    fromNext.Value13 = value;
                     break;
                 case 14:
-                    from_next.Value14 = value;
+                    fromNext.Value14 = value;
                     break;
             }
         }
 
         public static void SetDepthTick(DepthTick tick, int pos, int value)
         {
-            DepthTick from_next = tick;
+            var from_next = tick;
 
-            while (pos > 0)
-            {
+            while (pos > 0) {
                 if (from_next == null)
                     return;
 
-                if (pos <= 14)
-                {
+                if (pos <= 14) {
                     SetDepthTick14(from_next, pos, value);
                 }
 
                 pos -= 14;
 
-                if (pos > 0)
-                {
+                if (pos > 0) {
                     if (from_next.Next == null)
                         from_next.Next = new DepthTick();
                     from_next = from_next.Next;
@@ -367,22 +339,19 @@ namespace QuantBox.Data.Serializer.V2
 
         public static int GetDepthTick(DepthTick tick, int pos)
         {
-            DepthTick from_next = tick;
+            var from_next = tick;
 
-            while (pos > 0)
-            {
+            while (pos > 0) {
                 if (from_next == null)
                     return 0;
 
-                if (pos <= 14)
-                {
+                if (pos <= 14) {
                     return GetDepthTick14(from_next, pos);
                 }
 
                 pos -= 14;
 
-                if (pos > 0)
-                {
+                if (pos > 0) {
                     if (from_next.Next == null)
                         return 0;
                     from_next = from_next.Next;
@@ -392,15 +361,11 @@ namespace QuantBox.Data.Serializer.V2
             return 0;
         }
 
-        public static void ListToStruct(List<DepthItem> list, int dataCount, DepthTick tick)
+        public static void ListToStruct(IEnumerable<DepthItem> list, int dataCount, DepthTick tick)
         {
-            int pos = 0;
-            for (int i = 0; i < list.Count; ++i)
-            {
-                DepthItem currItem = list[i];
-
-                switch (dataCount)
-                {
+            var pos = 0;
+            foreach (var currItem in list) {
+                switch (dataCount) {
                     case 1:
                         SetDepthTick(tick, ++pos, currItem.Price);
                         break;
@@ -421,54 +386,46 @@ namespace QuantBox.Data.Serializer.V2
         {
             list.Clear();
 
-            DepthTick from_next = tick;
+            var fromNext = tick;
 
             DepthItem item = null;
-            int pos = 0;
+            var pos = 0;
 
-            while (from_next != null)
-            {
-                for (int i = 1; i <= 14; ++i)
-                {
-                    ++pos;
-                    if (dataCount == 3)
-                    {
-                        switch (pos % dataCount)
-                        {
+            while (fromNext != null) {
+                for (var i = 1; i <= 14; ++i) {
+                    pos += 1;
+                    if (dataCount == 3) {
+                        switch (pos % dataCount) {
                             case 1:
                                 item = new DepthItem();
-                                item.Price = GetDepthTick14(from_next, i);
+                                item.Price = GetDepthTick14(fromNext, i);
                                 break;
                             case 2:
-                                item.Size = GetDepthTick14(from_next, i);
+                                item.Size = GetDepthTick14(fromNext, i);
                                 break;
                             case 0:
-                                item.Count = GetDepthTick14(from_next, i);
+                                item.Count = GetDepthTick14(fromNext, i);
                                 list.Add(item);
                                 break;
                         }
                     }
-                    else if (dataCount == 2)
-                    {
-                        switch (pos % dataCount)
-                        {
+                    else if (dataCount == 2) {
+                        switch (pos % dataCount) {
                             case 1:
                                 item = new DepthItem();
-                                item.Price = GetDepthTick14(from_next, i);
+                                item.Price = GetDepthTick14(fromNext, i);
                                 break;
                             case 0:
-                                item.Size = GetDepthTick14(from_next, i);
+                                item.Size = GetDepthTick14(fromNext, i);
                                 list.Add(item);
                                 break;
                         }
                     }
-                    else if (dataCount == 1)
-                    {
-                        switch (pos % dataCount)
-                        {
+                    else if (dataCount == 1) {
+                        switch (pos % dataCount) {
                             case 0:
                                 item = new DepthItem();
-                                item.Price = GetDepthTick14(from_next, i);
+                                item.Price = GetDepthTick14(fromNext, i);
                                 list.Add(item);
                                 break;
                         }
@@ -476,18 +433,15 @@ namespace QuantBox.Data.Serializer.V2
                 }
 
                 // 指向下一个可用数据
-                from_next = from_next.Next;
+                fromNext = fromNext.Next;
             }
 
             // 由于上面结构的特点，最后会有些数据为空的内容加入,要删去
-            for (int j = list.Count - 1; j >= 0; --j)
-            {
-                if (list[j].IsZero)
-                {
+            for (var j = list.Count - 1; j >= 0; --j) {
+                if (list[j].IsZero) {
                     list.RemoveAt(j);
                 }
-                else
-                {
+                else {
                     break;
                 }
             }
@@ -503,27 +457,24 @@ namespace QuantBox.Data.Serializer.V2
         /// 都没有，list.count=0;-1
         /// </summary>
         /// <param name="list"></param>
-        /// <param name="AskPrice1"></param>
+        /// <param name="askPrice1"></param>
         /// <returns></returns>
-        public static int FindAsk1Position(List<DepthItem> list,int AskPrice1)
+        public static int FindAsk1Position(List<DepthItem> list, int askPrice1)
         {
             if (list == null || list.Count == 0)
                 return -1;
 
-            int i = 0;
-            for (; i < list.Count;++i )
-            {
-                DepthItem currItem = list[i];
-                if(currItem.Price > AskPrice1)
-                {
+            var i = 0;
+            for (; i < list.Count; ++i) {
+                var currItem = list[i];
+                if (currItem.Price > askPrice1) {
                     return i - 1;
                 }
-                else if(currItem.Price == AskPrice1)
-                {
+                if (currItem.Price == askPrice1) {
                     return i;
                 }
             }
-            
+
             return i;
         }
 
@@ -532,20 +483,16 @@ namespace QuantBox.Data.Serializer.V2
             if (list == null || list.Count == 0)
                 return -1;
 
-            int i = 0;
-            for (; i < list.Count; ++i)
-            {
+            var i = 0;
+            for (; i < list.Count; i++) {
                 var currItem = list[i];
-                if (currItem.Price > askPrice1)
-                {
+                if (currItem.Price > askPrice1) {
                     return i - 1;
                 }
-                if (currItem.Price == askPrice1)
-                {
+                if (Math.Abs(currItem.Price - askPrice1) < double.Epsilon) {
                     return i;
                 }
             }
-
             return i;
         }
 
@@ -554,21 +501,17 @@ namespace QuantBox.Data.Serializer.V2
             if (list == null || list.Count == 0)
                 return -1;
 
-            int i = 0;
-            for (; i < list.Count; ++i)
-            {
-                DepthItemView currItem = list[i];
-                if (currItem.Price < askPrice1)
-                {
+            var i = 0;
+            for (; i < list.Count; ++i) {
+                var currItem = list[i];
+                if (currItem.Price < askPrice1) {
                     return i - 1;
                 }
-                if (currItem.Price == askPrice1)
-                {
+                if (Math.Abs(currItem.Price - askPrice1) < double.Epsilon) {
                     return i;
                 }
             }
             return i;
-            
         }
     }
 }

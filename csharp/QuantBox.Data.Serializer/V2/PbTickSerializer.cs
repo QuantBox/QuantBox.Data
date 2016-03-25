@@ -11,8 +11,8 @@ namespace QuantBox.Data.Serializer.V2
 {
     public class PbTickSerializer
     {
-        private PbTick _lastWrite = null;
-        private PbTick _lastRead = null;
+        private PbTick _lastWrite;
+        private PbTick _lastRead;
 
         public PbTickSerializer()
         {
@@ -28,18 +28,18 @@ namespace QuantBox.Data.Serializer.V2
 
         public PbTick Write(PbTick data, Stream dest)
         {
-            PbTick diff = Codec.Diff(_lastWrite, data);
+            var diff = Codec.Diff(_lastWrite, data);
             _lastWrite = data;
 
             diff.PrepareObjectBeforeWrite(Codec.Config);
-            ProtoBuf.Serializer.SerializeWithLengthPrefix<PbTick>(dest, diff, PrefixStyle.Base128);
+            ProtoBuf.Serializer.SerializeWithLengthPrefix(dest, diff, PrefixStyle.Base128);
 
             return diff;
         }
 
         public void Write(IEnumerable<PbTick> list, Stream stream)
         {
-            foreach (PbTick item in list)
+            foreach (var item in list)
             {
                 Write(item, stream);
             }
@@ -59,7 +59,7 @@ namespace QuantBox.Data.Serializer.V2
             if (list == null)
                 return;
 
-            PbTickCodec Codec = new PbTickCodec();
+            var Codec = new PbTickCodec();
 
             // 将差分数据生成界面数据
             IEnumerable<PbTickView> _list = Codec.Data2View(Codec.Restore(list), false);
@@ -67,8 +67,8 @@ namespace QuantBox.Data.Serializer.V2
             // 保存
             using (TextWriter stream = new StreamWriter(output))
             {
-                PbTickView t = new PbTickView();
-                stream.WriteLine(t.ToCsvHeader());
+                var t = new PbTickView();
+                stream.WriteLine(PbTickView.ToCsvHeader());
 
                 foreach (var l in _list)
                 {
@@ -82,11 +82,10 @@ namespace QuantBox.Data.Serializer.V2
         /// 可以同时得到原始的raw和解码后的数据
         /// </summary>
         /// <param name="source"></param>
-        /// <param name="raw"></param>
         /// <returns></returns>
         public PbTick ReadOne(Stream source)
         {
-            PbTick raw = ProtoBuf.Serializer.DeserializeWithLengthPrefix<PbTick>(source, PrefixStyle.Base128);
+            var raw = ProtoBuf.Serializer.DeserializeWithLengthPrefix<PbTick>(source, PrefixStyle.Base128);
             if (raw == null)
                 return null;
             raw.PrepareObjectAfterRead(Codec.Config);
@@ -102,13 +101,11 @@ namespace QuantBox.Data.Serializer.V2
 
         public List<PbTick> Read(Stream stream)
         {
-            PbTick resotre = null;
-
-            List<PbTick> _list = new List<PbTick>();
+            var _list = new List<PbTick>();
 
             while (true)
             {
-                resotre = ReadOne(stream);
+                var resotre = ReadOne(stream);
                 if (resotre == null)
                 {
                     break;

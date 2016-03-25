@@ -48,7 +48,7 @@ namespace QuantBox.Data.Serializer
                     if (bFisrtException)
                         _version = MaxVersion;
                     else
-                        --_version;
+                        _version -= 1;
 
                     bFisrtException = false;
                     stream.Seek(position, SeekOrigin.Begin);

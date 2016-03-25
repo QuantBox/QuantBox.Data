@@ -39,11 +39,11 @@ namespace QuantBox.Data.Serializer.V1
             if (val.Length == 0)
                 return 1 / TickSizeMultiplier;
 
-            long a = (long)Math.Round(Math.Abs(val[0]) * TickSizeMultiplier, 0);
+            var a = (long)Math.Round(Math.Abs(val[0]) * TickSizeMultiplier, 0);
 
             if (val.Length > 1)
             {
-                for (int i = 1; i < val.Length; ++i)
+                for (var i = 1; i < val.Length; ++i)
                 {
                     var b = (long)Math.Round(Math.Abs(val[i]) * TickSizeMultiplier, 0);
                     a = gcd(a, b);
@@ -650,7 +650,7 @@ namespace QuantBox.Data.Serializer.V1
             // 由于肯定Millisec这个每次都会变，0变5，2变7，如果让他127内变不就更合适？
             // 时间123456，只取前面的1234，到分钟，然后相减，也就是分钟变一次
             // 时间123456.200，只取562，然后相减，也就是最大是599变成0,一般情况是变5
-            int t = time * 1000 + ms;
+            var t = time * 1000 + ms;
             hhmm_____ = t / 100000;
             ____ssf__ = t % 100000 / 100;
             _______ff = t % 100;
@@ -754,7 +754,7 @@ namespace QuantBox.Data.Serializer.V1
                 return current;
             }
 
-            PbTick tick = new PbTick();
+            var tick = new PbTick();
 
             #region 配置数据
             // 当前数据为空或前后相同，表示
@@ -1337,7 +1337,7 @@ namespace QuantBox.Data.Serializer.V1
             if (list == null)
                 return null;
 
-            List<PbTick> _list = new List<PbTick>();
+            var _list = new List<PbTick>();
 
             PbTick last = null;
             foreach (var item in list)
@@ -1353,12 +1353,12 @@ namespace QuantBox.Data.Serializer.V1
             if (list == null)
                 return null;
 
-            List<PbTick> _list = new List<PbTick>();
+            var _list = new List<PbTick>();
 
             PbTick last = null;
             foreach (var item in list)
             {
-                PbTick diff = Diff(last, item);
+                var diff = Diff(last, item);
                 last = item;
                 _list.Add(diff);
             }
@@ -1370,8 +1370,8 @@ namespace QuantBox.Data.Serializer.V1
             if (list == null)
                 return null;
 
-            Int2DoubleConverter converter = new Int2DoubleConverter(flat);
-            List<PbTickView> tempList = new List<PbTickView>();
+            var converter = new Int2DoubleConverter(flat);
+            var tempList = new List<PbTickView>();
 
             foreach (var l in list)
             {
@@ -1385,8 +1385,8 @@ namespace QuantBox.Data.Serializer.V1
             if (list == null)
                 return null;
 
-            Double2IntConverter converter = new Double2IntConverter(flat);
-            List<PbTick> tempList = new List<PbTick>();
+            var converter = new Double2IntConverter(flat);
+            var tempList = new List<PbTick>();
 
             foreach (var l in list)
             {

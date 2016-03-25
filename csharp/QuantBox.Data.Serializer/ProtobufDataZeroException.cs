@@ -5,11 +5,12 @@ using System.Text;
 
 namespace QuantBox.Data.Serializer
 {
-    public class ProtobufDataZeroException:Exception
+    public class ProtobufDataZeroException : Exception
     {
-        public int CurrentVersion;
+        public readonly int CurrentVersion;
         public int ExpectVersion;
-        public ProtobufDataZeroException(string message,int currentVersion,int expectVersion):base(message)
+        public ProtobufDataZeroException(string message, int currentVersion, int expectVersion)
+            : base(message)
         {
             CurrentVersion = currentVersion;
             ExpectVersion = expectVersion;

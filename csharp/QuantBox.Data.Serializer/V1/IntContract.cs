@@ -284,9 +284,9 @@ namespace QuantBox.Data.Serializer.V1
             get
             {
                 // 这地方可能有问题，先放着
-                double fV = 1 + StockDividend + RightsOffering;
-                double fP = RightsOfferingPrice * RightsOffering - CashDividend;
-                double fS = (PreClose + fP) / fV;
+                var fV = 1 + StockDividend + RightsOffering;
+                var fP = RightsOfferingPrice * RightsOffering - CashDividend;
+                var fS = (PreClose + fP) / fV;
 
                 return PreClose/fS;
             }
