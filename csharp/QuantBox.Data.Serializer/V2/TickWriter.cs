@@ -12,7 +12,7 @@ namespace QuantBox.Data.Serializer.V2
     {
         public class WriterDataItem
         {
-            public WriterDataItem(FileStream stream, PbTickSerializer serializer, string path,string symbol)
+            public WriterDataItem(FileStream stream, PbTickSerializer serializer, string path, string symbol)
             {
                 Stream = stream;
                 Serializer = serializer;
@@ -43,8 +43,7 @@ namespace QuantBox.Data.Serializer.V2
 
             public void Close()
             {
-                lock(locker)
-                {
+                lock (locker) {
                     Serializer.Reset();
 
                     if (Stream == null)
@@ -57,13 +56,11 @@ namespace QuantBox.Data.Serializer.V2
 
             public void Write()
             {
-                lock (locker)
-                {
+                lock (locker) {
                     if (Tick == null)
                         return;
 
-                    if (Stream == null)
-                    {
+                    if (Stream == null) {
                         // 换天时，必须重置记录器，不然记录的数据是差分后数据，导致新文件无法解读
                         Serializer.Reset();
 
@@ -73,25 +70,23 @@ namespace QuantBox.Data.Serializer.V2
                     Serializer.Write(Tick, Stream);
                     Tick = null;
                     //HasData = true;
-                    
+
                     FlushInWriter();
                 }
             }
 
             public void FlushInWriter()
             {
-                lock (locker)
-                {
+                lock (locker) {
                     if (Stream == null)
                         return;
 
                     var ts = (DateTime.Now - LastWriteTime).TotalSeconds;
                     // 与上次一写入相比大于10s就写入
                     // 但对于行情很少不变动的，会出现没有机会写入的情况，所以需要定时器来帮忙
-                    if (ts >= 10)
-                    {
+                    if (ts >= 10) {
                         //if(HasData)
-                            Stream.Flush(true);
+                        Stream.Flush(true);
                         //HasData = false;
                         LastWriteTime = DateTime.Now;
                     }
@@ -100,23 +95,20 @@ namespace QuantBox.Data.Serializer.V2
 
             public void FlushInTimer()
             {
-                lock (locker)
-                {
+                lock (locker) {
                     if (Stream == null)
                         return;
 
                     var ts = (DateTime.Now - LastWriteTime).TotalSeconds;
                     // 每10秒写一次
-                    if (ts >= 10)
-                    {
+                    if (ts >= 10) {
                         //if (HasData)
-                            Stream.Flush(true);
+                        Stream.Flush(true);
                         //HasData = false;
 
                         // 1分钟没有写入数据就关闭文件句柄
                         // 这样留下机会可以进行删除
-                        if (ts > 1 * 60)
-                        {
+                        if (ts > 1 * 60) {
                             Close();
                         }
                     }
@@ -135,7 +127,7 @@ namespace QuantBox.Data.Serializer.V2
 
             _Timer.Elapsed += this.OnTimerElapsed;
             // 每15秒遍历一次
-            _Timer.Interval = 1000*15;
+            _Timer.Interval = 1000 * 15;
             _Timer.Start();
         }
 
@@ -146,10 +138,8 @@ namespace QuantBox.Data.Serializer.V2
 
         public void Close()
         {
-            lock (locker)
-            {
-                foreach (var item in Items.Values)
-                {
+            lock (locker) {
+                foreach (var item in Items.Values) {
                     item.Write();
                     item.Close();
                 }
@@ -159,10 +149,8 @@ namespace QuantBox.Data.Serializer.V2
 
         public void FlushInTimer()
         {
-            lock (locker)
-            {
-                foreach (var item in Items.Values)
-                {
+            lock (locker) {
+                foreach (var item in Items.Values) {
                     item.FlushInTimer();
                 }
             }
@@ -170,14 +158,11 @@ namespace QuantBox.Data.Serializer.V2
 
         public void AddInstrument(string symbol, double tickSize, double factor, int Time_ssf_Diff)
         {
-            lock (locker)
-            {
+            lock (locker) {
                 WriterDataItem item;
-                if (!Items.TryGetValue(symbol, out item))
-                {
+                if (!Items.TryGetValue(symbol, out item)) {
                     var serializer = new PbTickSerializer();
-                    if (tickSize > 0)
-                    {
+                    if (tickSize > 0) {
                         serializer.Codec.Config.SetTickSize(tickSize);
                         serializer.Codec.TickSize = serializer.Codec.Config.GetTickSize();
                     }
@@ -187,14 +172,11 @@ namespace QuantBox.Data.Serializer.V2
 
                     Items.Add(symbol, new WriterDataItem(null, serializer, _path, symbol));
                 }
-                else
-                {
+                else {
                     // 有可能要不关软件，连续工作，但tickSize又发生了变化
                     var serializer = item.Serializer;
-                    if (serializer != null)
-                    {
-                        if (tickSize > 0)
-                        {
+                    if (serializer != null) {
+                        if (tickSize > 0) {
                             serializer.Codec.Config.SetTickSize(tickSize);
                             serializer.Codec.TickSize = serializer.Codec.Config.GetTickSize();
                         }
@@ -208,11 +190,9 @@ namespace QuantBox.Data.Serializer.V2
 
         public void RemoveInstrument(string symbol)
         {
-            lock (locker)
-            {
+            lock (locker) {
                 WriterDataItem item;
-                if (Items.TryGetValue(symbol, out item))
-                {
+                if (Items.TryGetValue(symbol, out item)) {
                     item.Close();
                     Items.Remove(symbol);
                 }
@@ -222,19 +202,17 @@ namespace QuantBox.Data.Serializer.V2
         public bool Write(PbTick tick)
         {
             WriterDataItem item;
-            if (Items.TryGetValue(tick.Static.Symbol, out item))
-            {
+            if (Items.TryGetValue(tick.Static.Symbol, out item)) {
                 Write(item, tick);
                 return true;
             }
             return false;
         }
 
-        public void Write(WriterDataItem item,PbTick tick)
+        public void Write(WriterDataItem item, PbTick tick)
         {
             // 对于换交易日，应当将前一天的关闭
-            if (item.TradingDay != tick.TradingDay)
-            {
+            if (item.TradingDay != tick.TradingDay) {
                 item.Close();
                 item.TradingDay = tick.TradingDay;
             }

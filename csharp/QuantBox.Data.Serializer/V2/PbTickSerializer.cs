@@ -39,16 +39,14 @@ namespace QuantBox.Data.Serializer.V2
 
         public void Write(IEnumerable<PbTick> list, Stream stream)
         {
-            foreach (var item in list)
-            {
+            foreach (var item in list) {
                 Write(item, stream);
             }
         }
 
         public void Write(IEnumerable<PbTick> list, string output)
         {
-            using (Stream stream = File.Open(output, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.Read))
-            {
+            using (Stream stream = File.Open(output, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.Read)) {
                 Write(list, stream);
                 stream.Close();
             }
@@ -59,20 +57,16 @@ namespace QuantBox.Data.Serializer.V2
             if (list == null)
                 return;
 
-            var Codec = new PbTickCodec();
+            var codec = new PbTickCodec();
 
             // 将差分数据生成界面数据
-            IEnumerable<PbTickView> _list = Codec.Data2View(Codec.Restore(list), false);
+            IEnumerable<PbTickView> views = codec.Data2View(codec.Restore(list), false);
 
             // 保存
-            using (TextWriter stream = new StreamWriter(output))
-            {
-                var t = new PbTickView();
+            using (TextWriter stream = new StreamWriter(output)) {
                 stream.WriteLine(PbTickView.ToCsvHeader());
-
-                foreach (var l in _list)
-                {
-                    stream.WriteLine(l);
+                foreach (var view in views) {
+                    stream.WriteLine(view);
                 }
                 stream.Close();
             }
@@ -91,37 +85,30 @@ namespace QuantBox.Data.Serializer.V2
             raw.PrepareObjectAfterRead(Codec.Config);
 
             _lastRead = Codec.Restore(_lastRead, raw);
-            if (_lastRead.Config.Version != 2)
-            {
+            if (_lastRead.Config.Version != 2) {
                 throw new ProtobufDataZeroException("only support pd0 file version 2", _lastRead.Config.Version, 2);
             }
-            
+
             return _lastRead;
         }
 
         public List<PbTick> Read(Stream stream)
         {
-            var _list = new List<PbTick>();
-
-            while (true)
-            {
+            var list = new List<PbTick>();
+            while (true) {
                 var resotre = ReadOne(stream);
-                if (resotre == null)
-                {
+                if (resotre == null) {
                     break;
                 }
-
-                _list.Add(resotre);
+                list.Add(resotre);
             }
             stream.Close();
-
-            return _list;
+            return list;
         }
 
         public List<PbTick> Read(string input)
         {
-            using (Stream stream = File.Open(input, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
-            {
+            using (Stream stream = File.Open(input, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)) {
                 return Read(stream);
             }
         }

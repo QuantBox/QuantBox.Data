@@ -776,14 +776,13 @@ namespace QuantBox.Data.Serializer.V2
             if (list == null)
                 return null;
 
-            var _list = new List<PbTick>();
-
+            var ticks = new List<PbTick>();
             PbTick last = null;
             foreach (var item in list) {
                 last = Restore(last, item);
-                _list.Add(last);
+                ticks.Add(last);
             }
-            return _list;
+            return ticks;
         }
 
         public List<PbTick> Diff(IEnumerable<PbTick> list)
@@ -791,15 +790,14 @@ namespace QuantBox.Data.Serializer.V2
             if (list == null)
                 return null;
 
-            var _list = new List<PbTick>();
-
+            var ticks = new List<PbTick>();
             PbTick last = null;
             foreach (var item in list) {
                 var diff = Diff(last, item);
                 last = item;
-                _list.Add(diff);
+                ticks.Add(diff);
             }
-            return _list;
+            return ticks;
         }
 
         public List<PbTickView> Data2View(IEnumerable<PbTick> ticks, bool descending)
