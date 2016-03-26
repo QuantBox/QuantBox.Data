@@ -44,12 +44,12 @@ namespace QuantBox.Data.Serializer.V1
         /// <param name="source"></param>
         /// <param name="raw"></param>
         /// <returns></returns>
-        public PbTick ReadOne(Stream source)
+        public PbTick ReadOne(Stream source, bool unpackDepth = true)
         {
             var raw = ProtoBuf.Serializer.DeserializeWithLengthPrefix<PbTick>(source, PrefixStyle.Base128);
             if (raw == null)
                 return null;
-            _lastRead = Codec.Restore(_lastRead, raw);
+            _lastRead = Codec.Restore(_lastRead, raw, unpackDepth);
             if (_lastRead.Config.Version != 1)
             {
                 throw new ProtobufDataZeroException("only support pd0 file version 1", _lastRead.Config.Version, 1);

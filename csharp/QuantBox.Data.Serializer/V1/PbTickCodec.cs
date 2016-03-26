@@ -1049,7 +1049,7 @@ namespace QuantBox.Data.Serializer.V1
             return tick;
         }
 
-        public PbTick Restore(PbTick prev, PbTick diff)
+        public PbTick Restore(PbTick prev, PbTick diff, bool unpackDepth = true)
         {
             if (prev == null)
             {
@@ -1092,6 +1092,9 @@ namespace QuantBox.Data.Serializer.V1
 
             DepthTick last_last = null;
             DepthTick last_next = null;
+
+            if(unpackDepth)
+            { 
 
             #region 买1到买N
             from_last = null;
@@ -1270,7 +1273,9 @@ namespace QuantBox.Data.Serializer.V1
                 if (last_next != null)
                     last_next = last_next.Next;
             }
-            #endregion
+                #endregion
+
+            }
 
             #region 常用行情信息
             tick.Volume = prev.Volume + diff.Volume;
@@ -1332,7 +1337,7 @@ namespace QuantBox.Data.Serializer.V1
             return tick;
         }
 
-        public List<PbTick> Restore(IEnumerable<PbTick> list)
+        public List<PbTick> Restore(IEnumerable<PbTick> list, bool unpackDepth = true)
         {
             if (list == null)
                 return null;
@@ -1342,7 +1347,7 @@ namespace QuantBox.Data.Serializer.V1
             PbTick last = null;
             foreach (var item in list)
             {
-                last = Restore(last, item);
+                last = Restore(last, item, unpackDepth);
                 _list.Add(last);
             }
             return _list;

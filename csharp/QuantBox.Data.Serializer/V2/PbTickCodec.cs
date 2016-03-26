@@ -667,7 +667,7 @@ namespace QuantBox.Data.Serializer.V2
             return tick;
         }
 
-        public PbTick Restore(PbTick prev, PbTick diff)
+        public PbTick Restore(PbTick prev, PbTick diff, bool unpackDepth = true)
         {
             if (prev == null) {
                 if (diff.Config == null)
@@ -699,19 +699,21 @@ namespace QuantBox.Data.Serializer.V2
             tick.LastPrice = prev.LastPrice + diff.LastPrice;
             tick.AskPrice1 = prev.AskPrice1 + diff.AskPrice1;
 
-            // 前一个是完整的，后一个是做过Size和Price的调整，如何还原
-            var newPrevList = new List<DepthItem>();
-            var newDiffList = new List<DepthItem>();
+            if(unpackDepth)
+            {
+                // 前一个是完整的，后一个是做过Size和Price的调整，如何还原
+                var newPrevList = new List<DepthItem>();
+                var newDiffList = new List<DepthItem>();
 
-            // 换成同长度
-            DepthListHelper.ExpandTwoListsToSameLength(
-                prev.DepthList, diff.DepthList,
-                int.MinValue, int.MaxValue,
-                newPrevList, newDiffList);
+                // 换成同长度
+                DepthListHelper.ExpandTwoListsToSameLength(
+                    prev.DepthList, diff.DepthList,
+                    int.MinValue, int.MaxValue,
+                    newPrevList, newDiffList);
 
-            tick.DepthList = new List<DepthItem>();
-            DepthListHelper.SizeAddInTwoLists(newPrevList, newDiffList, tick.DepthList);
-
+                tick.DepthList = new List<DepthItem>();
+                DepthListHelper.SizeAddInTwoLists(newPrevList, newDiffList, tick.DepthList);
+            }
 
             #region 常用行情信息
             tick.Volume = prev.Volume + diff.Volume;

@@ -18,7 +18,7 @@ namespace QuantBox.Data.Serializer
         private int _version = 2;
         private const int MaxVersion = 2;
 
-        public V2.PbTick ReadOne(Stream stream)
+        public V2.PbTick ReadOne(Stream stream, bool unpackDepth = true)
         {
             // 计划如果简单的将V2和V1的文件合并成一个文件也能读取
             var position = stream.Position;
@@ -28,10 +28,10 @@ namespace QuantBox.Data.Serializer
                     V2.PbTick tick;
                     switch (_version) {
                         case 1:
-                            tick = V1_to_V2.Converter(_v1Reader.ReadOne(stream));
+                            tick = V1_to_V2.Converter(_v1Reader.ReadOne(stream, unpackDepth));
                             break;
                         case 2:
-                            tick = _v2Reader.ReadOne(stream);
+                            tick = _v2Reader.ReadOne(stream, unpackDepth);
                             break;
                         default:
                             throw new Exception(string.Format("Invalid file, version {0}", _version));
@@ -56,10 +56,10 @@ namespace QuantBox.Data.Serializer
             } while (true);
         }
 
-        public IEnumerable<V2.PbTick> Read(Stream stream)
+        public IEnumerable<V2.PbTick> Read(Stream stream, bool unpackDepth = true)
         {
             while (true) {
-                var tick = ReadOne(stream);
+                var tick = ReadOne(stream, unpackDepth);
                 if (tick == null) {
                     break;
                 }
@@ -67,14 +67,14 @@ namespace QuantBox.Data.Serializer
             }
         }
 
-        public V2.PbTickView ReadOne2View(Stream stream)
+        public V2.PbTickView ReadOne2View(Stream stream, bool unpackDepth = true)
         {
-            return _v2Codec.Data2View(ReadOne(stream), false);
+            return _v2Codec.Data2View(ReadOne(stream, unpackDepth), false);
         }
 
-        public List<V2.PbTickView> Read2View(Stream stream)
+        public List<V2.PbTickView> Read2View(Stream stream, bool unpackDepth = true)
         {
-            return _v2Codec.Data2View(Read(stream), false);
+            return _v2Codec.Data2View(Read(stream, unpackDepth), false);
         }
     }
 }
