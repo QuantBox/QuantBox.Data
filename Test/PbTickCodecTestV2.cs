@@ -17,6 +17,11 @@ namespace Test
 
         static void Main(string[] args)
         {
+
+        }
+
+        static void Main4(string[] args)
+        {
             List<DepthItem> oldPrevList = new List<DepthItem>();
             List<DepthItem> oldCurrList = new List<DepthItem>();
 

@@ -6,7 +6,7 @@ namespace QuantBox.Data.Serializer.V2
     public class DepthListHelper
     {
         #region List中的算法操作
-        public static void ExpandTwoListsToSameLength(List<DepthItem> oldPrevList, List<DepthItem> oldCurrList, int StartPrice, int EndPrice, List<DepthItem> newPrevList, List<DepthItem> newCurrList)
+        public static void ExpandTwoListsToSameLength(List<DepthItem> oldPrevList, List<DepthItem> oldCurrList, int startPrice, int endPrice, List<DepthItem> newPrevList, List<DepthItem> newCurrList)
         {
             newPrevList.Clear();
             newCurrList.Clear();
@@ -25,19 +25,19 @@ namespace QuantBox.Data.Serializer.V2
                 var currItem = oldCurrList[i];
 
                 // 处理新列表中数据的范围
-                if (currItem.Price < StartPrice)
+                if (currItem.Price < startPrice)
                     continue;
-                if (currItem.Price > EndPrice)
+                if (currItem.Price > endPrice)
                     break;
 
                 for (; j < oldPrevList.Count; ++j) {
                     prevItem = oldPrevList[j];
 
 
-                    if (prevItem.Price < StartPrice)
+                    if (prevItem.Price < startPrice)
                         continue;
                     // 条件是&&的原因是curr在范围内，而prev在范围外的情况会出现
-                    if (prevItem.Price > EndPrice && currItem.Price > EndPrice)
+                    if (prevItem.Price > endPrice && currItem.Price > endPrice)
                         break;
 
                     if (currItem.Price == prevItem.Price) {
@@ -62,7 +62,7 @@ namespace QuantBox.Data.Serializer.V2
 
                 // 历史的已经刷完，当前的还有
                 if (j == oldPrevList.Count) {
-                    if (currItem.Price > EndPrice)
+                    if (currItem.Price > endPrice)
                         break;
 
                     // 只有新数据，没有老数据的情况
@@ -77,9 +77,9 @@ namespace QuantBox.Data.Serializer.V2
                 prevItem = oldPrevList[j];
 
                 // 只有历史没有最新
-                if (prevItem.Price < StartPrice)
+                if (prevItem.Price < startPrice)
                     continue;
-                if (prevItem.Price > EndPrice)
+                if (prevItem.Price > endPrice)
                     break;
 
                 newPrevList.Add(prevItem);
