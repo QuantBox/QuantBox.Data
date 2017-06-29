@@ -62,6 +62,9 @@ message StaticInfo {
    optional sint32 SettlementPrice = 3 [default = 0];
    optional string Symbol = 4;
    optional string Exchange = 5;
+   optional sint32 PreClosePrice = 6 [default = 0];
+   optional sint32 PreSettlementPrice = 7 [default = 0];
+   optional sint64 PreOpenInterest = 8 [default = 0];
 }
 message StockSplitInfo {
    optional double CashDividend = 1 [default = 0];

@@ -20,6 +20,7 @@ namespace QuantBox.Data.Serializer
 
         public V2.PbTick ReadOne(Stream stream, bool unpackDepth = true)
         {
+            //string proto = ProtoBuf.Serializer.GetProto<PbTick>();
             // 计划如果简单的将V2和V1的文件合并成一个文件也能读取
             var position = stream.Position;
             var bFisrtException = true;
